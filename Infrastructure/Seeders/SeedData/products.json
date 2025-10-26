@@ -1,0 +1,272 @@
+[
+  {
+    "Name": "Premium Dog Food Chicken Flavor",
+    "Description": "Nutritious dry dog food with real chicken and vitamins.",
+    "Price": 45,
+    "Type": "Food",
+    "Brand": "PetDelight",
+    "QuantityInStock": 120,
+    "CategoryId": 1
+  },
+  {
+    "Name": "Salmon Cat Food",
+    "Description": "Tasty salmon-flavored dry food for adult cats.",
+    "Price": 40,
+    "Type": "Food",
+    "Brand": "WhiskerBite",
+    "QuantityInStock": 90,
+    "CategoryId": 1
+  },
+  {
+    "Name": "Puppy Starter Milk",
+    "Description": "Lactose-free milk formula for newborn puppies.",
+    "Price": 30,
+    "Type": "Food",
+    "Brand": "PawCare",
+    "QuantityInStock": 60,
+    "CategoryId": 1
+  },
+  {
+    "Name": "Cat Tuna Treats",
+    "Description": "Soft tuna treats perfect for training and rewards.",
+    "Price": 15,
+    "Type": "Food",
+    "Brand": "MeowMix",
+    "QuantityInStock": 110,
+    "CategoryId": 1
+  },
+  {
+    "Name": "Dog Dental Sticks",
+    "Description": "Chew sticks that clean teeth and freshen breath.",
+    "Price": 25,
+    "Type": "Food",
+    "Brand": "ChewEase",
+    "QuantityInStock": 85,
+    "CategoryId": 1
+  },
+  {
+    "Name": "Squeaky Bone Toy",
+    "Description": "Durable rubber bone with a built-in squeaker.",
+    "Price": 20,
+    "Type": "Toys",
+    "Brand": "PlayPaws",
+    "QuantityInStock": 150,
+    "CategoryId": 2
+  },
+  {
+    "Name": "Cat Feather Wand",
+    "Description": "Interactive feather wand to engage your cat.",
+    "Price": 18,
+    "Type": "Toys",
+    "Brand": "FunTail",
+    "QuantityInStock": 100,
+    "CategoryId": 2
+  },
+  {
+    "Name": "Chew Rope Toy",
+    "Description": "Strong cotton rope for tug and fetch games.",
+    "Price": 22,
+    "Type": "Toys",
+    "Brand": "TugFun",
+    "QuantityInStock": 140,
+    "CategoryId": 2
+  },
+  {
+    "Name": "Laser Pointer Toy",
+    "Description": "Handheld laser pointer for cats’ playtime.",
+    "Price": 12,
+    "Type": "Toys",
+    "Brand": "PurrPlay",
+    "QuantityInStock": 95,
+    "CategoryId": 2
+  },
+  {
+    "Name": "Plush Mouse Toy",
+    "Description": "Soft mouse toy filled with catnip.",
+    "Price": 10,
+    "Type": "Toys",
+    "Brand": "WhiskerWorld",
+    "QuantityInStock": 130,
+    "CategoryId": 2
+  },
+  {
+    "Name": "Adjustable Dog Collar",
+    "Description": "Durable nylon collar with reflective stitching.",
+    "Price": 25,
+    "Type": "Accessories",
+    "Brand": "SafeWalk",
+    "QuantityInStock": 120,
+    "CategoryId": 3
+  },
+  {
+    "Name": "Cat Harness Set",
+    "Description": "Comfortable harness with leash for outdoor cats.",
+    "Price": 35,
+    "Type": "Accessories",
+    "Brand": "PurrGo",
+    "QuantityInStock": 80,
+    "CategoryId": 3
+  },
+  {
+    "Name": "Pet Travel Carrier",
+    "Description": "Lightweight and breathable carrier for small pets.",
+    "Price": 60,
+    "Type": "Accessories",
+    "Brand": "PetMove",
+    "QuantityInStock": 50,
+    "CategoryId": 3
+  },
+  {
+    "Name": "Dog Raincoat",
+    "Description": "Waterproof coat to keep your dog dry and stylish.",
+    "Price": 40,
+    "Type": "Accessories",
+    "Brand": "PawFit",
+    "QuantityInStock": 70,
+    "CategoryId": 3
+  },
+  {
+    "Name": "Pet ID Tag",
+    "Description": "Customizable stainless-steel ID tag for pets.",
+    "Price": 10,
+    "Type": "Accessories",
+    "Brand": "TagTail",
+    "QuantityInStock": 200,
+    "CategoryId": 3
+  },
+  {
+    "Name": "Pet Grooming Brush",
+    "Description": "Soft bristle brush for daily grooming.",
+    "Price": 20,
+    "Type": "Care",
+    "Brand": "FurEase",
+    "QuantityInStock": 110,
+    "CategoryId": 4
+  },
+  {
+    "Name": "Nail Clippers for Pets",
+    "Description": "Ergonomic nail clippers with safety lock.",
+    "Price": 18,
+    "Type": "Care",
+    "Brand": "TrimTails",
+    "QuantityInStock": 85,
+    "CategoryId": 4
+  },
+  {
+    "Name": "Pet Shampoo Aloe Vera",
+    "Description": "Gentle shampoo with natural aloe for shiny coats.",
+    "Price": 28,
+    "Type": "Care",
+    "Brand": "CleanPaw",
+    "QuantityInStock": 75,
+    "CategoryId": 4
+  },
+  {
+    "Name": "Ear Cleaning Solution",
+    "Description": "Cleans and deodorizes pet ears safely.",
+    "Price": 22,
+    "Type": "Care",
+    "Brand": "VetPure",
+    "QuantityInStock": 60,
+    "CategoryId": 4
+  },
+  {
+    "Name": "Flea and Tick Spray",
+    "Description": "Protects pets from fleas and ticks for up to 30 days.",
+    "Price": 35,
+    "Type": "Care",
+    "Brand": "GuardPet",
+    "QuantityInStock": 65,
+    "CategoryId": 4
+  },
+  {
+    "Name": "Dog Bed Large",
+    "Description": "Soft and washable bed for large dogs.",
+    "Price": 80,
+    "Type": "Beds",
+    "Brand": "CozyRest",
+    "QuantityInStock": 40,
+    "CategoryId": 5
+  },
+  {
+    "Name": "Cat Cave Bed",
+    "Description": "Warm felted cave bed for cats to nap comfortably.",
+    "Price": 65,
+    "Type": "Beds",
+    "Brand": "PurrNest",
+    "QuantityInStock": 55,
+    "CategoryId": 5
+  },
+  {
+    "Name": "Small Pet Blanket",
+    "Description": "Soft fleece blanket for small pets and kittens.",
+    "Price": 18,
+    "Type": "Beds",
+    "Brand": "SnugglePaw",
+    "QuantityInStock": 90,
+    "CategoryId": 5
+  },
+  {
+    "Name": "Cooling Mat for Pets",
+    "Description": "Keeps pets cool during hot weather.",
+    "Price": 50,
+    "Type": "Beds",
+    "Brand": "ChillTail",
+    "QuantityInStock": 45,
+    "CategoryId": 5
+  },
+  {
+    "Name": "Heated Cat Bed",
+    "Description": "Electric bed to keep cats warm in winter.",
+    "Price": 70,
+    "Type": "Beds",
+    "Brand": "WarmWhisker",
+    "QuantityInStock": 30,
+    "CategoryId": 5
+  },
+  {
+    "Name": "Dog Water Fountain",
+    "Description": "Automatic water dispenser to keep dogs hydrated.",
+    "Price": 60,
+    "Type": "Feeding",
+    "Brand": "HydraPet",
+    "QuantityInStock": 50,
+    "CategoryId": 6
+  },
+  {
+    "Name": "Cat Food Bowl Set",
+    "Description": "Stainless steel double bowl for food and water.",
+    "Price": 30,
+    "Type": "Feeding",
+    "Brand": "FeedEase",
+    "QuantityInStock": 70,
+    "CategoryId": 6
+  },
+  {
+    "Name": "Slow Feeder Dog Bowl",
+    "Description": "Prevents dogs from eating too fast.",
+    "Price": 25,
+    "Type": "Feeding",
+    "Brand": "PawSlow",
+    "QuantityInStock": 90,
+    "CategoryId": 6
+  },
+  {
+    "Name": "Automatic Pet Feeder",
+    "Description": "Smart feeder with portion control timer.",
+    "Price": 85,
+    "Type": "Feeding",
+    "Brand": "PetTech",
+    "QuantityInStock": 40,
+    "CategoryId": 6
+  },
+  {
+    "Name": "Travel Water Bottle for Pets",
+    "Description": "Portable bottle for outdoor hydration.",
+    "Price": 20,
+    "Type": "Feeding",
+    "Brand": "GoPet",
+    "QuantityInStock": 100,
+    "CategoryId": 6
+  }
+]
