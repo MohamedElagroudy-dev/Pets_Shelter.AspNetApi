@@ -14,9 +14,16 @@ namespace Core.Sharing.Identity
         public required string Username { get; set; }
 
         [Required, StringLength(128)]
+        [EmailAddress]
         public required string Email { get; set; }
 
         [Required, StringLength(256)]
+        [DataType(DataType.Password)]
         public required string Password { get; set; }
+
+        [Required, StringLength(256)]
+        [DataType(DataType.Password)]
+        [Compare(nameof(Password), ErrorMessage = "Passwords do not match.")]
+        public required string ConfirmPassword { get; set; }
     }
 }

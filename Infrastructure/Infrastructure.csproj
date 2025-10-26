@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-	<None Include="Seeders\Data\SeedData\**" CopyToOutputDirectory="PreserveNewest" />
+	<None Include="Seeders\SeedData\*.json" CopyToOutputDirectory="PreserveNewest" />
     <ProjectReference Include="..\Application\Application.csproj" />
   </ItemGroup>
 
