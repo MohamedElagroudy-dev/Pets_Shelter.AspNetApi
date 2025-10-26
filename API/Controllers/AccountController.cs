@@ -101,12 +101,12 @@ namespace API.Controllers
         }
 
         [HttpGet("refreshToken")]
-        public async Task<IActionResult> RefreshToken()
+        public async Task<IActionResult> RefreshToken([FromBody] GetTokenDto model)
         {
-            var refreshToken = Request.Cookies["refreshToken"];
+            var refreshToken = model.Token ?? Request.Cookies["refreshToken"];
 
             if (string.IsNullOrEmpty(refreshToken))
-                return BadRequest(new { Message = "Refresh token is missing." });
+                return BadRequest("Token is required!");
 
             var result = await _accountAppService.RefreshToken(refreshToken);
 
