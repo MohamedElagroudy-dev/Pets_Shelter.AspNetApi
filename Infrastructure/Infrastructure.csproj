@@ -23,6 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
+	<None Include="Seeders\Data\SeedData\**" CopyToOutputDirectory="PreserveNewest" />
     <ProjectReference Include="..\Application\Application.csproj" />
   </ItemGroup>
 

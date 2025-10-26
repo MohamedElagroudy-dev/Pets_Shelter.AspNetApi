@@ -3,6 +3,7 @@ using Core.Entities.Product;
 using Ecom.Core.Entities.Product;
 using Infrastructure.Persistence;
 using Microsoft.AspNetCore.Identity;
+using System.Reflection;
 using System.Text.Json;
 
 namespace Infrastructure.Seeders
@@ -24,9 +25,11 @@ namespace Infrastructure.Seeders
                 await userManager.AddToRoleAsync(user, "Admin");
             }
 
+            var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+
             if (!context.Products.Any())
-            {
-                var productsData = await File.ReadAllTextAsync("../Infrastructure/Seeders/SeedData/products.json");
+            {  
+                var productsData = await File.ReadAllTextAsync(path + @"/Seeders/SeedData/products.json");
                 var products = JsonSerializer.Deserialize<List<Product>>(productsData);
 
                 if (products != null && products.Count > 0)
@@ -38,7 +41,8 @@ namespace Infrastructure.Seeders
 
             if (!context.DeliveryMethods.Any())
             {
-                var dmData = await File.ReadAllTextAsync("../Infrastructure/Seeders/SeedData/delivery.json");
+                
+                var dmData = await File.ReadAllTextAsync(path + @"/Seeders/SeedData/delivery.json");
                 var methods = JsonSerializer.Deserialize<List<DeliveryMethod>>(dmData);
 
                 if (methods != null && methods.Count > 0)
@@ -50,7 +54,8 @@ namespace Infrastructure.Seeders
 
             if (!context.Categories.Any())
             {
-                var catData = await File.ReadAllTextAsync("../Infrastructure/Seeders/SeedData/categories.json");
+                
+                var catData = await File.ReadAllTextAsync(path + @"/Seeders/SeedData/categories.json");
                 var categories = JsonSerializer.Deserialize<List<Category>>(catData);
 
                 if (categories != null && categories.Count > 0)
