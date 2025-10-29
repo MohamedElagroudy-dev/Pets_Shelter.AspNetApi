@@ -46,8 +46,6 @@ namespace API
 
             var app = builder.Build();
 
-            // Use CORS
-            app.UseCors("AllowReactApp");
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
@@ -75,6 +73,9 @@ namespace API
             }
 
             app.UseHttpsRedirection();
+
+            // Use CORS
+            app.UseCors("AllowReactApp");
 
             app.UseAuthorization();
 
