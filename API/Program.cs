@@ -32,7 +32,22 @@ namespace API
             builder.Services.Addcore();
             builder.Services.AddApplication();
 
+            // Add CORS
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowReactApp",
+                    policy =>
+                    {
+                        policy.WithOrigins("http://localhost:3000","http://localhost:5173") // frontend React
+                              .AllowAnyHeader()
+                              .AllowAnyMethod();
+                    });
+            });
+
             var app = builder.Build();
+
+            // Use CORS
+            app.UseCors("AllowReactApp");
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
