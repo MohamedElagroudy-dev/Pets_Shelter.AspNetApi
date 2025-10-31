@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Ecom.Core.Entities.Product;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,11 +11,14 @@ namespace Core.Entities
 {
     public class AppUser : IdentityUser
     {
+        
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
 
         public Address? Address { get; set; }
 
         public List<RefreshToken>? RefreshTokens { get; set; }
+
+        public string PictureUrl { get; set; } = string.Empty;
     }
 }

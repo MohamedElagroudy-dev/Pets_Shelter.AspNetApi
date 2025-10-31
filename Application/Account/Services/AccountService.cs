@@ -12,6 +12,7 @@ using System.Security.Claims;
 
 namespace Application.Account.Services
 {
+
     public class AccountService : IAccountService
     {
         private readonly IAuthService _authService;
@@ -20,8 +21,10 @@ namespace Application.Account.Services
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IUserContext _userContext;
 
+        private const string DefaultImagePath = "/Images/Defult/DefultUserPic.jpeg";
 
-        
+
+
         public AccountService(IAuthService authService,
             ILogger<AccountService> logger,
             UserManager<AppUser> userManager,
@@ -50,7 +53,12 @@ namespace Application.Account.Services
                 throw new ArgumentNullException(nameof(model));
 
             _logger.LogInformation("Token request for email: {Email}", model.Email);
-            return await _authService.GetTokenAsync(model);
+            var token = await _authService.GetTokenAsync(model);
+            if (string.IsNullOrWhiteSpace(token.PictureUrl) && token.IsAuthenticated)
+            {
+                token.PictureUrl = DefaultImagePath;
+            }
+            return token;
         }
 
         public async Task<string?> AddRoleAsync(AddRoleModel model)

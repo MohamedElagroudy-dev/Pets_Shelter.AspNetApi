@@ -6,6 +6,7 @@ namespace Core.Sharing.Identity
 {
     public class AuthModel
     {
+        public string PictureUrl { get; set; } = string.Empty;
         public string Message { get; set; } = string.Empty;
         public bool IsAuthenticated { get; set; } 
         public string Username { get; set; } = string.Empty;
