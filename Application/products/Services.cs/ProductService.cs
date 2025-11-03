@@ -28,7 +28,7 @@ namespace Ecom.Application.Products.Services
         {
             _logger.LogInformation("Executing GetAllAsync with page {PageNumber}, size {PageSize}", productParams.PageNumber, productParams.PageSize);
 
-            (IEnumerable<Product> products, int totalCount) = await _unitOfWork.Products.GetAllAsync(
+            var(products, totalCount) = await _unitOfWork.Products.GetAllAsync(
                 productParams.PageNumber,
                 productParams.PageSize,
                 productParams.Search,

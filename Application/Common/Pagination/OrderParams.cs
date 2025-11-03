@@ -1,4 +1,5 @@
 ﻿using Core.Entities.OrderAggregate;
+using Core.Sharing.Pagination;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,13 +8,12 @@ using System.Threading.Tasks;
 
 namespace Application.Common.Pagination
 {
-    namespace Core.Sharing
-    {
+    
         public class OrderParams : PaginationParams
         {
             public string? BuyerEmail { get; set; }
             public OrderStatus? Status { get; set; }
             public OrderSort Sort { get; set; } = OrderSort.DateDesc;
         }
-    }
+    
 }

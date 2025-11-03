@@ -1,6 +1,6 @@
 ﻿using Application.Common;
+using Application.Common.Pagination;
 using Application.Orders.DTOs;
-using Core.Sharing.Pagination.Core.Sharing;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
