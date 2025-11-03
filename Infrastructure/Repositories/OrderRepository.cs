@@ -1,7 +1,6 @@
 ﻿using Core.Entities.OrderAggregate;
 using Core.Interfaces;
 using Core.Sharing.Pagination;
-using Core.Sharing.Pagination.Core.Sharing;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
@@ -18,7 +17,13 @@ namespace Infrastructure.Repositories
         }
 
 
-        public async Task<(IEnumerable<Order> Orders, int TotalCount)> GetAllAsync(OrderParams orderParams)
+        public async Task<(IEnumerable<Order> Orders, int TotalCount)> GetAllAsync(
+            int pageNumber,
+            int pageSize,
+            string? search,
+            string? buyerEmail,
+            OrderStatus? status,
+            OrderSort sort)
         {
             var query = _context.Orders
                 .Include(o => o.OrderItems)
@@ -26,42 +31,38 @@ namespace Infrastructure.Repositories
                 .Include(o => o.DeliveryMethod)
                 .AsNoTracking();
 
-            //  Filtering by BuyerEmail
-            if (!string.IsNullOrEmpty(orderParams.BuyerEmail))
-                query = query.Where(o => o.BuyerEmail == orderParams.BuyerEmail);
+            if (!string.IsNullOrEmpty(buyerEmail)) 
+                query = query.Where(o => o.BuyerEmail == buyerEmail); 
 
-            //  Filtering by Status
-            if (orderParams.Status.HasValue)
-                query = query.Where(o => o.Status == orderParams.Status.Value);
+            
+            if (status.HasValue) 
+                query = query.Where(o => o.Status == status.Value); 
 
-            //  Searching (on email or shipping name)
-            if (!string.IsNullOrEmpty(orderParams.Search))
+            if (!string.IsNullOrEmpty(search)) 
             {
-                string search = orderParams.Search.ToLower();
+                string searchLower = search.ToLower(); 
                 query = query.Where(o =>
-                    o.BuyerEmail.ToLower().Contains(search) ||
-                    o.ShippingAddress.Name.ToLower().Contains(search)
+                    o.BuyerEmail.ToLower().Contains(searchLower) ||
+                    o.ShippingAddress.Name.ToLower().Contains(searchLower)
                 );
             }
 
-            //  Get total before pagination
             int totalCount = await query.CountAsync();
 
-            //  Sorting
-            query = orderParams.Sort switch
+            query = sort switch 
             {
                 OrderSort.DateAsc => query.OrderBy(o => o.OrderDate),
                 OrderSort.DateDesc => query.OrderByDescending(o => o.OrderDate),
                 OrderSort.PriceAsc => query.OrderBy(o => o.Subtotal),
                 OrderSort.PriceDesc => query.OrderByDescending(o => o.Subtotal),
-                _ => query.OrderByDescending(o => o.Id)
+                _ => query.OrderByDescending(o => o.Id) // default 
             };
 
 
             // 📄 Pagination
             query = query
-                .Skip(orderParams.PageSize * (orderParams.PageNumber - 1))
-                .Take(orderParams.PageSize);
+                .Skip(pageSize * (pageNumber - 1)) 
+                .Take(pageSize); 
 
             var orders = await query.ToListAsync();
 

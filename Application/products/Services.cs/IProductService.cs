@@ -1,5 +1,5 @@
 ﻿using Application.Common;
-using Core.Sharing.Pagination;
+using Application.Common.Pagination;
 using Ecom.Application.Products.DTOs;
 
 namespace Ecom.Application.Products.Services

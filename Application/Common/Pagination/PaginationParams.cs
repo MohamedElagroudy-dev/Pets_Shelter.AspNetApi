@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Core.Sharing.Pagination
+namespace Application.Common.Pagination
 {
     public abstract class PaginationParams
     {
-        private const int MaxPageSizeDefault = 10;
-        private int _pageSize = 3;
+        private const int MaxPageSizeDefault = 20;
+        private int _pageSize = 12;
 
         public int PageNumber { get; set; } = 1;
 

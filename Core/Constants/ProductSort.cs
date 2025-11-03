@@ -1,4 +1,4 @@
-﻿namespace Core.Sharing
+﻿namespace Core.Constants
 {
     public enum ProductSort
     {

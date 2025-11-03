@@ -1,5 +1,6 @@
 ﻿using API.Helper;
 using Application.Common;
+using Application.Common.Pagination;
 using Application.Orders.DTOs;
 using Application.Orders.Services;
 using Application.Payment.Services;
@@ -8,7 +9,6 @@ using Core.Exceptions;
 using Core.Interfaces;
 using Core.Sharing;
 using Core.Sharing.Pagination;
-using Core.Sharing.Pagination.Core.Sharing;
 using Ecom.Application.Products.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
