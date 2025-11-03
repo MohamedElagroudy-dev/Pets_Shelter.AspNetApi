@@ -22,12 +22,14 @@ namespace Infrastructure.Repositories
             int pageNumber,             
             int pageSize,               
             string? search,             
-            int? categoryId,            
+            int? categoryId,         
+            int? petTypeId,
             ProductSort? sort) 
         {
             var query = _context.Products
                 .Include(p => p.Category)
                 .Include(p => p.Photos)
+                .Include(p => p.PetType)
                 .AsNoTracking();
 
             if (!string.IsNullOrEmpty(search))
@@ -41,6 +43,9 @@ namespace Infrastructure.Repositories
 
             if (categoryId.HasValue)
                 query = query.Where(p => p.CategoryId == categoryId);
+
+            if (petTypeId.HasValue)
+                query = query.Where(p => p.PetTypeId == petTypeId);
 
             int totalCount = await query.CountAsync();
 

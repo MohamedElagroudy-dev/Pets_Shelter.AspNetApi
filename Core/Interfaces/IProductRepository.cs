@@ -17,6 +17,7 @@ namespace Core.Interfaces
             int pageSize,
             string? search,
             int? categoryId,
+            int? petTypeId,
             ProductSort? sort);
 
     }
