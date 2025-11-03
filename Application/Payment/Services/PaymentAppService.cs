@@ -96,7 +96,7 @@ namespace Application.Payment.Services
         {
             if (cart.DeliveryMethodId.HasValue)
             {
-                var deliveryMethod = await _unit.DeliveryMethods
+                var deliveryMethod = await _unit.Repository<DeliveryMethod>()
                     .GetAsync(cart.DeliveryMethodId.Value)
                     ?? throw new Exception("Problem with delivery method");
 
@@ -112,7 +112,7 @@ namespace Application.Payment.Services
 
         public async Task<IReadOnlyList<DeliveryMethodDTO>> GetDeliveryMethodsAsync()
         {
-            var methods = await _unit.DeliveryMethods.GetAllAsync();
+            var methods = await _unit.Repository<DeliveryMethod>().GetAllAsync();
             return methods.ToDtoList();
         }
 

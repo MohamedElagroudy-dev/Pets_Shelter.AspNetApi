@@ -3,10 +3,12 @@ using Application.Common;
 using Application.Common.Pagination;
 using Application.Orders.DTOs;
 using Application.Orders.Mappings;
+using Core.Entities;
 using Core.Entities.OrderAggregate;
 using Core.Exceptions;
 using Core.Interfaces;
 using Ecom.Application.Products.DTOs;
+using Ecom.Core.Entities.Product;
 using Microsoft.Extensions.Logging;
 
 
@@ -78,7 +80,7 @@ namespace Application.Orders.Services
                 });
             }
 
-            var deliveryMethod = await _unitOfWork.DeliveryMethods.GetAsync(dto.DeliveryMethodId)
+            var deliveryMethod = await _unitOfWork.Repository<DeliveryMethod>().GetAsync(dto.DeliveryMethodId)
                 ?? throw new ArgumentException("Delivery method not found");
 
             var subtotal = items.Sum(x => x.Price * x.Quantity);

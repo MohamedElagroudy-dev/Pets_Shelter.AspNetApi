@@ -61,7 +61,7 @@ namespace Ecom.Application.Products.Services
                 }).ToList();
 
                 foreach (var photo in photos)
-                    await _unitOfWork.Photos.AddAsync(photo);
+                    await _unitOfWork.Repository<Photo>().AddAsync(photo);
 
                 await _unitOfWork.CompleteAsync();
             }
@@ -91,7 +91,7 @@ namespace Ecom.Application.Products.Services
             foreach (var photo in existingPhotos)
             {
                 _imageService.DeleteImageAsync(photo.ImageName);
-                await _unitOfWork.Photos.DeleteAsync(photo.Id);
+                await _unitOfWork.Repository<Photo>().DeleteAsync(photo.Id);
             }
 
             if (updateProductDTO.Photos != null && updateProductDTO.Photos.Any())
@@ -104,7 +104,7 @@ namespace Ecom.Application.Products.Services
                 }).ToList();
 
                 foreach (var photo in newPhotos)
-                    await _unitOfWork.Photos.AddAsync(photo);
+                    await _unitOfWork.Repository<Photo>().AddAsync(photo);
             }
 
             await _unitOfWork.Products.UpdateAsync(updateProductDTO.Id, findProduct);

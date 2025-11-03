@@ -2,6 +2,7 @@
 using Application.Categories.Mappings;
 using Core.Entities.Product;
 using Core.Interfaces;
+using Ecom.Core.Entities.Product;
 using Microsoft.Extensions.Logging;
 
 namespace Application.Categories.Services
@@ -20,7 +21,7 @@ namespace Application.Categories.Services
         public async Task<IReadOnlyList<CategoryDTO>> GetAllAsync()
         {
             _logger.LogInformation("Fetching all categories...");
-            var categories = await _unitOfWork.Categories.GetAllAsync();
+            var categories = await _unitOfWork.Repository<Category>().GetAllAsync();
 
             if (categories == null || !categories.Any())
                 throw new KeyNotFoundException("No categories found");
@@ -35,7 +36,7 @@ namespace Application.Categories.Services
 
             var category = dto.ToEntity();
 
-            await _unitOfWork.Categories.AddAsync(category);
+            await _unitOfWork.Repository<Category>().AddAsync(category);
             await _unitOfWork.CompleteAsync();
 
             return category.ToDto();
@@ -43,13 +44,13 @@ namespace Application.Categories.Services
 
         public async Task<CategoryDTO> UpdateAsync(UpdateCategoryDTO updateDTO)
         {
-            var existing = await _unitOfWork.Categories.GetAsync(updateDTO.Id);
+            var existing = await _unitOfWork.Repository<Category>().GetAsync(updateDTO.Id);
             if (existing == null)
                 throw new KeyNotFoundException($"Category with Id={updateDTO.Id} not found");
 
             existing.UpdateEntity(updateDTO);
 
-            await _unitOfWork.Categories.UpdateAsync(existing.Id, existing);
+            await _unitOfWork.Repository<Category>().UpdateAsync(existing.Id, existing);
             await _unitOfWork.CompleteAsync();
 
             return existing.ToDto();
@@ -57,17 +58,17 @@ namespace Application.Categories.Services
 
         public async Task DeleteAsync(int id)
         {
-            var existing = await _unitOfWork.Categories.GetAsync(id);
+            var existing = await _unitOfWork.Repository<Category>().GetAsync(id);
             if (existing == null)
                 throw new KeyNotFoundException($"Category with Id={id} not found");
 
-            await _unitOfWork.Categories.DeleteAsync(id);
+            await _unitOfWork.Repository<Category>().DeleteAsync(id);
             await _unitOfWork.CompleteAsync();
         }
 
         public async Task<CategoryDTO> GetProductAsync(int id)
         {
-            var category = await _unitOfWork.Categories.GetAsync(id);
+            var category = await _unitOfWork.Repository<Category>().GetAsync(id);
             if (category == null)
                 throw new KeyNotFoundException($"Category with Id={id} not found");
 
@@ -77,7 +78,7 @@ namespace Application.Categories.Services
         {
             _logger.LogInformation("Checking if category with Id {Id} exists...", id);
 
-            var exists = await _unitOfWork.Categories.GetAsync(id);
+            var exists = await _unitOfWork.Repository<Category>().GetAsync(id);
             return exists != null;
         }
 
