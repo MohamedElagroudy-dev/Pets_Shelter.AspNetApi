@@ -66,7 +66,7 @@ namespace Application.Categories.Services
             await _unitOfWork.CompleteAsync();
         }
 
-        public async Task<CategoryDTO> GetProductAsync(int id)
+        public async Task<CategoryDTO> GetCategoryAsync(int id)
         {
             var category = await _unitOfWork.Repository<Category>().GetAsync(id);
             if (category == null)

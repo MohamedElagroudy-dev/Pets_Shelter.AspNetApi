@@ -41,7 +41,7 @@ namespace API.Controllers
         {
             try
             {
-                var category = await _service.GetProductAsync(id);
+                var category = await _service.GetCategoryAsync(id);
                 return Ok(new ResponseAPI<CategoryDTO>(200, "Category found", category));
             }
             catch (KeyNotFoundException ex)
