@@ -4,48 +4,44 @@ using Core.Entities.Product;
 using Core.Interfaces;
 using Ecom.Core.Entities.Product;
 using Infrastructure.Persistence;
+using System.Collections.Concurrent;
 
 namespace Infrastructure.Repositories
 {
     public class UnitOfWork : IUnitOfWork
     {
+        private readonly ConcurrentDictionary<string, object> _repositories = new();
         private readonly ApplicationDbContext _context;
         public IProductRepository Products { get; }
-        public IGenericRepository<Photo> Photos { get; }
-        public IGenericRepository<Category> Categories { get; }
-        public IGenericRepository<DeliveryMethod> DeliveryMethods { get; }
-
         public IOrderRepository Orders { get; }
-        public IGenericRepository<OrderItem> OrderItems { get; }
-        
         public IImageManagementService Images { get; }
         public ICartService Cart { get; }
-
-        public IGenericRepository<Rating> Ratings { get; }
-
-
+        public IGenericRepository<Rating> Ratings { get; } //
         public UnitOfWork(ApplicationDbContext context,
                           IProductRepository productRepository,
-                          IGenericRepository<Photo> photoRepository,
-                          IGenericRepository<Category> categoryRepository,
-                          IGenericRepository<DeliveryMethod> DeliveryMethodsRepo,
                           IGenericRepository<Rating> RatingRepo,
                           IImageManagementService _ImageService,
                           ICartService _CartService,
-                          IGenericRepository<OrderItem> orderItemsRepo,
                           IOrderRepository orderRepository
                           )
         {
             _context = context;
             Products = productRepository;
-            Photos = photoRepository;
-            Categories = categoryRepository;
-            DeliveryMethods = DeliveryMethodsRepo;
             Orders = orderRepository;       
-            OrderItems = orderItemsRepo;
             Images = _ImageService;
             Cart = _CartService;
             Ratings = RatingRepo;
+        }
+        public IGenericRepository<TEntity> Repository<TEntity>() where TEntity : BaseEntity
+        {
+            var type = typeof(TEntity).Name;
+
+            return (IGenericRepository<TEntity>)_repositories.GetOrAdd(type, t =>
+            {
+                var repositoryType = typeof(GenericRepository<>).MakeGenericType(typeof(TEntity));
+                return Activator.CreateInstance(repositoryType, _context)
+                       ?? throw new InvalidOperationException($"Could not create repository instance for {t}.");
+            });
         }
 
         public async Task<int> CompleteAsync()
