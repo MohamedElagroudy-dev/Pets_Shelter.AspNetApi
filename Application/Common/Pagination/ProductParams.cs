@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Core.Sharing.Pagination
+namespace Application.Common.Pagination
 {
     public class ProductParams : PaginationParams
     {

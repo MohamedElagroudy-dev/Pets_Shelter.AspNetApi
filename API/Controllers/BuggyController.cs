@@ -32,6 +32,11 @@ namespace API.Controllers
         {
             throw new Exception("This is a test exception");
         }
+        [HttpGet("ArgumentNullException")]
+        public IActionResult GetArgumentNullException()
+        {
+            throw new ArgumentNullException();
+        }
 
         
 

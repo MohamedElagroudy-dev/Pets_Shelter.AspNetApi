@@ -1,6 +1,7 @@
-﻿using Core.Entities.Product;
+﻿using Application.Common.Pagination;
+using Core.Constants;
+using Core.Entities.Product;
 using Core.Interfaces;
-using Core.Sharing;
 using Core.Sharing.Pagination;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -17,51 +18,47 @@ namespace Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<(IEnumerable<Product> Products, int TotalCount)> GetAllAsync(ProductParams productParams)
+        public async Task<(IEnumerable<Product> Products, int TotalCount)> GetAllAsync(
+            int pageNumber,             
+            int pageSize,               
+            string? search,             
+            int? categoryId,            
+            ProductSort? sort) 
         {
             var query = _context.Products
                 .Include(p => p.Category)
                 .Include(p => p.Photos)
                 .AsNoTracking();
 
-            // Filtering by search words
-            if (!string.IsNullOrEmpty(productParams.Search))
+            if (!string.IsNullOrEmpty(search))
             {
-                var searchWords = productParams.Search.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                var searchWords = search.Split(' ', StringSplitOptions.RemoveEmptyEntries);
                 query = query.Where(p => searchWords.All(word =>
                     p.Name.ToLower().Contains(word.ToLower()) ||
                     p.Description.ToLower().Contains(word.ToLower())
                 ));
             }
 
-            // Filtering by category
-            if (productParams.CategoryId.HasValue)
-                query = query.Where(p => p.CategoryId == productParams.CategoryId);
+            if (categoryId.HasValue)
+                query = query.Where(p => p.CategoryId == categoryId);
 
-            // Get total count before pagination
             int totalCount = await query.CountAsync();
 
-            query = productParams.Sort switch
+            query = sort switch
             {
                 ProductSort.PriceAsc => query.OrderBy(p => p.Price),
                 ProductSort.PriceDesc => query.OrderByDescending(p => p.Price),
                 ProductSort.NameAsc => query.OrderBy(p => p.Name),
                 ProductSort.NameDesc => query.OrderByDescending(p => p.Name),
-                _ => query.OrderByDescending(p => p.Id) // default Id
+                _ => query.OrderByDescending(p => p.Id)
             };
 
-
-            // Pagination
             query = query
-                .Skip(productParams.PageSize * (productParams.PageNumber - 1))
-                .Take(productParams.PageSize);
+                .Skip(pageSize * (pageNumber - 1))
+                .Take(pageSize);
 
             var products = await query.ToListAsync();
             return (products, totalCount);
         }
-
-
-
-        
-    }
+   }
 }

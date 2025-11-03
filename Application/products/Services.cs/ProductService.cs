@@ -2,11 +2,12 @@
 using Core.Entities.Product;
 using Core.Exceptions;
 using Core.Interfaces;
-using Core.Sharing.Pagination;
+using Core.Constants;
 using Ecom.Application.Products.DTOs;
 using Ecom.Application.Products.Mappings;
 using Ecom.Core.Entities.Product;
 using Microsoft.Extensions.Logging;
+using Application.Common.Pagination;
 
 namespace Ecom.Application.Products.Services
 {
@@ -27,7 +28,13 @@ namespace Ecom.Application.Products.Services
         {
             _logger.LogInformation("Executing GetAllAsync with page {PageNumber}, size {PageSize}", productParams.PageNumber, productParams.PageSize);
 
-            var (products, totalCount) = await _unitOfWork.Products.GetAllAsync(productParams);
+            (IEnumerable<Product> products, int totalCount) = await _unitOfWork.Products.GetAllAsync(
+                productParams.PageNumber,
+                productParams.PageSize,
+                productParams.Search,
+                productParams.CategoryId,
+                productParams.Sort
+            );
             var productsDto = products.Select(p => p.ToDto()).ToList();
 
             return new PagedResult<ProductDTO>(productsDto, totalCount, productParams.PageSize, productParams.PageNumber);

@@ -1,4 +1,6 @@
-﻿using Core.Entities.Product;
+﻿using Core.Constants;
+using Core.Entities.Product;
+using Core.Sharing;
 using Core.Sharing.Pagination;
 using System;
 using System.Collections.Generic;
@@ -10,7 +12,12 @@ namespace Core.Interfaces
 {
     public interface IProductRepository : IGenericRepository<Product>
     {
-        Task<(IEnumerable<Product> Products, int TotalCount)> GetAllAsync(ProductParams productParams);
-       
+        Task<(IEnumerable<Product> Products, int TotalCount)> GetAllAsync(
+            int pageNumber,
+            int pageSize,
+            string? search,
+            int? categoryId,
+            ProductSort? sort);
+
     }
 }
