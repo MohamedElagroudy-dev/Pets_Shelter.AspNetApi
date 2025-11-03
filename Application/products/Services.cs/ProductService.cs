@@ -33,6 +33,7 @@ namespace Ecom.Application.Products.Services
                 productParams.PageSize,
                 productParams.Search,
                 productParams.CategoryId,
+                productParams.PetTypeId,
                 productParams.Sort
             );
             var productsDto = products.Select(p => p.ToDto()).ToList();
@@ -117,7 +118,7 @@ namespace Ecom.Application.Products.Services
         {
             _logger.LogInformation("Executing DeleteAsync for product Id={Id}", id);
 
-            var product = await _unitOfWork.Products.GetByidAsync(id, p => p.Photos, p => p.Category);
+            var product = await _unitOfWork.Products.GetByidAsync(id, p => p.Photos, p => p.Category, p => p.PetType);
             if (product == null)
                 throw new NotFoundException(nameof(Product), id.ToString());
 
@@ -136,7 +137,7 @@ namespace Ecom.Application.Products.Services
         {
             _logger.LogInformation("Executing GetProductAsync for product Id={Id}", id);
 
-            var product = await _unitOfWork.Products.GetByidAsync(id, p => p.Photos, p => p.Category);
+            var product = await _unitOfWork.Products.GetByidAsync(id, p => p.Photos, p => p.Category, p => p.PetType);
             if (product == null)
                 throw new NotFoundException(nameof(Product), id.ToString());
 

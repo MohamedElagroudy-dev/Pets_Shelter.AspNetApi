@@ -11,6 +11,7 @@ namespace Application.Common.Pagination
     {
         public ProductSort? Sort { get; set; } = ProductSort.Id;
         public int? CategoryId { get; set; }
+        public int? PetTypeId { get; set; }
         public int? TotalCount { get; set; }
     }
 }
