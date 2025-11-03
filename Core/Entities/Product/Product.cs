@@ -12,10 +12,16 @@ namespace Core.Entities.Product
 
         public virtual List<Photo> Photos { get; set; } = new();
 
+        public int QuantityInStock { get; set; }
+
         public int CategoryId { get; set; }
 
         [ForeignKey(nameof(CategoryId))]
         public virtual Category Category { get; set; } = null!;
+        public int PetTypeId { get; set; }
+
+        [ForeignKey(nameof(PetTypeId))]
+        public virtual PetType PetType { get; set; } = null!;
 
         public double rating { get; set; }
 

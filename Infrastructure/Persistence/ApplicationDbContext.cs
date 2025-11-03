@@ -21,6 +21,7 @@ namespace Infrastructure.Persistence
         public DbSet<OrderItem>  OrdersItems{ get; set; }
 
         public virtual DbSet<Category> Categories { get; set; }
+        public virtual DbSet<PetType> PetTypes { get; set; }
         public virtual DbSet<Photo> Photos { get; set; }
 
         public virtual DbSet<Rating> Ratings { get; set; }

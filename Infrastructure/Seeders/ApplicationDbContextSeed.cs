@@ -28,7 +28,7 @@ namespace Infrastructure.Seeders
             var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
             if (!context.Products.Any())
-            {  
+            {
                 var productsData = await File.ReadAllTextAsync(path + @"/Seeders/SeedData/products.json");
                 var products = JsonSerializer.Deserialize<List<Product>>(productsData);
 
@@ -61,6 +61,18 @@ namespace Infrastructure.Seeders
                 if (categories != null && categories.Count > 0)
                 {
                     context.Categories.AddRange(categories);
+                    await context.SaveChangesAsync();
+                }
+            }
+            if (!context.PetTypes.Any())
+            {
+
+                var petTypeData = await File.ReadAllTextAsync(path + @"/Seeders/SeedData/PetTypes.json");
+                var petTypes = JsonSerializer.Deserialize<List<PetType>>(petTypeData);
+
+                if (petTypes != null && petTypes.Count > 0)
+                {
+                    context.PetTypes.AddRange(petTypes);
                     await context.SaveChangesAsync();
                 }
             }
