@@ -7,6 +7,7 @@ using Application.Cart.Services;
 using Application.Categories.Services;
 using Application.Orders.Services;
 using Application.Payment.Services;
+using Application.PetTypes.Services;
 using Application.Ratings.Services;
 using Core.Interfaces;
 using Ecom.Application.Products.Services;
@@ -26,6 +27,7 @@ namespace Application.Extensions
 
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<IPetTypeService, PetTypeService>();
             services.AddScoped<ICartAppService, CartAppService>();
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IPaymentAppService, PaymentAppService>();
