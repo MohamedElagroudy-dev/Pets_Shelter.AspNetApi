@@ -12,8 +12,6 @@ namespace Core.Entities.Product
 
         public virtual List<Photo> Photos { get; set; } = new();
 
-        public int QuantityInStock { get; set; }
-
         public int CategoryId { get; set; }
 
         [ForeignKey(nameof(CategoryId))]

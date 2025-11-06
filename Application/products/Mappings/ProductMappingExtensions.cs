@@ -28,7 +28,6 @@ namespace Ecom.Application.Products.Mappings
                 Name = product.Name,
                 Description = product.Description,
                 Price = product.Price,
-                QuantityInStock = product.QuantityInStock,
                 CategoryName = product.Category?.Name ?? string.Empty,
                 PetTypeName = product.PetType?.Name ?? string.Empty,
                 Photos = photos,
@@ -52,7 +51,6 @@ namespace Ecom.Application.Products.Mappings
                 Name = dto.Name,
                 Description = dto.Description,
                 Price = dto.Price,
-                QuantityInStock = dto.QuantityInStock,
                 CategoryId = dto.CategoryId,
                 PetTypeId = dto.PetTypeId,
                 Photos = new List<Photo>()
@@ -64,7 +62,6 @@ namespace Ecom.Application.Products.Mappings
             product.Name = dto.Name;
             product.Description = dto.Description;
             product.Price = dto.Price;
-            product.QuantityInStock = dto.QuantityInStock;
             product.CategoryId = dto.CategoryId;
             product.PetTypeId = dto.PetTypeId;
         }
