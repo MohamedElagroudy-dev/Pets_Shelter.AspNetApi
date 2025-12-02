@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Core.Entities;
+using Core.Exceptions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -37,8 +39,19 @@ namespace API.Controllers
         {
             throw new ArgumentNullException();
         }
-
+        [HttpGet("notFoundException")]
+        public IActionResult GetNotFoundException()
+        {
+            throw new NotFoundException("not found","400");
+        }
+        [HttpGet("ForbidException")]
+        public IActionResult GetForbidException()
+        {
+            throw new ForbidException("Not allowed");
+        }
+            
         
+
 
         [Authorize]
         [HttpGet("secret")]
