@@ -10,6 +10,7 @@ using Application.Payment.Services;
 using Application.PetTypes.Services;
 using Application.Ratings.Services;
 using Core.Interfaces;
+using Ecom.Application.Favorites.Services;
 using Ecom.Application.Products.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
@@ -33,6 +34,7 @@ namespace Application.Extensions
             services.AddScoped<IPaymentAppService, PaymentAppService>();
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IRatingService, RatingService>();
+            services.AddScoped<IFavoriteService, FavoriteService>();
 
             services.AddHttpContextAccessor(); // needed for IHttpContextAccessor
             services.AddScoped<IUserContext, UserContext>();
