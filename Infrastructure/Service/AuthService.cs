@@ -1,5 +1,4 @@
 ﻿using Application.Account;
-using Azure.Core;
 using Core.Entities;
 using Core.Entities.Product;
 using Core.Exceptions;
@@ -30,13 +29,60 @@ namespace Infrastructure.Service
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly JWT _jwt;
         private readonly IUserContext _userContext;
+        private readonly IImageManagementService _imageService;
 
-        public AuthService(UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager, IOptions<JWT> jwt, IUserContext userContext)
+        public AuthService(UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager, IOptions<JWT> jwt, IUserContext userContext, IImageManagementService imageService)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _jwt = jwt.Value;
             _userContext = userContext;
+            _imageService = imageService;
+        }
+
+        public async Task<string> UpdatePictureUrlAsync(string userEmail, string pictureUrl)
+        {
+            var user = await _userManager.FindByEmailAsync(userEmail);
+            if (user == null)
+                throw new NotFoundException(nameof(AppUser), userEmail);
+
+            user.PictureUrl = pictureUrl;
+            var result = await _userManager.UpdateAsync(user);
+
+            if (!result.Succeeded)
+                throw new Exception("Problem updating user picture");
+
+            return user.PictureUrl;
+        }
+
+        public async Task<string> DeletePictureUrlAsync(string userEmail)
+        {
+            var user = await _userManager.FindByEmailAsync(userEmail);
+            if (user == null)
+                throw new NotFoundException(nameof(AppUser), userEmail);
+
+            // Delete the old picture file if it exists
+            if (!string.IsNullOrEmpty(user.PictureUrl) && user.PictureUrl != string.Empty)
+            {
+                _imageService.DeleteImageAsync(user.PictureUrl);
+            }
+
+            user.PictureUrl = string.Empty;
+            var result = await _userManager.UpdateAsync(user);
+
+            if (!result.Succeeded)
+                throw new Exception("Problem deleting user picture");
+
+            return string.Empty;
+        }
+
+        public async Task<string> GetPictureUrlAsync(string userEmail)
+        {
+            var user = await _userManager.FindByEmailAsync(userEmail);
+            if (user == null)
+                throw new NotFoundException(nameof(AppUser), userEmail);
+
+            return user.PictureUrl ?? string.Empty;
         }
 
         public async Task<AuthModel> RegisterAsync(RegisterModel model)
@@ -107,6 +153,7 @@ namespace Infrastructure.Service
             authModel.Email = user.Email;
             authModel.Username = user.UserName;
             authModel.Roles = rolesList.ToList();
+            authModel.PictureUrl = user.PictureUrl;
 
             if (user.RefreshTokens != null && user.RefreshTokens.Any(t => t.IsActive))
             {
