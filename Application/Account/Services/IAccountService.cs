@@ -20,5 +20,8 @@ namespace Application.Account.Services
 
         Task<AuthModel?> RefreshToken(string token);
         Task<bool> RevokeToken(string token);
+        Task<string> UpdatePictureUrlAsync(UpdatePictureDto dto);
+        Task<string> DeletePictureUrlAsync();
+        Task<string> GetPictureUrlAsync();
     }
 }
