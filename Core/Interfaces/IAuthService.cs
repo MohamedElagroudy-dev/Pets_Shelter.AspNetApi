@@ -18,7 +18,8 @@ namespace Core.Interfaces
         Task<(AppUser, IEnumerable<string>)> GetUserByEmailWithAddress(string userEmail);
         Task<AuthModel> RefreshTokenAsync(string token);
         Task<bool> RevokeTokenAsync(string token);
-
-
+        Task<string> UpdatePictureUrlAsync(string userEmail, string pictureUrl);
+        Task<string> DeletePictureUrlAsync(string userEmail);
+        Task<string> GetPictureUrlAsync(string userEmail);
     }
 }
