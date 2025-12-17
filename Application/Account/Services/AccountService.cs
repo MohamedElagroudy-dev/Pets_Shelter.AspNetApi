@@ -4,6 +4,7 @@ using Application.Account.Mappings;
 using Core.Entities;
 using Core.Interfaces;
 using Core.Sharing.Identity;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -20,6 +21,7 @@ namespace Application.Account.Services
         private readonly UserManager<AppUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IUserContext _userContext;
+        private readonly IImageManagementService _imageService;
 
         private const string DefaultImagePath = "/Images/Defult/DefultUserPic.jpeg";
 
@@ -29,13 +31,15 @@ namespace Application.Account.Services
             ILogger<AccountService> logger,
             UserManager<AppUser> userManager,
             RoleManager<IdentityRole> roleManager,
-            IUserContext userContext)
+            IUserContext userContext,
+            IImageManagementService imageService)
         {
             _authService = authService;
             _logger = logger;
             _userManager = userManager;
             _roleManager = roleManager;
             _userContext = userContext;
+            _imageService = imageService;
         }
 
         public async Task<AuthModel> RegisterAsync(RegisterModel model)
@@ -44,7 +48,12 @@ namespace Application.Account.Services
                 throw new ArgumentNullException(nameof(model));
 
             _logger.LogInformation("User registration for email: {Email}", model.Email);
-            return await _authService.RegisterAsync(model);
+            var authModel = await _authService.RegisterAsync(model);
+            if (string.IsNullOrWhiteSpace(authModel.PictureUrl) && authModel.IsAuthenticated)
+            {
+                authModel.PictureUrl = DefaultImagePath;
+            }
+            return authModel;
         }
 
         public async Task<AuthModel> GetTokenAsync(TokenRequestModel model)
@@ -134,6 +143,71 @@ namespace Application.Account.Services
             userInfo.Roles = roles?.ToList() ?? new List<string>();
 
             return userInfo;
+        }
+
+        public async Task<string> UpdatePictureUrlAsync(UpdatePictureDto dto)
+        {
+            _logger.LogInformation("Updating picture for user: {Email}", _userContext.GetCurrentUser()?.Email);
+
+            var currentUser = _userContext.GetCurrentUser();
+            if (currentUser == null)
+                throw new UnauthorizedAccessException("User not authenticated");
+
+            if (dto?.Picture == null)
+                throw new ArgumentNullException(nameof(dto.Picture), "Picture file is required");
+
+            if (dto.Picture.Length == 0)
+                throw new ArgumentException("Picture file is empty");
+
+            // Delete old picture if exists before uploading new one
+            var user = await _userManager.FindByEmailAsync(currentUser.Email);
+            if (user != null && !string.IsNullOrEmpty(user.PictureUrl) && user.PictureUrl != string.Empty)
+            {
+                _imageService.DeleteImageAsync(user.PictureUrl);
+            }
+
+        
+
+            var imagePaths = await _imageService.AddSingleImageAsync(dto.Picture,"Users");
+
+            if (string.IsNullOrEmpty(imagePaths))
+                throw new Exception("Failed to upload picture");
+
+            // Update picture URL in database
+            var updatedUrl = await _authService.UpdatePictureUrlAsync(currentUser.Email!, imagePaths);
+
+            _logger.LogInformation("Picture updated successfully for user: {Email}", currentUser.Email);
+
+            return updatedUrl;
+        }
+
+
+        public async Task<string> DeletePictureUrlAsync()
+        {
+            _logger.LogInformation("Deleting picture for user: {Email}", _userContext.GetCurrentUser()?.Email);
+
+            var currentUser = _userContext.GetCurrentUser();
+            if (currentUser == null)
+                throw new UnauthorizedAccessException("User not authenticated");
+
+            await _authService.DeletePictureUrlAsync(currentUser.Email!);
+
+            _logger.LogInformation("Picture deleted successfully for user: {Email}", currentUser.Email);
+
+            return string.Empty;
+        }
+
+        public async Task<string> GetPictureUrlAsync()
+        {
+            _logger.LogInformation("Getting picture URL for user: {Email}", _userContext.GetCurrentUser()?.Email);
+
+            var currentUser = _userContext.GetCurrentUser();
+            if (currentUser == null)
+                throw new UnauthorizedAccessException("User not authenticated");
+
+            var pictureUrl = await _authService.GetPictureUrlAsync(currentUser.Email!);
+
+            return string.IsNullOrEmpty(pictureUrl) ? DefaultImagePath : pictureUrl;
         }
 
     }

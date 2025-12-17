@@ -52,6 +52,34 @@ namespace Infrastructure.Service
             }
             return SaveImageSrc;
         }
+        public async Task<string?> AddSingleImageAsync(IFormFile file, string src)
+        {
+            if (file == null || file.Length == 0)
+                return null;
+
+            var imageDirectory = Path.Combine("wwwroot", "Images", src);
+
+            if (!Directory.Exists(imageDirectory))
+            {
+                Directory.CreateDirectory(imageDirectory);
+            }
+
+            var imageName = file.FileName;
+            var shortGuid = Guid.NewGuid().ToString("N").Substring(0, 8);
+
+            var uniqueImageName =
+                $"{Path.GetFileNameWithoutExtension(imageName)}_{shortGuid}{Path.GetExtension(imageName)}";
+
+            var fullPath = Path.Combine(imageDirectory, uniqueImageName);
+
+            using (var stream = new FileStream(fullPath, FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
+            }
+
+            return $"/Images/{src}/{Uri.EscapeDataString(uniqueImageName)}";
+        }
+
 
 
 

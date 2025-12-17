@@ -10,6 +10,7 @@ namespace Core.Interfaces
     public interface IImageManagementService
     {
         Task<List<string>> AddImageAsync(IFormFileCollection files, string src);
+        Task<string?> AddSingleImageAsync(IFormFile file, string src);
         void DeleteImageAsync(string src);
     }
 }

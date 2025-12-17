@@ -1,4 +1,5 @@
-﻿using Application.Account.DTOs;
+﻿using Application.Account;
+using Application.Account.DTOs;
 using Application.Account.DTOs.Application.Account;
 using Application.Account.Services;
 using Core.Sharing;
@@ -132,6 +133,67 @@ namespace API.Controllers
                 return BadRequest("Token is invalid!");
 
             return Ok();
+        }
+
+        [Authorize]
+        [HttpPost("picture")]
+        public async Task<IActionResult> UpdatePicture([FromForm] UpdatePictureDto dto)
+        {
+            try
+            {
+                var pictureUrl = await _accountAppService.UpdatePictureUrlAsync(dto);
+                return Ok(new { message = "Picture updated successfully", pictureUrl });
+            }
+            catch (ArgumentNullException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
+        }
+
+        [Authorize]
+        [HttpDelete("picture")]
+        public async Task<IActionResult> DeletePicture()
+        {
+            try
+            {
+                await _accountAppService.DeletePictureUrlAsync();
+                return NoContent();
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
+        }
+
+        [Authorize]
+        [HttpGet("picture")]
+        public async Task<IActionResult> GetPicture()
+        {
+            try
+            {
+                var pictureUrl = await _accountAppService.GetPictureUrlAsync();
+                return Ok(new { pictureUrl });
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
         }
 
         private void SetRefreshTokenInCookie(string refreshToken, DateTime expires)
