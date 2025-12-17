@@ -11,12 +11,14 @@ namespace Application.Account.Mappings
 {
     public static class UserMappingExtensions
     {
+        private const string DefaultImagePath = "/Images/Defult/DefultUserPic.jpeg";
         public static UserInfoDto? ToDto(this AppUser? user)
         {
             if (user == null) return null;
 
             return new UserInfoDto
             {
+                PersonalPicture = string.IsNullOrWhiteSpace(user.PictureUrl) ? DefaultImagePath: user.PictureUrl,
                 UserName = user.UserName ?? string.Empty,
                 Email = user.Email ?? string.Empty,
                 FirstName = user.FirstName ?? string.Empty,
