@@ -93,14 +93,17 @@ namespace API.Controllers
 
         private async Task HandlePaymentIntentSucceeded(PaymentIntent intent)
         {
+            // Handle both successful and failed payment intent statuses
+            var order = await _unit.Orders.GetByAsync(x => x.PaymentIntentId == intent.Id, x => x.OrderItems, p => p.DeliveryMethod);
+
+            if (order == null)
+            {
+                // Order not found - nothing to do
+                return;
+            }
+
             if (intent.Status == "succeeded")
             {
-
-                var order = await _unit.Orders.GetByAsync(x => x.PaymentIntentId == intent.Id,x=>x.OrderItems,p=>p.DeliveryMethod)
-                            ?? throw new Exception("Order not found");
-
-                order.Status = OrderStatus.PaymentReceived;
-
                 if ((long)order.GetTotal() * 100 != intent.Amount)
                 {
                     order.Status = OrderStatus.PaymentMismatch;
@@ -116,7 +119,51 @@ namespace API.Controllers
 
                 if (!string.IsNullOrEmpty(connectionId))
                 {
-                    await _hubContext.Clients.Client(connectionId).SendAsync("OrderCompleteNotification");
+                    var payload = new
+                    {
+                        orderId = order.Id,
+                        status = order.Status.ToString(),
+                        total = order.GetTotal(),
+                        subtotal = order.Subtotal,
+                        deliveryPrice = order.DeliveryMethod?.Price ?? 0,
+                        itemsCount = order.OrderItems?.Sum(i => i.Quantity) ?? 0,
+                        deliveryMethod = order.DeliveryMethod?.ShortName ?? string.Empty,
+                        deliveryTime = order.DeliveryMethod?.DeliveryTime ?? string.Empty,
+                        message = order.Status == OrderStatus.PaymentReceived
+                            ? "✓ Payment received — your order is confirmed!"
+                            : "⚠ Payment amount mismatch — please contact support.",
+                        timestamp = DateTime.UtcNow
+                    };
+
+                    await _hubContext.Clients.Client(connectionId).SendAsync("OrderStatusChanged", payload);
+                }
+            }
+            else
+            {
+                // Treat other statuses as payment failure
+                order.Status = OrderStatus.PaymentFailed;
+                await _unit.CompleteAsync();
+
+                var connectionId = NotificationHub.GetConnectionIdByEmail(order.BuyerEmail);
+
+                if (!string.IsNullOrEmpty(connectionId))
+                {
+                    var payload = new
+                    {
+                        orderId = order.Id,
+                        status = order.Status.ToString(),
+                        total = order.GetTotal(),
+                        subtotal = order.Subtotal,
+                        deliveryPrice = order.DeliveryMethod?.Price ?? 0,
+                        itemsCount = order.OrderItems?.Sum(i => i.Quantity) ?? 0,
+                        deliveryMethod = order.DeliveryMethod?.ShortName ?? string.Empty,
+                        deliveryTime = order.DeliveryMethod?.DeliveryTime ?? string.Empty,
+                        message = "✖ Payment failed — please retry checkout or contact support.",
+                        timestamp = DateTime.UtcNow,
+                        error = intent.LastPaymentError?.Message ?? string.Empty
+                    };
+
+                    await _hubContext.Clients.Client(connectionId).SendAsync("OrderStatusChanged", payload);
                 }
             }
         }
