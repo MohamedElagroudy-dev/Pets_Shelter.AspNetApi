@@ -1,4 +1,5 @@
 ﻿using API.Helper;
+using Application.Admin.Services;
 using Application.Common;
 using Application.Common.Pagination;
 using Application.Orders.DTOs;
@@ -23,10 +24,12 @@ namespace API.Controllers
     {
         private readonly IOrderService _orderService;
         private readonly IPaymentAppService _paymentService;
-        public AdminController(IOrderService orderService, IPaymentAppService paymentService)
+        private readonly IAdminAppService _adminAppService;
+        public AdminController(IOrderService orderService, IPaymentAppService paymentService, IAdminAppService adminAppService)
         {
             _orderService = orderService;
             _paymentService = paymentService;
+            _adminAppService = adminAppService;
         }
         [HttpGet]
         public async Task<IActionResult> GetAll([FromQuery] OrderParams orderParams)
@@ -98,6 +101,23 @@ namespace API.Controllers
             }
         }
 
+        [HttpGet("roles")]
+        public async Task<IActionResult> GetAvailableRoles()
+        {
+            try
+            {
+                var roles = await _adminAppService.GetAvailableRolesAsync();
+                return Ok(new ResponseAPI<IEnumerable<string>>(200, "Roles fetched successfully", roles));
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new ResponseAPI<string>(404, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ResponseAPI<string>(500, $"Internal server error: {ex.Message}"));
+            }
+        }
 
     }
 }

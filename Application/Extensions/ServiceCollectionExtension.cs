@@ -1,8 +1,7 @@
 
-
-
 using Application.Account;
 using Application.Account.Services;
+using Application.Admin.Services;
 using Application.Cart.Services;
 using Application.Categories.Services;
 using Application.Orders.Services;
@@ -12,10 +11,7 @@ using Application.Ratings.Services;
 using Core.Interfaces;
 using Ecom.Application.Favorites.Services;
 using Ecom.Application.Products.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.FileProviders;
 
 
 namespace Application.Extensions
@@ -35,6 +31,7 @@ namespace Application.Extensions
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IRatingService, RatingService>();
             services.AddScoped<IFavoriteService, FavoriteService>();
+            services.AddScoped<IAdminAppService, AdminAppService>();
 
             services.AddHttpContextAccessor(); // needed for IHttpContextAccessor
             services.AddScoped<IUserContext, UserContext>();
