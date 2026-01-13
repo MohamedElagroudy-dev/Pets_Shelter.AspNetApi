@@ -29,9 +29,4 @@
     </Reference>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Admin\DTO\" />
-    <Folder Include="Admin\Mappings\" />
-  </ItemGroup>
-
 </Project>

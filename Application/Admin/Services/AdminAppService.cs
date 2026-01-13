@@ -1,4 +1,10 @@
-﻿using Core.Interfaces;
+﻿using Application.Admin.DTO;
+using Application.Admin.Mappings;
+using Application.Common;
+using Application.Common.Pagination;
+using Core.Entities;
+using Core.Interfaces;
+using Ecom.Application.Products.DTOs;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -32,6 +38,26 @@ namespace Application.Admin.Services
             var roles = await _unitOfWork.AdminService.GetAvailableRolesAsync() ?? Enumerable.Empty<string>();
 
             return roles;
+        }
+
+        public async Task<PagedResult<UserDto>> GetAllUsersAsync(UserParams paginationParams)
+        {
+            _logger?.LogInformation($"GetAllUsersAsync called with pageNumber=" +
+                $"{paginationParams.PageNumber}, pageSize={paginationParams.PageSize}, search={paginationParams.Search}");
+
+            if (_unitOfWork?.AdminService == null)
+            {
+                _logger?.LogWarning("AdminService is not available on UnitOfWork");
+                return new PagedResult<UserDto>(new List<UserDto>(), 0, paginationParams.PageNumber, paginationParams.PageSize);
+            }
+
+            var (result, Count) = await _unitOfWork.AdminService.GetAllUsersAsync(
+                paginationParams.PageNumber,
+                paginationParams.PageSize,
+                paginationParams.Search);
+
+            var users = result.Select(c => c.ToDto()).ToList();
+            return new PagedResult<UserDto>(users, Count, paginationParams.PageSize, paginationParams.PageNumber);
         }
     }
 }
