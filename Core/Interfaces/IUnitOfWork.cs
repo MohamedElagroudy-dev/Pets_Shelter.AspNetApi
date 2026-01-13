@@ -17,7 +17,9 @@ namespace Core.Interfaces
         IImageManagementService Images { get; }
         ICartService Cart { get; }
         IOrderRepository Orders { get; }
+        IAdminService AdminService { get; }
         IGenericRepository<TEntity> Repository<TEntity>() where TEntity : BaseEntity;
         Task<int> CompleteAsync();
+
     }
 }

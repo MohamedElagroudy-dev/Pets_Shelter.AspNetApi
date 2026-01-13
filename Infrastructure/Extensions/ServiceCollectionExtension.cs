@@ -38,6 +38,7 @@ namespace Infrastructure.Extensions
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IPaymentService, PaymentService>();
             services.AddScoped<IOrderRepository, OrderRepository>();
+            services.AddScoped<IAdminService, AdminService>();
 
             services.AddSingleton<IFileProvider>(
             new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot")));
