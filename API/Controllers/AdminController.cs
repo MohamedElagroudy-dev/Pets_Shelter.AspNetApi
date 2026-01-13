@@ -1,10 +1,12 @@
 ﻿using API.Helper;
+using Application.Admin.DTO;
 using Application.Admin.Services;
 using Application.Common;
 using Application.Common.Pagination;
 using Application.Orders.DTOs;
 using Application.Orders.Services;
 using Application.Payment.Services;
+using Core.Entities;
 using Core.Entities.OrderAggregate;
 using Core.Exceptions;
 using Core.Interfaces;
@@ -116,6 +118,19 @@ namespace API.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, new ResponseAPI<string>(500, $"Internal server error: {ex.Message}"));
+            }
+        }
+        [HttpGet("GetAllUsers")]
+        public async Task<IActionResult> GetAllUsers([FromQuery] UserParams userParams)
+        {
+            try
+            {
+                var users = await _adminAppService.GetAllUsersAsync(userParams);
+                return Ok(new ResponseAPI<PagedResult<UserDto>>(200, "Users fetched successfully", users));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ResponseAPI<string>(500, ex.Message));
             }
         }
 
