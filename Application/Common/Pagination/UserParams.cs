@@ -8,5 +8,6 @@ namespace Application.Common.Pagination
 {
     public class UserParams : PaginationParams
     {
+        public string? Role { get; set; }
     }
 }

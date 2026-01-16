@@ -2,6 +2,7 @@ using Core.Entities;
 using Core.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace Infrastructure.Service
 {
@@ -25,37 +26,60 @@ namespace Infrastructure.Service
                 .ToListAsync();
         }
 
-        //Get all users with search + pagination
+        //Get all users with search + pagination + optional role filter
         public async Task<(IEnumerable<AppUser> Users, int TotalCount)> GetAllUsersAsync(
             int pageNumber,
             int pageSize,
-            string? search)
+            string? search,
+            string? role)
         {
-            var query = _userManager.Users
-                .AsNoTracking();
+            // If a role is provided, get users in that role (in-memory list) and apply search/pagination there.
+            if (!string.IsNullOrEmpty(role))
+            {
+                var usersInRole = await _userManager.GetUsersInRoleAsync(role);
+                var query = usersInRole.AsQueryable();
 
-            // earch (Username + Email)
+                if (!string.IsNullOrEmpty(search))
+                {
+                    var searchLower = search.ToLower();
+                    query = query.Where(u =>
+                        (u.UserName ?? string.Empty).ToLower().Contains(searchLower) ||
+                        (u.Email ?? string.Empty).ToLower().Contains(searchLower)
+                    );
+                }
+
+                var totalCount = query.Count();
+
+                var users = query
+                    .OrderBy(u => u.UserName)
+                    .Skip(pageSize * (pageNumber - 1))
+                    .Take(pageSize)
+                    .ToList();
+
+                return (users, totalCount);
+            }
+
+            // No role filter — use IQueryable from UserManager for server-side filtering/pagination.
+            var baseQuery = _userManager.Users.AsNoTracking();
+
             if (!string.IsNullOrEmpty(search))
             {
                 var searchLower = search.ToLower();
-
-                query = query.Where(u =>
-                    u.UserName!.ToLower().Contains(searchLower) ||
-                    u.Email!.ToLower().Contains(searchLower)
+                baseQuery = baseQuery.Where(u =>
+                    (u.UserName ?? string.Empty).ToLower().Contains(searchLower) ||
+                    (u.Email ?? string.Empty).ToLower().Contains(searchLower)
                 );
             }
 
-            // ?? Total count (before pagination)
-            int totalCount = await query.CountAsync();
+            int total = await baseQuery.CountAsync();
 
-            // ?? Pagination
-            var users = await query
+            var pagedUsers = await baseQuery
                 .OrderBy(u => u.UserName)
                 .Skip(pageSize * (pageNumber - 1))
                 .Take(pageSize)
                 .ToListAsync();
 
-            return (users, totalCount);
+            return (pagedUsers, total);
         }
     }
 }

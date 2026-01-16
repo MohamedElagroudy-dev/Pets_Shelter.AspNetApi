@@ -43,7 +43,7 @@ namespace Application.Admin.Services
         public async Task<PagedResult<UserDto>> GetAllUsersAsync(UserParams paginationParams)
         {
             _logger?.LogInformation($"GetAllUsersAsync called with pageNumber=" +
-                $"{paginationParams.PageNumber}, pageSize={paginationParams.PageSize}, search={paginationParams.Search}");
+                $"{paginationParams.PageNumber}, pageSize={paginationParams.PageSize}, search={paginationParams.Search}, role={paginationParams.Role}");
 
             if (_unitOfWork?.AdminService == null)
             {
@@ -51,13 +51,17 @@ namespace Application.Admin.Services
                 return new PagedResult<UserDto>(new List<UserDto>(), 0, paginationParams.PageNumber, paginationParams.PageSize);
             }
 
-            var (result, Count) = await _unitOfWork.AdminService.GetAllUsersAsync(
+            var usersTuple = await _unitOfWork.AdminService.GetAllUsersAsync(
                 paginationParams.PageNumber,
                 paginationParams.PageSize,
-                paginationParams.Search);
+                paginationParams.Search,
+                paginationParams.Role);
+
+            var result = usersTuple.Users;
+            var count = usersTuple.TotalCount;
 
             var users = result.Select(c => c.ToDto()).ToList();
-            return new PagedResult<UserDto>(users, Count, paginationParams.PageSize, paginationParams.PageNumber);
+            return new PagedResult<UserDto>(users, count, paginationParams.PageSize, paginationParams.PageNumber);
         }
     }
 }

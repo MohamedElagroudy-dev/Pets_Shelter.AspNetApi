@@ -10,6 +10,7 @@ namespace Core.Interfaces
         Task<(IEnumerable<AppUser> Users, int TotalCount)> GetAllUsersAsync(
             int pageNumber,
             int pageSize,
-            string? search);
+            string? search,
+            string? role);
     }
 }
