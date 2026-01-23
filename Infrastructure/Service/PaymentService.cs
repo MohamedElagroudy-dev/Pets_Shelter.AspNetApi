@@ -30,7 +30,7 @@ namespace Infrastructure.Service
                 var options = new PaymentIntentCreateOptions
                 {
                     Amount = total,
-                    Currency = "usd",
+                    Currency = "egp",
                     PaymentMethodTypes = ["card"]
                 };
                 var intent = await service.CreateAsync(options);
