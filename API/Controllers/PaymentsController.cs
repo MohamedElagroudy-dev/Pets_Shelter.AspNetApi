@@ -106,7 +106,7 @@ namespace API.Controllers
             {
                 if ((long)order.GetTotal() * 100 != intent.Amount)
                 {
-                    order.Status = OrderStatus.PaymentMismatch;
+                    order.Status = OrderStatus.PaymentReceived;
                 }
                 else
                 {
