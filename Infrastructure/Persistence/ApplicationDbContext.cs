@@ -1,4 +1,5 @@
 ﻿using Core.Entities;
+using Core.Entities.Animal;
 using Core.Entities.OrderAggregate;
 using Core.Entities.Product;
 using Ecom.Core.Entities.Product;
@@ -24,6 +25,7 @@ namespace Infrastructure.Persistence
         public virtual DbSet<PetType> PetTypes { get; set; }
         public virtual DbSet<Photo> Photos { get; set; }
         public DbSet<Favorite> Favorites { get; set; } 
+        public DbSet<Animal> Animals { get; set; }
 
         public virtual DbSet<Rating> Ratings { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -1,0 +1,487 @@
+[
+  {
+    "Name": "Buddy",
+    "Description": "Buddy is a friendly and outgoing dog who absolutely loves being around people. He enjoys long walks, playing fetch, and relaxing beside his favorite humans after a fun day.",
+    "AgeYears": 3.5,
+    "Size": 3,
+    "WeightKg": 28,
+    "Gender": 1,
+    "PetTypeId": 1,
+    "Temperament": {
+      "AnimalsFriendlyLevel": 5,
+      "ChildrenFriendlyLevel": 5,
+      "HouseTrainedLevel": 5
+    },
+    "Photos": [ { "ImageUrl": "/Images/Defult/default_animal.jpg" } ]
+  },
+  {
+    "Name": "Milo",
+    "Description": "Milo is a calm indoor cat who enjoys quiet environments. He loves taking long naps in sunny spots and will happily sit next to you while you relax or work.",
+    "AgeYears": 2,
+    "Size": 1,
+    "WeightKg": 4.5,
+    "Gender": 1,
+    "PetTypeId": 2,
+    "Temperament": {
+      "AnimalsFriendlyLevel": 3,
+      "ChildrenFriendlyLevel": 3,
+      "HouseTrainedLevel": 5
+    },
+    "Photos": [ { "ImageUrl": "/Images/Defult/default_animal.jpg" } ]
+  },
+  {
+    "Name": "Rocky",
+    "Description": "Rocky is an energetic dog who loves adventure. He enjoys long walks, outdoor activities, and staying active, making him a perfect companion for energetic families.",
+    "AgeYears": 4,
+    "Size": 3,
+    "WeightKg": 34,
+    "Gender": 1,
+    "PetTypeId": 1,
+    "Temperament": {
+      "AnimalsFriendlyLevel": 4,
+      "ChildrenFriendlyLevel": 4,
+      "HouseTrainedLevel": 4
+    },
+    "Photos": [ { "ImageUrl": "/Images/Defult/default_animal.jpg" } ]
+  },
+  {
+    "Name": "Luna",
+    "Description": "Luna is a curious and intelligent cat who loves exploring her surroundings. She enjoys interactive toys and observing everything happening around her.",
+    "AgeYears": 1.5,
+    "Size": 1,
+    "WeightKg": 3.9,
+    "Gender": 2,
+    "PetTypeId": 2,
+    "Temperament": {
+      "AnimalsFriendlyLevel": 4,
+      "ChildrenFriendlyLevel": 3,
+      "HouseTrainedLevel": 5
+    },
+    "Photos": [ { "ImageUrl": "/Images/Defult/default_animal.jpg" } ]
+  },
+  {
+    "Name": "Max",
+    "Description": "Max is a loyal and protective dog with a gentle personality. He is well-mannered, house-trained, and enjoys being part of a loving and structured home.",
+    "AgeYears": 5,
+    "Size": 3,
+    "WeightKg": 36,
+    "Gender": 1,
+    "PetTypeId": 1,
+    "Temperament": {
+      "AnimalsFriendlyLevel": 3,
+      "ChildrenFriendlyLevel": 4,
+      "HouseTrainedLevel": 5
+    },
+    "Photos": [ { "ImageUrl": "/Images/Defult/default_animal.jpg" } ]
+  },
+  {
+    "Name": "Nala",
+    "Description": "Nala is an affectionate cat who enjoys spending time with her family. She is gentle, friendly, and adapts well to homes with children.",
+    "AgeYears": 3,
+    "Size": 1,
+    "WeightKg": 5,
+    "Gender": 2,
+    "PetTypeId": 2,
+    "Temperament": {
+      "AnimalsFriendlyLevel": 5,
+      "ChildrenFriendlyLevel": 4,
+      "HouseTrainedLevel": 5
+    },
+    "Photos": [ { "ImageUrl": "/Images/Defult/default_animal.jpg" } ]
+  },
+  {
+    "Name": "Bella",
+    "Description": "Bella is a smart and obedient dog who learns quickly. She enjoys training sessions, playing games, and bonding closely with her owners.",
+    "AgeYears": 2.5,
+    "Size": 2,
+    "WeightKg": 20,
+    "Gender": 2,
+    "PetTypeId": 1,
+    "Temperament": {
+      "AnimalsFriendlyLevel": 4,
+      "ChildrenFriendlyLevel": 5,
+      "HouseTrainedLevel": 4
+    },
+    "Photos": [ { "ImageUrl": "/Images/Defult/default_animal.jpg" } ]
+  },
+  {
+    "Name": "Oliver",
+    "Description": "Oliver is a playful young cat with lots of energy. He enjoys chasing toys, exploring small spaces, and interacting with people throughout the day.",
+    "AgeYears": 1,
+    "Size": 1,
+    "WeightKg": 3.2,
+    "Gender": 1,
+    "PetTypeId": 2,
+    "Temperament": {
+      "AnimalsFriendlyLevel": 4,
+      "ChildrenFriendlyLevel": 4,
+      "HouseTrainedLevel": 5
+    },
+    "Photos": [ { "ImageUrl": "/Images/Defult/default_animal.jpg" } ]
+  },
+
+  {
+    "Name": "Charlie",
+    "Description": "Charlie is a cheerful dog who loves attention and social interaction. He thrives in environments where he can be close to people and stay active.",
+    "AgeYears": 3,
+    "Size": 2,
+    "WeightKg": 22,
+    "Gender": 1,
+    "PetTypeId": 1,
+    "Temperament": {
+      "AnimalsFriendlyLevel": 5,
+      "ChildrenFriendlyLevel": 5,
+      "HouseTrainedLevel": 4
+    },
+    "Photos": [ { "ImageUrl": "/Images/Defult/default_animal.jpg" } ]
+  },
+  {
+    "Name": "Whiskers",
+    "Description": "Whiskers is a calm and quiet cat who prefers peaceful environments. She enjoys relaxing, observing her surroundings, and gentle affection.",
+    "AgeYears": 4,
+    "Size": 1,
+    "WeightKg": 5.3,
+    "Gender": 2,
+    "PetTypeId": 2,
+    "Temperament": {
+      "AnimalsFriendlyLevel": 3,
+      "ChildrenFriendlyLevel": 2,
+      "HouseTrainedLevel": 5
+    },
+    "Photos": [ { "ImageUrl": "/Images/Defult/default_animal.jpg" } ]
+  },
+
+  {
+    "Name": "Daisy",
+    "Description": "Daisy is a gentle and loving dog who is especially good with children. She enjoys calm walks, playtime, and relaxing indoors.",
+    "AgeYears": 2,
+    "Size": 2,
+    "WeightKg": 19,
+    "Gender": 2,
+    "PetTypeId": 1,
+    "Temperament": {
+      "AnimalsFriendlyLevel": 4,
+      "ChildrenFriendlyLevel": 5,
+      "HouseTrainedLevel": 4
+    },
+    "Photos": [ { "ImageUrl": "/Images/Defult/default_animal.jpg" } ]
+  },
+  {
+    "Name": "Simba",
+    "Description": "Simba is a confident cat with a strong personality. He enjoys independence but still appreciates attention and structured routines.",
+    "AgeYears": 3.5,
+    "Size": 1,
+    "WeightKg": 5.8,
+    "Gender": 1,
+    "PetTypeId": 2,
+    "Temperament": {
+      "AnimalsFriendlyLevel": 3,
+      "ChildrenFriendlyLevel": 3,
+      "HouseTrainedLevel": 5
+    },
+    "Photos": [ { "ImageUrl": "/Images/Defult/default_animal.jpg" } ]
+  },
+
+  {
+    "Name": "Cooper",
+    "Description": "Cooper is a playful dog who loves running and outdoor activities. He has a friendly nature and enjoys being part of an active family.",
+    "AgeYears": 2.8,
+    "Size": 3,
+    "WeightKg": 32,
+    "Gender": 1,
+    "PetTypeId": 1,
+    "Temperament": {
+      "AnimalsFriendlyLevel": 4,
+      "ChildrenFriendlyLevel": 4,
+      "HouseTrainedLevel": 4
+    },
+    "Photos": [ { "ImageUrl": "/Images/Defult/default_animal.jpg" } ]
+  },
+  {
+    "Name": "Chloe",
+    "Description": "Chloe is a sweet and affectionate cat who enjoys cuddling and staying close to her owners during quiet moments.",
+    "AgeYears": 2.2,
+    "Size": 1,
+    "WeightKg": 4.7,
+    "Gender": 2,
+    "PetTypeId": 2,
+    "Temperament": {
+      "AnimalsFriendlyLevel": 4,
+      "ChildrenFriendlyLevel": 4,
+      "HouseTrainedLevel": 5
+    },
+    "Photos": [ { "ImageUrl": "/Images/Defult/default_animal.jpg" } ]
+  },
+  {
+    "Name": "Oscar",
+    "Description": "Oscar is a calm and strong dog with a relaxed personality. He is well-trained and enjoys peaceful walks and resting indoors.",
+    "AgeYears": 6,
+    "Size": 3,
+    "WeightKg": 38,
+    "Gender": 1,
+    "PetTypeId": 1,
+    "Temperament": {
+      "AnimalsFriendlyLevel": 3,
+      "ChildrenFriendlyLevel": 4,
+      "HouseTrainedLevel": 5
+    },
+    "Photos": [ { "ImageUrl": "/Images/Defult/default_animal.jpg" } ]
+  },
+  {
+    "Name": "Lily",
+    "Description": "Lily is a quiet and gentle cat who enjoys calm environments. She prefers relaxing in warm spots and observing quietly.",
+    "AgeYears": 4.5,
+    "Size": 1,
+    "WeightKg": 5.1,
+    "Gender": 2,
+    "PetTypeId": 2,
+    "Temperament": {
+      "AnimalsFriendlyLevel": 3,
+      "ChildrenFriendlyLevel": 3,
+      "HouseTrainedLevel": 5
+    },
+    "Photos": [ { "ImageUrl": "/Images/Defult/default_animal.jpg" } ]
+  },
+
+  {
+    "Name": "Toby",
+    "Description": "Toby is a cheerful young dog with lots of energy. He enjoys playtime, learning new tricks, and staying active throughout the day.",
+    "AgeYears": 1.9,
+    "Size": 2,
+    "WeightKg": 21,
+    "Gender": 1,
+    "PetTypeId": 1,
+    "Temperament": {
+      "AnimalsFriendlyLevel": 5,
+      "ChildrenFriendlyLevel": 5,
+      "HouseTrainedLevel": 3
+    },
+    "Photos": [ { "ImageUrl": "/Images/Defult/default_animal.jpg" } ]
+  },
+  {
+    "Name": "Cleo",
+    "Description": "Cleo is an independent cat who enjoys both playtime and quiet moments alone. She adapts well to most home environments.",
+    "AgeYears": 2.7,
+    "Size": 1,
+    "WeightKg": 4.9,
+    "Gender": 2,
+    "PetTypeId": 2,
+    "Temperament": {
+      "AnimalsFriendlyLevel": 3,
+      "ChildrenFriendlyLevel": 3,
+      "HouseTrainedLevel": 5
+    },
+    "Photos": [ { "ImageUrl": "/Images/Defult/default_animal.jpg" } ]
+  },
+
+  {
+    "Name": "Leo",
+    "Description": "Leo is an intelligent and alert dog who enjoys mental challenges. He responds well to training and structured routines.",
+    "AgeYears": 4.3,
+    "Size": 2,
+    "WeightKg": 24,
+    "Gender": 1,
+    "PetTypeId": 1,
+    "Temperament": {
+      "AnimalsFriendlyLevel": 4,
+      "ChildrenFriendlyLevel": 4,
+      "HouseTrainedLevel": 5
+    },
+    "Photos": [ { "ImageUrl": "/Images/Defult/default_animal.jpg" } ]
+  },
+  {
+    "Name": "Shadow",
+    "Description": "Shadow is a shy cat who forms strong bonds with people he trusts. He prefers quiet homes and calm interactions.",
+    "AgeYears": 5,
+    "Size": 1,
+    "WeightKg": 5.6,
+    "Gender": 1,
+    "PetTypeId": 2,
+    "Temperament": {
+      "AnimalsFriendlyLevel": 2,
+      "ChildrenFriendlyLevel": 2,
+      "HouseTrainedLevel": 5
+    },
+    "Photos": [ { "ImageUrl": "/Images/Defult/default_animal.jpg" } ]
+  },
+  {
+    "Name": "Buster",
+    "Description": "Buster is a playful and strong dog who enjoys physical activity. He loves interactive games and spending time outdoors.",
+    "AgeYears": 3.7,
+    "Size": 3,
+    "WeightKg": 33,
+    "Gender": 1,
+    "PetTypeId": 1,
+    "Temperament": {
+      "AnimalsFriendlyLevel": 4,
+      "ChildrenFriendlyLevel": 4,
+      "HouseTrainedLevel": 4
+    },
+    "Photos": [ { "ImageUrl": "/Images/Defult/default_animal.jpg" } ]
+  },
+  {
+    "Name": "Misty",
+    "Description": "Misty is a gentle and calm cat who enjoys a peaceful lifestyle. She is affectionate in quiet ways and loves cozy places.",
+    "AgeYears": 6,
+    "Size": 1,
+    "WeightKg": 5.9,
+    "Gender": 2,
+    "PetTypeId": 2,
+    "Temperament": {
+      "AnimalsFriendlyLevel": 3,
+      "ChildrenFriendlyLevel": 3,
+      "HouseTrainedLevel": 5
+    },
+    "Photos": [ { "ImageUrl": "/Images/Defult/default_animal.jpg" } ]
+  },
+  {
+    "Name": "Apollo",
+    "Description": "Apollo is a confident and energetic dog who enjoys structured activities and daily exercise. He thrives in homes where he can stay active and mentally engaged.",
+    "AgeYears": 4.1,
+    "Size": 3,
+    "WeightKg": 31,
+    "Gender": 1,
+    "PetTypeId": 1,
+    "Temperament": {
+      "AnimalsFriendlyLevel": 4,
+      "ChildrenFriendlyLevel": 4,
+      "HouseTrainedLevel": 5
+    },
+    "Photos": [ { "ImageUrl": "/Images/Defult/default_animal.jpg" } ]
+  },
+  {
+    "Name": "Snowy",
+    "Description": "Snowy is a calm and gentle cat who loves relaxing in quiet places. She enjoys soft blankets, warm sunlight, and peaceful companionship.",
+    "AgeYears": 3.8,
+    "Size": 1,
+    "WeightKg": 5.2,
+    "Gender": 2,
+    "PetTypeId": 2,
+    "Temperament": {
+      "AnimalsFriendlyLevel": 3,
+      "ChildrenFriendlyLevel": 3,
+      "HouseTrainedLevel": 5
+    },
+    "Photos": [ { "ImageUrl": "/Images/Defult/default_animal.jpg" } ]
+  },
+  {
+    "Name": "Hunter",
+    "Description": "Hunter is an alert and intelligent dog who enjoys learning new commands. He bonds strongly with his owners and prefers an active lifestyle.",
+    "AgeYears": 2.9,
+    "Size": 2,
+    "WeightKg": 23,
+    "Gender": 1,
+    "PetTypeId": 1,
+    "Temperament": {
+      "AnimalsFriendlyLevel": 4,
+      "ChildrenFriendlyLevel": 4,
+      "HouseTrainedLevel": 4
+    },
+    "Photos": [ { "ImageUrl": "/Images/Defult/default_animal.jpg" } ]
+  },
+  {
+    "Name": "Peanut",
+    "Description": "Peanut is a playful and curious cat who loves exploring small spaces and chasing toys. She brings energy and fun into any home.",
+    "AgeYears": 1.6,
+    "Size": 1,
+    "WeightKg": 3.7,
+    "Gender": 2,
+    "PetTypeId": 2,
+    "Temperament": {
+      "AnimalsFriendlyLevel": 4,
+      "ChildrenFriendlyLevel": 4,
+      "HouseTrainedLevel": 5
+    },
+    "Photos": [ { "ImageUrl": "/Images/Defult/default_animal.jpg" } ]
+  },
+  {
+    "Name": "Zeus",
+    "Description": "Zeus is a strong and calm dog with a balanced temperament. He enjoys relaxed walks, structured routines, and being part of a stable home.",
+    "AgeYears": 6.2,
+    "Size": 3,
+    "WeightKg": 39,
+    "Gender": 1,
+    "PetTypeId": 1,
+    "Temperament": {
+      "AnimalsFriendlyLevel": 3,
+      "ChildrenFriendlyLevel": 4,
+      "HouseTrainedLevel": 5
+    },
+    "Photos": [ { "ImageUrl": "/Images/Defult/default_animal.jpg" } ]
+  },
+  {
+    "Name": "Ivy",
+    "Description": "Ivy is a gentle and affectionate cat who enjoys human company. She adapts easily to indoor environments and loves quiet bonding time.",
+    "AgeYears": 2.4,
+    "Size": 1,
+    "WeightKg": 4.6,
+    "Gender": 2,
+    "PetTypeId": 2,
+    "Temperament": {
+      "AnimalsFriendlyLevel": 4,
+      "ChildrenFriendlyLevel": 3,
+      "HouseTrainedLevel": 5
+    },
+    "Photos": [ { "ImageUrl": "/Images/Defult/default_animal.jpg" } ]
+  },
+  {
+    "Name": "Rex",
+    "Description": "Rex is a loyal and protective dog who takes his role seriously. With proper guidance, he becomes a calm and loving companion.",
+    "AgeYears": 5.4,
+    "Size": 3,
+    "WeightKg": 37,
+    "Gender": 1,
+    "PetTypeId": 1,
+    "Temperament": {
+      "AnimalsFriendlyLevel": 3,
+      "ChildrenFriendlyLevel": 3,
+      "HouseTrainedLevel": 5
+    },
+    "Photos": [ { "ImageUrl": "/Images/Defult/default_animal.jpg" } ]
+  },
+  {
+    "Name": "Pumpkin",
+    "Description": "Pumpkin is a sweet and friendly cat who enjoys gentle play and relaxing near her favorite people. She is well-suited for calm households.",
+    "AgeYears": 4.1,
+    "Size": 1,
+    "WeightKg": 5.4,
+    "Gender": 2,
+    "PetTypeId": 2,
+    "Temperament": {
+      "AnimalsFriendlyLevel": 4,
+      "ChildrenFriendlyLevel": 4,
+      "HouseTrainedLevel": 5
+    },
+    "Photos": [ { "ImageUrl": "/Images/Defult/default_animal.jpg" } ]
+  },
+  {
+    "Name": "Finn",
+    "Description": "Finn is a friendly and social dog who enjoys meeting new people. He is playful, adaptable, and fits well into family environments.",
+    "AgeYears": 2.3,
+    "Size": 2,
+    "WeightKg": 21,
+    "Gender": 1,
+    "PetTypeId": 1,
+    "Temperament": {
+      "AnimalsFriendlyLevel": 5,
+      "ChildrenFriendlyLevel": 5,
+      "HouseTrainedLevel": 4
+    },
+    "Photos": [ { "ImageUrl": "/Images/Defult/default_animal.jpg" } ]
+  },
+  {
+    "Name": "Mocha",
+    "Description": "Mocha is a calm and observant cat who enjoys watching her surroundings. She prefers peaceful homes and gentle interaction.",
+    "AgeYears": 5.7,
+    "Size": 1,
+    "WeightKg": 5.6,
+    "Gender": 2,
+    "PetTypeId": 2,
+    "Temperament": {
+      "AnimalsFriendlyLevel": 3,
+      "ChildrenFriendlyLevel": 3,
+      "HouseTrainedLevel": 5
+    },
+    "Photos": [ { "ImageUrl": "/Images/Defult/default_animal.jpg" } ]
+  }
+]

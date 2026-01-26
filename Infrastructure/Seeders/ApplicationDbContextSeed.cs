@@ -1,4 +1,5 @@
 ﻿using Core.Entities;
+using Core.Entities.Animal;
 using Core.Entities.Product;
 using Ecom.Core.Entities.Product;
 using Infrastructure.Persistence;
@@ -73,6 +74,20 @@ namespace Infrastructure.Seeders
                 if (petTypes != null && petTypes.Count > 0)
                 {
                     context.PetTypes.AddRange(petTypes);
+                    await context.SaveChangesAsync();
+                }
+            }
+            if (!context.Animals.Any())
+            {
+                var animalsData = await File.ReadAllTextAsync(
+                    path + @"/Seeders/SeedData/animals.json"
+                );
+
+                var animals = JsonSerializer.Deserialize<List<Animal>>(animalsData);
+
+                if (animals != null && animals.Count > 0)
+                {
+                    context.Animals.AddRange(animals);
                     await context.SaveChangesAsync();
                 }
             }
