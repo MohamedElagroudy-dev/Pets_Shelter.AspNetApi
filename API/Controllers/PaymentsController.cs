@@ -1,10 +1,9 @@
 ﻿using API.SignalR;
 using Application.Payment.DTOs;
 using Application.Payment.Services;
+using Core.Constants;
 using Core.Entities;
-using Core.Entities.OrderAggregate;
 using Core.Interfaces;
-using Core.Sharing;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

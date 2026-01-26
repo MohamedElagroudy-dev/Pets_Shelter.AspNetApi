@@ -1,7 +1,7 @@
 ﻿using API.Helper;
 using Application.Ratings.DTOs;
 using Application.Ratings.Services;
-using Core.Sharing;
+using Core.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

@@ -1,8 +1,8 @@
 ﻿using API.Helper;
 using Application.Common;
 using Application.Common.Pagination;
+using Core.Constants;
 using Core.Exceptions;
-using Core.Sharing;
 using Ecom.Application.Products.DTOs;
 using Ecom.Application.Products.Services;
 using Microsoft.AspNetCore.Authorization;
