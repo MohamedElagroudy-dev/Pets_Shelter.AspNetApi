@@ -1,4 +1,5 @@
 ﻿using Core.Constants;
+using Core.Entities;
 using Core.Entities.Product;
 using Ecom.Core.Entities.Product;
 using System;
@@ -12,9 +13,8 @@ using System.Threading.Tasks;
 
 namespace Core.Entities.Animal
 {
-    public class Animal
+    public class Animal : BaseEntity
     {
-        public int Id { get; set; }
         public string Name { get; set; } = null!;
         public string Description { get; set; } = null!;
         public double AgeYears { get; set; }
