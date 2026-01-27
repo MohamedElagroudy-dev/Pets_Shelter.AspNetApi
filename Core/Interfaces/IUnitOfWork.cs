@@ -18,6 +18,7 @@ namespace Core.Interfaces
         ICartService Cart { get; }
         IOrderRepository Orders { get; }
         IAdminService AdminService { get; }
+        IAnimalRepository Animals { get; } // Animals repository
         IGenericRepository<TEntity> Repository<TEntity>() where TEntity : BaseEntity;
         Task<int> CompleteAsync();
 
