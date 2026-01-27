@@ -80,25 +80,87 @@ namespace Infrastructure.Service
             return $"/Images/{src}/{Uri.EscapeDataString(uniqueImageName)}";
         }
 
-
-
-
-
-
-
         public void DeleteImageAsync(string src)
         {
             if (string.IsNullOrWhiteSpace(src))
-                return; 
+                return;
 
+            // If provided an absolute URL, get the path part
             if (Uri.TryCreate(src, UriKind.Absolute, out var uri))
-                src = uri.AbsolutePath; 
+                src = uri.AbsolutePath;
 
-            var filePath = Path.Combine("wwwroot", src.TrimStart('/').Replace('/', Path.DirectorySeparatorChar));
+            // URL-decode any percent-encoded characters
+            string unescaped = src;
+            try { unescaped = Uri.UnescapeDataString(src); } catch { }
 
-            if (File.Exists(filePath))
-                File.Delete(filePath);
+            // Build candidate file paths
+            var relativePath = unescaped.TrimStart('/').Replace('/', Path.DirectorySeparatorChar);
+            var directPath = Path.Combine("wwwroot", relativePath);
+
+            if (File.Exists(directPath))
+            {
+                File.Delete(directPath);
+                TryDeleteParentIfEmpty(directPath);
+                return;
+            }
+
+            // Try using the original (maybe contains %XX) filename
+            var relativePathEncoded = src.TrimStart('/').Replace('/', Path.DirectorySeparatorChar);
+            var encodedPath = Path.Combine("wwwroot", relativePathEncoded);
+            if (File.Exists(encodedPath))
+            {
+                File.Delete(encodedPath);
+                TryDeleteParentIfEmpty(encodedPath);
+                return;
+            }
+
+            // As a fallback, attempt to find the file by filename in the expected folder
+            try
+            {
+                var folderPath = Path.GetDirectoryName(directPath);
+                if (!string.IsNullOrEmpty(folderPath) && Directory.Exists(folderPath))
+                {
+                    var filenameUnescaped = Path.GetFileName(relativePath);
+                    var filenameEncoded = Path.GetFileName(relativePathEncoded);
+
+                    var files = Directory.GetFiles(folderPath);
+                    foreach (var f in files)
+                    {
+                        var fn = Path.GetFileName(f);
+                        if (string.Equals(fn, filenameUnescaped, StringComparison.OrdinalIgnoreCase) ||
+                            string.Equals(fn, filenameEncoded, StringComparison.OrdinalIgnoreCase) ||
+                            string.Equals(Uri.EscapeDataString(fn), filenameEncoded, StringComparison.OrdinalIgnoreCase) ||
+                            string.Equals(Uri.UnescapeDataString(fn), filenameUnescaped, StringComparison.OrdinalIgnoreCase))
+                        {
+                            File.Delete(f);
+                            TryDeleteParentIfEmpty(f);
+                            return;
+                        }
+                    }
+                }
+            }
+            catch
+            {
+                // ignore fallback errors
+            }
         }
 
+        private void TryDeleteParentIfEmpty(string filePath)
+        {
+            try
+            {
+                var dir = Path.GetDirectoryName(filePath);
+                if (string.IsNullOrEmpty(dir)) return;
+
+                if (Directory.Exists(dir) && !Directory.EnumerateFileSystemEntries(dir).Any())
+                {
+                    Directory.Delete(dir);
+                }
+            }
+            catch
+            {
+                // ignore
+            }
+        }
     }
 }
