@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Core.Sharing
+namespace Core.Constants
 {
     public static class UserRoles
     {
-        public const string Siller = "Siller";
+        public const string Seller = "Seller";
         public const string Customer = "Customer";
         public const string Admin = "Admin";
     }

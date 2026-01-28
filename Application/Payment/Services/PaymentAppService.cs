@@ -2,9 +2,9 @@
 using Application.Orders.Mappings;
 using Application.Payment.DTOs;
 using Application.Payment.Mapping;
+using Core.Constants;
 using Core.Entities;
 using Core.Entities.Cart;
-using Core.Entities.OrderAggregate;
 using Core.Entities.Product;
 using Core.Interfaces;
 using Microsoft.AspNetCore.Http;

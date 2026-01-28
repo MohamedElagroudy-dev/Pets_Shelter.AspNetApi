@@ -18,12 +18,14 @@ namespace Infrastructure.Repositories
         public ICartService Cart { get; }
         public IGenericRepository<Rating> Ratings { get; }
         public IAdminService AdminService { get; }
+        public IAnimalRepository Animals { get; }
         public UnitOfWork(ApplicationDbContext context,
                           IProductRepository productRepository,
                           IGenericRepository<Rating> RatingRepo,
                           IImageManagementService _ImageService,
                           ICartService _CartService,
                           IOrderRepository orderRepository,
+                          IAnimalRepository animalRepository,
                           IAdminService adminService
                           )
         {
@@ -34,6 +36,7 @@ namespace Infrastructure.Repositories
             Cart = _CartService;
             Ratings = RatingRepo;
             AdminService = adminService;
+            Animals = animalRepository;
         }
         public IGenericRepository<TEntity> Repository<TEntity>() where TEntity : BaseEntity
         {

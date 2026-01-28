@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Core.Entities.OrderAggregate
+namespace Core.Constants
 {
     public enum OrderStatus
     {

@@ -3,7 +3,7 @@ using Application.Categories.DTOs;
 using Application.Categories.Services;
 using Application.PetTypes.DTOs;
 using Application.PetTypes.Services;
-using Core.Sharing;
+using Core.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

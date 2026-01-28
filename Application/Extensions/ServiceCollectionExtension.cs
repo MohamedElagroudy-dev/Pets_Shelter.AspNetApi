@@ -1,4 +1,3 @@
-
 using Application.Account;
 using Application.Account.Services;
 using Application.Admin.Services;
@@ -9,6 +8,7 @@ using Application.Payment.Services;
 using Application.PetTypes.Services;
 using Application.Ratings.Services;
 using Core.Interfaces;
+using Ecom.Application.Animals.Services;
 using Ecom.Application.Favorites.Services;
 using Ecom.Application.Products.Services;
 using Microsoft.Extensions.DependencyInjection;
@@ -32,6 +32,7 @@ namespace Application.Extensions
             services.AddScoped<IRatingService, RatingService>();
             services.AddScoped<IFavoriteService, FavoriteService>();
             services.AddScoped<IAdminAppService, AdminAppService>();
+            services.AddScoped<IAnimalService, AnimalService>();
 
             services.AddHttpContextAccessor(); // needed for IHttpContextAccessor
             services.AddScoped<IUserContext, UserContext>();

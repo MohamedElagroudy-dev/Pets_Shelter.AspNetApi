@@ -1,6 +1,3 @@
-
-
-
 using Core.Entities;
 using Core.Interfaces;
 using Infrastructure.Persistence;
@@ -31,6 +28,7 @@ namespace Infrastructure.Extensions
 
             services.AddScoped<IImageManagementService, ImageManagementService>();
             services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddScoped<IAnimalRepository, AnimalRepository>();
             services.AddSingleton<ICartService, CartService>();
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             //services.AddScoped<IPaymentService, PaymentService>();
@@ -55,7 +53,8 @@ namespace Infrastructure.Extensions
 
                 options.User.RequireUniqueEmail = true;
             })
-            .AddEntityFrameworkStores<ApplicationDbContext>();
+            .AddEntityFrameworkStores<ApplicationDbContext>()
+            .AddDefaultTokenProviders();
 
             //JWT
             var key = configuration["JWT:Key"];
@@ -83,7 +82,6 @@ namespace Infrastructure.Extensions
                     ClockSkew = TimeSpan.Zero
                 };
             });
-            }
-
+        }
     }
 }
