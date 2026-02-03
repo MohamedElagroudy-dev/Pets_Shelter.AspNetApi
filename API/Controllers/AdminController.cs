@@ -12,10 +12,13 @@ using Core.Entities.OrderAggregate;
 using Core.Exceptions;
 using Core.Interfaces;
 using Core.Sharing.Pagination;
+using Ecom.Application.AdoptionApplications.DTOs;
+using Ecom.Application.AdoptionApplications.Services;
 using Ecom.Application.Products.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Stripe;
 
 namespace API.Controllers
 {
@@ -27,11 +30,14 @@ namespace API.Controllers
         private readonly IOrderService _orderService;
         private readonly IPaymentAppService _paymentService;
         private readonly IAdminAppService _adminAppService;
-        public AdminController(IOrderService orderService, IPaymentAppService paymentService, IAdminAppService adminAppService)
+        private readonly IAdoptionApplicationService _Applicationservice;
+
+        public AdminController(IOrderService orderService, IPaymentAppService paymentService, IAdminAppService adminAppService, IAdoptionApplicationService service)
         {
             _orderService = orderService;
             _paymentService = paymentService;
             _adminAppService = adminAppService;
+            _Applicationservice = service;
         }
         [HttpGet]
         public async Task<IActionResult> GetAll([FromQuery] OrderParams orderParams)
@@ -127,6 +133,38 @@ namespace API.Controllers
             {
                 var users = await _adminAppService.GetAllUsersAsync(userParams);
                 return Ok(new ResponseAPI<PagedResult<UserDto>>(200, "Users fetched successfully", users));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ResponseAPI<string>(500, ex.Message));
+            }
+        }
+
+
+        [HttpGet("GetAllApplications")]
+        public async Task<IActionResult> GetAll([FromQuery] AdoptionApplicationParams @params)
+        {
+            try
+            {
+                var result = await _Applicationservice.GetAllAsync(@params);
+                return Ok(new ResponseAPI<PagedResult<AdoptionApplicationDto>>(200, "Applications fetched", result));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ResponseAPI<string>(500, ex.Message));
+            }
+        }
+
+        [HttpGet("GetApplication/{id}")]
+        public async Task<IActionResult> Get(int id)
+        {
+            try
+            {
+                var app = await _Applicationservice.GetByIdAsync(id);
+                if (app == null)
+                    return NotFound(new ResponseAPI<string>(404, $"Application with ID {id} not found"));
+
+                return Ok(new ResponseAPI<AdoptionApplicationDetailsDto>(200, data: app));
             }
             catch (Exception ex)
             {
