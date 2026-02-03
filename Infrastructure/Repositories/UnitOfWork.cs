@@ -19,6 +19,7 @@ namespace Infrastructure.Repositories
         public IGenericRepository<Rating> Ratings { get; }
         public IAdminService AdminService { get; }
         public IAnimalRepository Animals { get; }
+        public IAdoptionApplicationRepository AdoptionApplications { get; }
         public UnitOfWork(ApplicationDbContext context,
                           IProductRepository productRepository,
                           IGenericRepository<Rating> RatingRepo,
@@ -26,6 +27,7 @@ namespace Infrastructure.Repositories
                           ICartService _CartService,
                           IOrderRepository orderRepository,
                           IAnimalRepository animalRepository,
+                          IAdoptionApplicationRepository adoptionApplicationRepository,
                           IAdminService adminService
                           )
         {
@@ -37,6 +39,7 @@ namespace Infrastructure.Repositories
             Ratings = RatingRepo;
             AdminService = adminService;
             Animals = animalRepository;
+            AdoptionApplications = adoptionApplicationRepository;
         }
         public IGenericRepository<TEntity> Repository<TEntity>() where TEntity : BaseEntity
         {
