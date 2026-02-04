@@ -19,6 +19,7 @@ namespace Core.Interfaces
         IOrderRepository Orders { get; }
         IAdminService AdminService { get; }
         IAnimalRepository Animals { get; } // Animals repository
+        IAdoptionApplicationRepository AdoptionApplications { get; }
         IGenericRepository<TEntity> Repository<TEntity>() where TEntity : BaseEntity;
         Task<int> CompleteAsync();
 
