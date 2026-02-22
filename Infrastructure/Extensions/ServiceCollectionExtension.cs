@@ -12,6 +12,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Infrastructure.Settings;
 using Infrastructure.Service;
+using Application.Subscriptions.Services;
 
 
 namespace Infrastructure.Extensions
@@ -38,6 +39,7 @@ namespace Infrastructure.Extensions
             services.AddScoped<IPaymentService, PaymentService>();
             services.AddScoped<IOrderRepository, OrderRepository>();
             services.AddScoped<IAdminService, AdminService>();
+            services.AddScoped<ISubscriptionService, SubscriptionService>();
 
             services.AddSingleton<IFileProvider>(
             new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot")));
