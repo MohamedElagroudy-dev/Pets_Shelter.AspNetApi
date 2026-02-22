@@ -1,4 +1,5 @@
 ﻿using Core.Constants;
+using Core.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,10 +8,8 @@ using System.Threading.Tasks;
 
 namespace Core.Entities.Plans
 {
-    public class SubscriptionPlan
+    public class SubscriptionPlan : BaseEntity
     {
-        public required int Id { get; set; }
-
         public required string Name { get; set; }          // Bronze Paws
         public decimal Price { get; set; }        // 300
         public int DurationInMonths { get; set; } // 3
