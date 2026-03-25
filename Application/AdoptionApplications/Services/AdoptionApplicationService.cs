@@ -28,7 +28,8 @@ namespace Ecom.Application.AdoptionApplications.Services
             var animal = await _unitOfWork.Repository<Animal>().GetAsync(dto.AnimalId);
             if (animal == null) throw new ArgumentException("Animal not found");
 
-            var existing = await _unitOfWork.Repository<AdoptionApplication>().GetByAsync(a => a.AnimalId == dto.AnimalId && a.ApplicantId == userId);
+            var existing = await _unitOfWork.Repository<AdoptionApplication>()
+                .GetByAsync(a => a.AnimalId == dto.AnimalId && a.ApplicantId == userId);
             if (existing != null)
                 throw new ArgumentException("You have already submitted an application for this animal.");
 
@@ -60,19 +61,25 @@ namespace Ecom.Application.AdoptionApplications.Services
             var dtos = items.Select(a => a.ToDto()).ToList();
 
             // compute counts
-            var allActiveCount = await _unitOfWork.AdoptionApplications.GetAllAsync(1, int.MaxValue, @params.Search, null, null, @params.Sort);
-            var activeCount = allActiveCount.TotalCount; // total count of all (active)
+            var ApprovedAll = await _unitOfWork.AdoptionApplications.GetAllAsync(1, int.MaxValue, @params.Search, null, ApplicationStatus.Approved, @params.Sort);
+            var ApprovedCount = ApprovedAll.TotalCount; // total count of all (active)
+
+            var RejectedAll = await _unitOfWork.AdoptionApplications.GetAllAsync(1, int.MaxValue, @params.Search, null, ApplicationStatus.Rejected, @params.Sort);
+            var RejectedCount = RejectedAll.TotalCount; // total count of all (active)
 
             var pendingAll = await _unitOfWork.AdoptionApplications.GetAllAsync(1, int.MaxValue, @params.Search, null, ApplicationStatus.Pending, @params.Sort);
             var pendingCount = pendingAll.TotalCount;
 
             var pagedResult = new PagedResult<AdoptionApplicationDto>(dtos, total, @params.PageSize, @params.PageNumber);
-
             return new AdoptionApplicationStatsResult
             {
                 PagedResult = pagedResult,
-                ActiveRequestsCount = activeCount,
-                PendingRequestsCount = pendingCount
+                ApprovedRequestsCount = ApprovedCount,
+                RejectedRequestsCount = RejectedCount,
+                PendingRequestsCount = pendingCount,
+                SuccessRate = (ApprovedCount + RejectedCount) > 0
+                    ? Math.Round((double)ApprovedCount / (ApprovedCount + RejectedCount) * 100, 2)
+                    : 0
             };
         }
 
