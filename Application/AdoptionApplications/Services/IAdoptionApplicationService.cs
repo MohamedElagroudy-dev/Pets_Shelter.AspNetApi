@@ -2,6 +2,7 @@ using Ecom.Application.AdoptionApplications.DTOs;
 using Application.Common;
 using Core.Constants;
 using Application.Common.Pagination;
+using Application.AdoptionApplications.DTOs;
 
 namespace Ecom.Application.AdoptionApplications.Services
 {
@@ -12,7 +13,7 @@ namespace Ecom.Application.AdoptionApplications.Services
         Task<AdoptionApplicationDetailsDto?> GetMyApplicationByIdAsync(string userId, int id);
 
         // Admin
-        Task<PagedResult<AdoptionApplicationDto>> GetAllAsync(AdoptionApplicationParams @params);
+        Task<AdoptionApplicationStatsResult> GetAllAsync(AdoptionApplicationParams @params);
         Task<AdoptionApplicationDetailsDto?> GetByIdAsync(int id);
     }
 }
