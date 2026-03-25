@@ -16,7 +16,11 @@ namespace Ecom.Application.AdoptionApplications.Mappings
                 AnimalId = app.AnimalId,
                 AnimalName = app.Animal?.Name ?? string.Empty,
                 ApplicantId = app.ApplicantId,
+                ApplicantFirstName = app.ApplicantInfo.FirstName,
+                ApplicantLastName = app.ApplicantInfo.LastName,
+                ApplicantEmail = app.ApplicantInfo.Email,
                 Status = app.Status,
+                StatusName = app.Status.ToString(),
                 SubmittedAt = app.SubmittedAt,
                 AnimalPictureUrl = app.Animal?.Photos?.FirstOrDefault()?.ImageUrl ?? string.Empty
             };
