@@ -48,7 +48,7 @@ namespace Application.Admin.Services
             if (_unitOfWork?.AdminService == null)
             {
                 _logger?.LogWarning("AdminService is not available on UnitOfWork");
-                return new PagedResult<UserDto>(new List<UserDto>(), 0, paginationParams.PageNumber, paginationParams.PageSize);
+                return new PagedResult<UserDto>(new List<UserDto>(), 0, paginationParams.PageSize, paginationParams.PageNumber);
             }
 
             var usersTuple = await _unitOfWork.AdminService.GetAllUsersAsync(
@@ -61,6 +61,14 @@ namespace Application.Admin.Services
             var count = usersTuple.TotalCount;
 
             var users = result.Select(c => c.ToDto()).ToList();
+
+            // fetch roles for each user sequentially
+            foreach (var u in users)
+            {
+                var role = await _unitOfWork.AdminService.GetUserPrimaryRoleAsync(u.Id);
+                u.Role = role ?? string.Empty;
+            }
+
             return new PagedResult<UserDto>(users, count, paginationParams.PageSize, paginationParams.PageNumber);
         }
     }
