@@ -20,8 +20,8 @@ namespace E_commerce.Extensions
 
                 // Important for Upstash (TLS/SSL required)
                 config.Ssl = true;
-                config.Password = "AUy5AAIncDFmYmU2MTcxNDI0ZGQ0OTFlOWVjZjcyMzA1YzhiOGQzYXAxMTk2NDE";
-                config.EndPoints.Add("unbiased-teal-19641.upstash.io:6379");
+                config.Password = "gQAAAAAAAXymAAIncDFkMDFjODRhZmU1N2M0MWY0OTU5YWFlZTg2NzRkNTM0NnAxOTc0NDY";
+                config.EndPoints.Add("becoming-duck-97446.upstash.io:6379");
 
                 return ConnectionMultiplexer.Connect(config);
             });
