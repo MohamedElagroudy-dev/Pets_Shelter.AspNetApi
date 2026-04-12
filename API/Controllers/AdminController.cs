@@ -1,6 +1,7 @@
 ﻿using API.Helper;
 using Application.Admin.DTO;
 using Application.Admin.Services;
+using Application.AdoptionApplications.DTOs;
 using Application.Common;
 using Application.Common.Pagination;
 using Application.Orders.DTOs;
@@ -147,7 +148,7 @@ namespace API.Controllers
             try
             {
                 var result = await _Applicationservice.GetAllAsync(@params);
-                return Ok(new ResponseAPI<PagedResult<AdoptionApplicationDto>>(200, "Applications fetched", result));
+                return Ok(new ResponseAPI<AdoptionApplicationStatsResult>(200, "Applications fetched", result));
             }
             catch (Exception ex)
             {

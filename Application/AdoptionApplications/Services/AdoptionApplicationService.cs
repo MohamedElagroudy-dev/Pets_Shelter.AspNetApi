@@ -10,6 +10,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System;
 using System.Collections.Generic;
+using Application.AdoptionApplications.DTOs;
 
 namespace Ecom.Application.AdoptionApplications.Services
 {
@@ -27,14 +28,10 @@ namespace Ecom.Application.AdoptionApplications.Services
             var animal = await _unitOfWork.Repository<Animal>().GetAsync(dto.AnimalId);
             if (animal == null) throw new ArgumentException("Animal not found");
 
-            // ?? Prevent same user from applying twice for same animal
-            var existing = await _unitOfWork.Repository<AdoptionApplication>().GetByAsync(
-                a => a.AnimalId == dto.AnimalId && a.ApplicantId == userId
-            );
+            var existing = await _unitOfWork.Repository<AdoptionApplication>()
+                .GetByAsync(a => a.AnimalId == dto.AnimalId && a.ApplicantId == userId);
             if (existing != null)
                 throw new ArgumentException("You have already submitted an application for this animal.");
-
-
 
             var entity = dto.ToEntity(userId);
 
@@ -58,11 +55,32 @@ namespace Ecom.Application.AdoptionApplications.Services
         }
 
         // ADMIN
-        public async Task<PagedResult<AdoptionApplicationDto>> GetAllAsync(AdoptionApplicationParams @params)
+        public async Task<AdoptionApplicationStatsResult> GetAllAsync(AdoptionApplicationParams @params)
         {
             var (items, total) = await _unitOfWork.AdoptionApplications.GetAllAsync(@params.PageNumber, @params.PageSize, @params.Search, null, @params.Status, @params.Sort);
             var dtos = items.Select(a => a.ToDto()).ToList();
-            return new PagedResult<AdoptionApplicationDto>(dtos, total, @params.PageSize, @params.PageNumber);
+
+            // compute counts
+            var ApprovedAll = await _unitOfWork.AdoptionApplications.GetAllAsync(1, int.MaxValue, @params.Search, null, ApplicationStatus.Approved, @params.Sort);
+            var ApprovedCount = ApprovedAll.TotalCount; // total count of all (active)
+
+            var RejectedAll = await _unitOfWork.AdoptionApplications.GetAllAsync(1, int.MaxValue, @params.Search, null, ApplicationStatus.Rejected, @params.Sort);
+            var RejectedCount = RejectedAll.TotalCount; // total count of all (active)
+
+            var pendingAll = await _unitOfWork.AdoptionApplications.GetAllAsync(1, int.MaxValue, @params.Search, null, ApplicationStatus.Pending, @params.Sort);
+            var pendingCount = pendingAll.TotalCount;
+
+            var pagedResult = new PagedResult<AdoptionApplicationDto>(dtos, total, @params.PageSize, @params.PageNumber);
+            return new AdoptionApplicationStatsResult
+            {
+                PagedResult = pagedResult,
+                ApprovedRequestsCount = ApprovedCount,
+                RejectedRequestsCount = RejectedCount,
+                PendingRequestsCount = pendingCount,
+                SuccessRate = (ApprovedCount + RejectedCount) > 0
+                    ? Math.Round((double)ApprovedCount / (ApprovedCount + RejectedCount) * 100, 2)
+                    : 0
+            };
         }
 
         public async Task<AdoptionApplicationDetailsDto?> GetByIdAsync(int id)
@@ -71,4 +89,6 @@ namespace Ecom.Application.AdoptionApplications.Services
             return app?.ToDetailsDto();
         }
     }
+
+   
 }
