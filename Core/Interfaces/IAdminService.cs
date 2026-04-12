@@ -12,5 +12,7 @@ namespace Core.Interfaces
             int pageSize,
             string? search,
             string? role);
+
+        Task<string?> GetUserPrimaryRoleAsync(string userId);
     }
 }

@@ -59,7 +59,7 @@ namespace Infrastructure.Service
                 return (users, totalCount);
             }
 
-            // No role filter — use IQueryable from UserManager for server-side filtering/pagination.
+            // No role filter – use IQueryable from UserManager for server-side filtering/pagination.
             var baseQuery = _userManager.Users.AsNoTracking();
 
             if (!string.IsNullOrEmpty(search))
@@ -80,6 +80,15 @@ namespace Infrastructure.Service
                 .ToListAsync();
 
             return (pagedUsers, total);
+        }
+
+        public async Task<string?> GetUserPrimaryRoleAsync(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null) return null;
+
+            var roles = await _userManager.GetRolesAsync(user);
+            return roles.FirstOrDefault();
         }
     }
 }
