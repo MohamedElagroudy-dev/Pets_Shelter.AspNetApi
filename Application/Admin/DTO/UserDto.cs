@@ -16,5 +16,7 @@ namespace Application.Admin.DTO
         public string? LastName { get; set; }
 
         public string PictureUrl { get; set; } = string.Empty;
+
+        public string Role { get; set; } = default!;
     }
 }
