@@ -5,6 +5,7 @@ namespace Application.Admin.Mappings
 {
     public static class UserMappingExtensions
     {
+        private const string DefaultImagePath = "/Images/Defult/DefultUserPic.jpeg";
         public static UserDto ToDto(this AppUser user)
         {
             ArgumentNullException.ThrowIfNull(user);
@@ -16,7 +17,8 @@ namespace Application.Admin.Mappings
                 Email = user.Email!,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
-                PictureUrl = user.PictureUrl
+                PictureUrl = user.PictureUrl,
+                PersonalPicture = string.IsNullOrWhiteSpace(user.PictureUrl) ? DefaultImagePath : user.PictureUrl,
             };
         }
     }

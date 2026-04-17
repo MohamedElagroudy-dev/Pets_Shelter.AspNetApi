@@ -18,5 +18,6 @@ namespace Application.Admin.DTO
         public string PictureUrl { get; set; } = string.Empty;
 
         public string Role { get; set; } = default!;
+        public string PersonalPicture { set; get; } = default!;
     }
 }
