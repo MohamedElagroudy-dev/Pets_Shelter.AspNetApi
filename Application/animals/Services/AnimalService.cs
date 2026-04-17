@@ -77,41 +77,45 @@ namespace Ecom.Application.Animals.Services
         }
 
         public async Task<bool> UpdateAsync(UpdateAnimalDTO dto)
+{
+    _logger.LogInformation("Executing UpdateAsync for animal Id={Id}", dto?.Id);
+
+    if (dto == null) return false;
+
+    var existing = await _unitOfWork.Animals.GetByidAsync(dto.Id, a => a.Photos, a => a.PetType);
+    if (existing == null) return false;
+
+    existing.UpdateEntity(dto);
+
+    // ? Only update photos if new ones are provided
+    if (dto.Photos != null && dto.Photos.Any())
+    {
+        var existingPhotos = existing.Photos?.ToList() ?? new List<AnimalPhoto>();
+
+        // delete old
+        foreach (var photo in existingPhotos)
         {
-            _logger.LogInformation("Executing UpdateAsync for animal Id={Id}", dto?.Id);
-
-            if (dto == null) return false;
-
-            var existing = await _unitOfWork.Animals.GetByidAsync(dto.Id, a => a.Photos, a => a.PetType);
-            if (existing == null) return false;
-
-            existing.UpdateEntity(dto);
-
-            var existingPhotos = existing.Photos?.ToList() ?? new List<AnimalPhoto>();
-            foreach (var photo in existingPhotos)
-            {
-                _imageService.DeleteImageAsync(photo.ImageUrl);
-                await _unitOfWork.Repository<AnimalPhoto>().DeleteAsync(photo.Id);
-            }
-
-            if (dto.Photos != null && dto.Photos.Any())
-            {
-                var imagePaths = await _imageService.AddImageAsync(dto.Photos, dto.Name);
-                var newPhotos = imagePaths.Select(p => new AnimalPhoto
-                {
-                    AnimalId = dto.Id,
-                    ImageUrl = p
-                }).ToList();
-
-                foreach (var photo in newPhotos)
-                    await _unitOfWork.Repository<AnimalPhoto>().AddAsync(photo);
-            }
-
-            await _unitOfWork.Animals.UpdateAsync(dto.Id, existing);
-            await _unitOfWork.CompleteAsync();
-
-            return true;
+            _imageService.DeleteImageAsync(photo.ImageUrl);
+            await _unitOfWork.Repository<AnimalPhoto>().DeleteAsync(photo.Id);
         }
+
+        // add new
+        var imagePaths = await _imageService.AddImageAsync(dto.Photos, dto.Name);
+        var newPhotos = imagePaths.Select(p => new AnimalPhoto
+        {
+            AnimalId = dto.Id,
+            ImageUrl = p
+        }).ToList();
+
+        foreach (var photo in newPhotos)
+            await _unitOfWork.Repository<AnimalPhoto>().AddAsync(photo);
+    }
+
+    await _unitOfWork.Animals.UpdateAsync(dto.Id, existing);
+    await _unitOfWork.CompleteAsync();
+
+    return true;
+}
 
         public async Task<AnimalDTO?> DeleteAsync(int id)
         {
