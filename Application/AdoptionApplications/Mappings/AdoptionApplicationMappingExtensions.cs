@@ -3,11 +3,14 @@ using Ecom.Application.AdoptionApplications.DTOs;
 using System.Linq;
 using System;
 using Core.Constants;
+using Core.Entities;
 
 namespace Ecom.Application.AdoptionApplications.Mappings
 {
+
     public static class AdoptionApplicationMappingExtensions
     {
+        private const string DefaultImagePath = "/Images/Defult/DefultUserPic.jpeg";
         public static AdoptionApplicationDto ToDto(this AdoptionApplication app)
         {
             return new AdoptionApplicationDto
@@ -19,6 +22,7 @@ namespace Ecom.Application.AdoptionApplications.Mappings
                 ApplicantFirstName = app.ApplicantInfo.FirstName,
                 ApplicantLastName = app.ApplicantInfo.LastName,
                 ApplicantEmail = app.ApplicantInfo.Email,
+                ApplicantPicture = string.IsNullOrWhiteSpace(app.ApplicantInfo.PersonalPicture) ? DefaultImagePath : app.ApplicantInfo.PersonalPicture,
                 Status = app.Status,
                 StatusName = app.Status.ToString(),
                 SubmittedAt = app.SubmittedAt,
@@ -50,18 +54,19 @@ namespace Ecom.Application.AdoptionApplications.Mappings
             };
         }
 
-        public static AdoptionApplication ToEntity(this CreateAdoptionApplicationDto dto, string userId)
+        public static AdoptionApplication ToEntity(this CreateAdoptionApplicationDto dto, AppUser user)
         {
             return new AdoptionApplication
             {
                 AnimalId = dto.AnimalId,
-                ApplicantId = userId,
+                ApplicantId = user.Id,
                 ApplicantInfo = new ApplicantInfo
                 {
                     FirstName = dto.FirstName,
                     LastName = dto.LastName,
                     PhoneNumber = dto.PhoneNumber,
-                    Email = dto.Email
+                    Email = dto.Email,
+                    PersonalPicture = string.IsNullOrWhiteSpace(user.PictureUrl) ? DefaultImagePath : user.PictureUrl
                 },
                 AddressInfo = new AddressInfo
                 {

@@ -1,26 +1,31 @@
-using Ecom.Application.AdoptionApplications.DTOs;
-using Ecom.Application.AdoptionApplications.Mappings;
+using Application.Account;
+using Application.AdoptionApplications.DTOs;
 using Application.Common;
 using Application.Common.Pagination;
 using Core.Constants;
 using Core.Entities.AdoptionApp;
 using Core.Entities.Animal;
 using Core.Interfaces;
-using System.Linq;
-using System.Threading.Tasks;
+using Ecom.Application.AdoptionApplications.DTOs;
+using Ecom.Application.AdoptionApplications.Mappings;
 using System;
 using System.Collections.Generic;
-using Application.AdoptionApplications.DTOs;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Ecom.Application.AdoptionApplications.Services
 {
     public class AdoptionApplicationService : IAdoptionApplicationService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IUserContext _userContext;
+        private readonly IAuthService _authService;
 
-        public AdoptionApplicationService(IUnitOfWork unitOfWork)
+        public AdoptionApplicationService(IUnitOfWork unitOfWork, IUserContext userContext, IAuthService authService)
         {
             _unitOfWork = unitOfWork;
+            _userContext = userContext;
+            _authService = authService;
         }
 
         public async Task<int> CreateAsync(CreateAdoptionApplicationDto dto, string userId)
@@ -33,7 +38,16 @@ namespace Ecom.Application.AdoptionApplications.Services
             if (existing != null)
                 throw new ArgumentException("You have already submitted an application for this animal.");
 
-            var entity = dto.ToEntity(userId);
+            var currentUser = _userContext.GetCurrentUser();
+            if (currentUser == null)
+                throw new UnauthorizedAccessException("User not authenticated");
+
+            var (user, roles) = await _authService.GetUserByEmailWithAddress(currentUser.Email!);
+
+            if (user == null)
+                throw new InvalidOperationException("User not found");
+
+            var entity = dto.ToEntity(user);
 
             await _unitOfWork.Repository<AdoptionApplication>().AddAsync(entity);
             await _unitOfWork.CompleteAsync();

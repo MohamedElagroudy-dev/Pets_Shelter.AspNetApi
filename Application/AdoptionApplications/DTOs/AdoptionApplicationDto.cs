@@ -12,6 +12,8 @@ namespace Ecom.Application.AdoptionApplications.DTOs
         public string ApplicantFirstName { get; set; } = string.Empty;
         public string ApplicantLastName { get; set; } = string.Empty;
         public string ApplicantEmail { get; set; } = string.Empty;
+
+        public string ApplicantPicture { set; get; } = default!;
         public ApplicationStatus Status { get; set; }
         public string StatusName { get; set; } = string.Empty;
         public DateTime SubmittedAt { get; set; }
