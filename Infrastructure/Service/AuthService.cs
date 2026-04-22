@@ -15,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Net.Mail;
 using System.Security.Authentication;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -30,14 +31,21 @@ namespace Infrastructure.Service
         private readonly JWT _jwt;
         private readonly IUserContext _userContext;
         private readonly IImageManagementService _imageService;
+        private readonly IEmailService _emailService;
 
-        public AuthService(UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager, IOptions<JWT> jwt, IUserContext userContext, IImageManagementService imageService)
+        public AuthService(UserManager<AppUser> userManager,
+            RoleManager<IdentityRole> roleManager,
+            IOptions<JWT> jwt,
+            IUserContext userContext,
+            IImageManagementService imageService,
+            IEmailService emailService)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _jwt = jwt.Value;
             _userContext = userContext;
             _imageService = imageService;
+            _emailService = emailService;
         }
 
         public async Task<string> UpdatePictureUrlAsync(string userEmail, string pictureUrl)
@@ -115,8 +123,10 @@ namespace Infrastructure.Service
 
             await _userManager.AddToRoleAsync(user, UserRoles.Customer);
 
-            var jwtSecurityToken = await CreateJwtToken(user);
 
+            #region Without email verification
+
+            var jwtSecurityToken = await CreateJwtToken(user);
             var refreshToken = GenerateRefreshToken();
             user.RefreshTokens?.Add(refreshToken);
             await _userManager.UpdateAsync(user);
@@ -131,6 +141,22 @@ namespace Infrastructure.Service
                 RefreshToken = refreshToken.Token,
                 RefreshTokenExpiration = refreshToken.ExpiresOn
             };
+            #endregion
+            #region With email verification
+            /*
+             SendEmail(user.Email!, 
+                await _userManager.GenerateEmailConfirmationTokenAsync(user), 
+                "confirm-email",
+                "Confirm your email",
+                "Please confirm your email by clicking the link below").Wait();
+
+           
+            return new AuthModel
+            {
+                Message = "Please Verify your email"
+            };
+             */
+            #endregion
         }
 
         public async Task<AuthModel> GetTokenAsync(TokenRequestModel model)
@@ -144,6 +170,39 @@ namespace Infrastructure.Service
                 authModel.Message = "Email or Password is incorrect!";
                 return authModel;
             }
+            #region with email verification check user verifi or not
+            /*
+             if (user is null)
+            {
+                authModel.Message = "Email or Password is incorrect!";
+                return authModel;
+            }
+
+            if (!await _userManager.CheckPasswordAsync(user, model.Password))
+            {
+                authModel.Message = "Email or Password is incorrect!";
+                return authModel;
+            }
+
+            if (!user.EmailConfirmed)
+            {
+                string token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+
+                await SendEmail(
+                    user.Email,
+                    token,
+                    "active",
+                    "ActiveEmail",
+                    "Please active your email, click on button to active"
+                );
+
+                return new AuthModel
+                {
+                    Message = "Please confirm your email first, we have sent an activation link to your email"
+                };
+            }
+             */
+            #endregion
 
             var jwtSecurityToken = await CreateJwtToken(user);
             var rolesList = await _userManager.GetRolesAsync(user);
@@ -369,6 +428,61 @@ namespace Infrastructure.Service
             await _userManager.UpdateAsync(user);
 
             return true;
+        }
+
+        public async Task<string> ResetPassword(RestPasswordModel restPassword)
+        {
+            var findUser = await _userManager.FindByEmailAsync(restPassword.Email);
+            if (findUser is null)
+            {
+                return null;
+            }
+
+            var result = await _userManager.ResetPasswordAsync(findUser, restPassword.Token, restPassword.Password);
+
+            if (result.Succeeded)
+            {
+                return "done";
+            }
+            return result.Errors.ToList()[0].Description;
+        }
+        public async Task<bool> ActiveAccount(ActiveAccountModel accountmodel)
+        {
+            var findUser = await _userManager.FindByEmailAsync(accountmodel.Email);
+            if (findUser is null)
+            {
+                return false;
+            }
+
+            var result = await _userManager.ConfirmEmailAsync(findUser, accountmodel.Token);
+            if (result.Succeeded)
+                return true;
+
+            var token = await _userManager.GenerateEmailConfirmationTokenAsync(findUser);
+            await SendEmail(findUser.Email, token, "active", "ActiveEmail", "Please active your email, click on button to active");
+
+            return false;
+        }
+        public async Task SendEmail(string email, string code, string component, string subject, string message)
+        {
+            var result = new EmailMessage(email,
+                "mohamed.elagroudy.dev@gmail.com",
+                subject
+                , EmailTemplateBuilder.Send(email, code, component, message));
+            await _emailService.SendEmail(result);
+        }
+        public async Task<bool> SendEmailForForgetPassword(string email)
+        {
+            var findUser = await _userManager.FindByEmailAsync(email);
+            if (findUser is null)
+            {
+                return false;
+            }
+            var token = await _userManager.GeneratePasswordResetTokenAsync(findUser);
+            await SendEmail(findUser.Email, token, "Reset-Password", "Reset Password", "click on button to Reset your password");
+
+            return true;
+
         }
     }
 }

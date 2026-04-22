@@ -22,5 +22,8 @@ namespace Core.Interfaces
         Task<string> DeletePictureUrlAsync(string userEmail);
         Task<string> GetPictureUrlAsync(string userEmail);
         Task<AppUser> UpdateUserAsync(AppUser user);
+        Task<string> ResetPassword(RestPasswordModel restPassword);
+        Task<bool> ActiveAccount(ActiveAccountModel accountModel);
+        Task<bool> SendEmailForForgetPassword(string email);
     }
 }
