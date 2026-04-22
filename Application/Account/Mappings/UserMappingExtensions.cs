@@ -21,9 +21,10 @@ namespace Application.Account.Mappings
                 PersonalPicture = string.IsNullOrWhiteSpace(user.PictureUrl) ? DefaultImagePath: user.PictureUrl,
                 UserName = user.UserName ?? string.Empty,
                 Email = user.Email ?? string.Empty,
+                PhoneNumber = user.PhoneNumber ?? string.Empty,
                 FirstName = user.FirstName ?? string.Empty,
                 LastName = user.LastName ?? string.Empty,
-                Address = user.Address.ToDto()
+                Address = user.Address?.ToDto()
             };
         }
     }

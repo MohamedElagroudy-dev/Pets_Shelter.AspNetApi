@@ -5,7 +5,8 @@ public record CurrentUser(string Id,
     IEnumerable<string> Roles,
     string FirstName,
     string LastName,
-    string Username
+    string Username,
+    string PhoneNumber = ""
     )
 {
     public bool IsInRole(string role) => Roles.Contains(role);
