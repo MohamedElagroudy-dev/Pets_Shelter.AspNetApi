@@ -245,6 +245,29 @@ namespace Application.Account.Services
 
             return string.IsNullOrEmpty(pictureUrl) ? DefaultImagePath : pictureUrl;
         }
+        public async Task<string?> ResetPassword(RestPasswordModel restPassword)
+        {
+            if (restPassword == null) throw new ArgumentNullException(nameof(restPassword));
+            _logger.LogInformation("ResetPassword called for email: {Email}", restPassword.Email);
+            var result = await _authService.ResetPassword(restPassword);
+            return result;
+        }
+
+        public async Task<bool> ActiveAccount(ActiveAccountModel accountModel)
+        {
+            if (accountModel == null) throw new ArgumentNullException(nameof(accountModel));
+            _logger.LogInformation("ActiveAccount called for email: {Email}", accountModel.Email);
+            return await _authService.ActiveAccount(accountModel);
+        }
+
+        public async Task<bool> SendEmailForForgetPassword(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+                throw new ArgumentException("Email is required", nameof(email));
+            _logger.LogInformation("SendEmailForForgetPassword called for email: {Email}", email);
+            return await _authService.SendEmailForForgetPassword(email);
+        }
+
 
     }
 }
