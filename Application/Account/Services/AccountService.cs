@@ -145,6 +145,42 @@ namespace Application.Account.Services
             return userInfo;
         }
 
+        public async Task<UserInfoDto> UpdateProfile(ProfileUpdateDto dto)
+        {
+            var currentUser = _userContext.GetCurrentUser();
+            if (currentUser == null)
+                throw new UnauthorizedAccessException("User not authenticated");
+
+            var (user, roles) = await _authService.GetUserByEmailWithAddress(currentUser.Email!);
+            if (user == null)
+                throw new InvalidOperationException("User not found");
+
+            // Update simple properties
+            if (!string.IsNullOrWhiteSpace(dto.FirstName)) user.FirstName = dto.FirstName;
+            if (!string.IsNullOrWhiteSpace(dto.LastName)) user.LastName = dto.LastName;
+            if (!string.IsNullOrWhiteSpace(dto.PhoneNumber)) user.PhoneNumber = dto.PhoneNumber;
+
+            // Update address
+            if (dto.Address != null)
+            {
+                if (user.Address == null)
+                {
+                    user.Address = dto.Address.ToEntity();
+                }
+                else
+                {
+                    user.Address.UpdateFromDto(dto.Address);
+                }
+            }
+
+            var updated = await _authService.UpdateUserAsync(user);
+
+            var userInfo = updated.ToDto() ?? new UserInfoDto();
+            userInfo.Roles = roles?.ToList() ?? new List<string>();
+
+            return userInfo;
+        }
+
         public async Task<string> UpdatePictureUrlAsync(UpdatePictureDto dto)
         {
             _logger.LogInformation("Updating picture for user: {Email}", _userContext.GetCurrentUser()?.Email);

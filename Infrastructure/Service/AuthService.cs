@@ -288,6 +288,15 @@ namespace Infrastructure.Service
             return (user,roles);
         }
 
+        public async Task<AppUser> UpdateUserAsync(AppUser user)
+        {
+            var result = await _userManager.UpdateAsync(user);
+            if (!result.Succeeded)
+                throw new Exception("Problem updating user");
+
+            return user;
+        }
+        
         private RefreshToken GenerateRefreshToken()
         {
             byte[] randomNumber = new byte[32];

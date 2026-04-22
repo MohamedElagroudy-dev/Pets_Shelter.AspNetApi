@@ -40,8 +40,9 @@ namespace Application.Account
 
             var username = user.FindFirst(JwtRegisteredClaimNames.Sub)?.Value ?? string.Empty;
 
+            var phone = user.FindFirst(ClaimTypes.MobilePhone)?.Value ?? user.FindFirst("phone_number")?.Value ?? string.Empty;
 
-            return new CurrentUser(userId, email, roles, firstName, lastName, username);
+            return new CurrentUser(userId, email, roles, firstName, lastName, username, phone);
         }
     }
 }
