@@ -21,5 +21,6 @@ namespace Core.Interfaces
         Task<string> UpdatePictureUrlAsync(string userEmail, string pictureUrl);
         Task<string> DeletePictureUrlAsync(string userEmail);
         Task<string> GetPictureUrlAsync(string userEmail);
+        Task<AppUser> UpdateUserAsync(AppUser user);
     }
 }
