@@ -7,6 +7,7 @@ using Core.Sharing.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 namespace API.Controllers
 {
@@ -234,6 +235,75 @@ namespace API.Controllers
             };
 
             Response.Cookies.Append("refreshToken", refreshToken, cookieOptions);
+        }
+
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword([FromBody] RestPasswordModel model)
+        {
+            if (model == null)
+                return BadRequest(new { message = "Request body is required" });
+
+            try
+            {
+                // Decode token in case it was URL-encoded in the link
+                if (!string.IsNullOrEmpty(model.Token))
+                    model.Token = WebUtility.UrlDecode(model.Token);
+
+                var result = await _accountAppService.ResetPassword(model);
+                if (result == null)
+                    return NotFound(new { message = "User not found" });
+
+                if (result == "done")
+                    return Ok(new { message = "Password has been reset" });
+
+                return BadRequest(new { message = result });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
+        }
+
+        [HttpGet("send-email-forget-password")]
+        public async Task<IActionResult> forget(string email)
+        {
+            if (email == null)
+                return BadRequest(new { message = "Request body is required" });
+            try
+            {
+                var result = await _accountAppService.SendEmailForForgetPassword(email);
+                if (!result)
+                    return NotFound(new { message = "User not found" });
+                return Ok(new { message = "Password reset link has been sent to your email" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
+        }
+
+        [HttpPost("activate")]
+        public async Task<IActionResult> Activate([FromBody] ActiveAccountModel model)
+        {
+            if (model == null)
+                return BadRequest(new { message = "Request body is required" });
+
+            try
+            {
+                // Decode token in case it was URL-encoded in the link
+                if (!string.IsNullOrEmpty(model.Token))
+                    model.Token = WebUtility.UrlDecode(model.Token);
+
+                var success = await _accountAppService.ActiveAccount(model);
+                if (success)
+                    return Ok(new { message = "Account activated" });
+
+                return BadRequest(new { message = "Activation failed or token invalid" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
         }
 
 

@@ -24,5 +24,9 @@ namespace Application.Account.Services
         Task<string> UpdatePictureUrlAsync(UpdatePictureDto dto);
         Task<string> DeletePictureUrlAsync();
         Task<string> GetPictureUrlAsync();
+
+        Task<string?> ResetPassword(RestPasswordModel restPassword);
+        Task<bool> ActiveAccount(ActiveAccountModel accountModel);
+        Task<bool> SendEmailForForgetPassword(string email);
     }
 }
