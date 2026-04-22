@@ -101,6 +101,32 @@ namespace API.Controllers
             return Ok(userInfo);
         }
 
+        [Authorize]
+        [HttpPut("profile")]
+        public async Task<ActionResult<UserInfoDto>> UpdateProfile([FromBody] Application.Account.DTOs.ProfileUpdateDto dto)
+        {
+            if (dto == null)
+                return BadRequest("Profile data is required");
+
+            try
+            {
+                var updated = await _accountAppService.UpdateProfile(dto);
+                return Ok(updated);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized();
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
+        }
+
         [HttpGet("refreshToken")]
         public async Task<IActionResult> RefreshToken([FromBody] GetTokenDto model)
         {
