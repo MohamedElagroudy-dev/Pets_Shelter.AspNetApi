@@ -40,6 +40,7 @@ namespace Infrastructure.Extensions
             services.AddScoped<IOrderRepository, OrderRepository>();
             services.AddScoped<IAdminService, AdminService>();
             services.AddScoped<ISubscriptionService, SubscriptionService>();
+            services.AddScoped<IEmailService, EmailService>();
 
             services.AddSingleton<IFileProvider>(
             new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot")));
