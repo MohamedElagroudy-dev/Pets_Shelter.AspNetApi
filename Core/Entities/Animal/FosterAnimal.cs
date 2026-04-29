@@ -16,16 +16,18 @@ namespace Core.Entities.Animal
         public DateTime? FosterStartDate { get; set; }
         public DateTime? FosterEndDate { get; set; }
 
-        public string? FosterNotes { get; set; }
-
-        public FosterStatus Status { get; set; } = FosterStatus.Available;
-        // Available, InFoster
-
-        public bool IsUrgent { get; set; }
-
         public int? FosterDurationDays =>
             FosterStartDate.HasValue && FosterEndDate.HasValue
                 ? (FosterEndDate.Value - FosterStartDate.Value).Days
                 : null;
+        public string? FosterNotes { get; set; }
+
+        public FosterStatus Status { get; set; } = FosterStatus.Available;
+        
+
+        public bool IsUrgent { get; set; }
+
+        public bool HasLeftShelter { get; set; }
+
     }
 }

@@ -9,6 +9,8 @@ namespace Core.Constants
     public enum FosterStatus
     {
         Available,
-        InFoster
+        InFoster,
+        Completed,
+        Cancelled
     }
 }
