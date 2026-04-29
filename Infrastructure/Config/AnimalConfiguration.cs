@@ -1,19 +1,15 @@
 ﻿using Core.Entities.Animal;
+using Core.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Infrastructure.Config
 {
-    public class AnimalConfiguration : IEntityTypeConfiguration<Animal>
+    public class AnimalConfiguration : IEntityTypeConfiguration<BaseAnimal>
     {
-        public void Configure(EntityTypeBuilder<Animal> builder)
+        public void Configure(EntityTypeBuilder<BaseAnimal> builder)
         {
-            // Table name (optional but clean)
+            // Table name
             builder.ToTable("Animals");
 
             // Primary Key
@@ -42,28 +38,21 @@ namespace Infrastructure.Config
             builder.Property(a => a.CreatedAt)
                    .IsRequired();
 
-            // Ignore computed property
-            builder.Ignore(a => a.IsAdopted);
+            // Discriminator for TPH
+            builder.HasDiscriminator<string>("AnimalRole")
+                .HasValue<AdoptionAnimal>("Adoption")
+                .HasValue<FosterAnimal>("Foster");
 
-            // Relationships
-
-            // Animal → PetType (Many-to-One)
+            // Shared relationships
             builder.HasOne(a => a.PetType)
-                   .WithMany()
-                   .HasForeignKey(a => a.PetTypeId)
-                   .OnDelete(DeleteBehavior.Restrict);
+                .WithMany()
+                .HasForeignKey(a => a.PetTypeId)
+                .OnDelete(DeleteBehavior.Restrict);
 
-            // Animal → Adopter (User) (Many-to-One, nullable)
-            builder.HasOne(a => a.Adopter)
-                   .WithMany()
-                   .HasForeignKey(a => a.AdopterId)
-                   .OnDelete(DeleteBehavior.SetNull);
-
-            // Animal → Photos (One-to-Many)
             builder.HasMany(a => a.Photos)
-                   .WithOne(p => p.Animal)
-                   .HasForeignKey(p => p.AnimalId)
-                   .OnDelete(DeleteBehavior.Cascade);
+                .WithOne(p => p.Animal)
+                .HasForeignKey(p => p.AnimalId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             // Owned Entity: AnimalTemperament
             builder.OwnsOne(a => a.Temperament, t =>
@@ -77,6 +66,31 @@ namespace Infrastructure.Config
                 t.Property(x => x.HouseTrainedLevel)
                  .IsRequired();
             });
+        }
+    }
+
+    public class AdoptionAnimalConfiguration : IEntityTypeConfiguration<AdoptionAnimal>
+    {
+        public void Configure(EntityTypeBuilder<AdoptionAnimal> builder)
+        {
+            // Ignore computed property
+            builder.Ignore(a => a.IsAdopted);
+
+            builder.HasOne(a => a.Adopter)
+                .WithMany()
+                .HasForeignKey(a => a.AdopterId)
+                .OnDelete(DeleteBehavior.SetNull);
+        }
+    }
+
+    public class FosterAnimalConfiguration : IEntityTypeConfiguration<FosterAnimal>
+    {
+        public void Configure(EntityTypeBuilder<FosterAnimal> builder)
+        {
+            // Ignore computed property
+            builder.Ignore(a => a.IsFostered);
+
+            // Foster specific configuration can be added here if needed
         }
     }
 }

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories
 {
-    public class AnimalRepository : GenericRepository<Animal>, IAnimalRepository
+    public class AnimalRepository : GenericRepository<AdoptionAnimal>, IAnimalRepository
     {
         private readonly ApplicationDbContext _context;
 
@@ -19,7 +19,7 @@ namespace Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<(IEnumerable<Animal> Animals, int TotalCount)> GetAllAsync(
+        public async Task<(IEnumerable<AdoptionAnimal> Animals, int TotalCount)> GetAllAsync(
             int pageNumber,
             int pageSize,
             string? search,
@@ -29,7 +29,7 @@ namespace Infrastructure.Repositories
             double? ageToYears,
             AnimalSort? sort)
         {
-            var query = _context.Set<Animal>()
+            var query = _context.Set<AdoptionAnimal>()
                 .Include(a => a.Photos)
                 .Include(a => a.PetType)
                 .AsNoTracking();

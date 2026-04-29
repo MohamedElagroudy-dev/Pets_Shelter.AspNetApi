@@ -83,7 +83,7 @@ namespace Infrastructure.Seeders
                     path + @"/Seeders/SeedData/animals.json"
                 );
 
-                var animals = JsonSerializer.Deserialize<List<Animal>>(animalsData);
+                var animals = JsonSerializer.Deserialize<List<AdoptionAnimal>>(animalsData);
 
                 if (animals != null && animals.Count > 0)
                 {
