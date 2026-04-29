@@ -8,7 +8,7 @@ namespace Ecom.Application.Animals.Mappings
     {
         private const string DefaultImagePath = "/Images/Defult/animal-default.jpg";
 
-        public static AnimalDTO ToDto(this Animal animal)
+        public static AnimalDTO ToDto(this AdoptionAnimal animal)
         {
             var photos = animal.Photos?.Select(p => new PhotoDTO
             {
@@ -42,9 +42,9 @@ namespace Ecom.Application.Animals.Mappings
             };
         }
 
-        public static Animal ToEntity(this AddAnimalDTO dto)
+        public static AdoptionAnimal ToEntity(this AddAnimalDTO dto)
         {
-            return new Animal
+            return new AdoptionAnimal
             {
                 Name = dto.Name,
                 Description = dto.Description,
@@ -62,7 +62,7 @@ namespace Ecom.Application.Animals.Mappings
             };
         }
 
-        public static void UpdateEntity(this Animal animal, UpdateAnimalDTO dto)
+        public static void UpdateEntity(this AdoptionAnimal animal, UpdateAnimalDTO dto)
         {
             animal.Name = dto.Name;
             animal.Description = dto.Description;
