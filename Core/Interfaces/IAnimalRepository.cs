@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace Core.Interfaces
 {
-    public interface IAnimalRepository : IGenericRepository<Animal>
+    public interface IAnimalRepository : IGenericRepository<AdoptionAnimal>
     {
-        Task<(IEnumerable<Animal> Animals, int TotalCount)> GetAllAsync(
+        Task<(IEnumerable<AdoptionAnimal> Animals, int TotalCount)> GetAllAsync(
             int pageNumber,
             int pageSize,
             string? search,
