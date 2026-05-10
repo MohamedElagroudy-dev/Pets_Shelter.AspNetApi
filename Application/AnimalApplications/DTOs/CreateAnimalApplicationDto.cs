@@ -1,8 +1,10 @@
+using Core.Constants;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
-namespace Ecom.Application.AdoptionApplications.DTOs
+namespace Ecom.Application.AnimalApplications.DTOs
 {
-    public class CreateAdoptionApplicationDto
+    public class CreateAnimalApplicationDto
     {
         [Required]
         public int AnimalId { get; set; }
@@ -44,5 +46,8 @@ namespace Ecom.Application.AdoptionApplications.DTOs
         // Agreement
         [Required]
         public bool Accepted { get; set; }
+
+        [JsonIgnore]
+        public ApplicationType ApplicationType { get; set; } = ApplicationType.Adoption;
     }
 }
