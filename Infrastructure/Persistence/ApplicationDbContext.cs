@@ -26,7 +26,7 @@ namespace Infrastructure.Persistence
         public virtual DbSet<PetType> PetTypes { get; set; }
         public virtual DbSet<Photo> Photos { get; set; }
         public DbSet<Favorite> Favorites { get; set; } 
-        public DbSet<Animal> Animals { get; set; }
+        public DbSet<BaseAnimal> Animals { get; set; }
         public virtual DbSet<Rating> Ratings { get; set; }
         public DbSet<PlanFeature> PlanFeatures { get; set; }
         public DbSet<SubscriptionPlan> SubscriptionPlans { get; set; }

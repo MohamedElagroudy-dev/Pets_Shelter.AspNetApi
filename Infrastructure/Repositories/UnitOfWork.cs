@@ -19,6 +19,7 @@ namespace Infrastructure.Repositories
         public IGenericRepository<Rating> Ratings { get; }
         public IAdminService AdminService { get; }
         public IAnimalRepository Animals { get; }
+        public IFosterAnimalRepository FosterAnimals { get; }
         public IAdoptionApplicationRepository AdoptionApplications { get; }
         public IEmailService EmailService { get; }
         public UnitOfWork(ApplicationDbContext context,
@@ -28,10 +29,10 @@ namespace Infrastructure.Repositories
                           ICartService _CartService,
                           IOrderRepository orderRepository,
                           IAnimalRepository animalRepository,
+                          IFosterAnimalRepository fosterAnimalRepository,
                           IAdoptionApplicationRepository adoptionApplicationRepository,
                           IAdminService adminService,
                           IEmailService emailService
-
                           )
         {
             _context = context;
@@ -42,6 +43,7 @@ namespace Infrastructure.Repositories
             Ratings = RatingRepo;
             AdminService = adminService;
             Animals = animalRepository;
+            FosterAnimals = fosterAnimalRepository;
             AdoptionApplications = adoptionApplicationRepository;
             EmailService = emailService;
         }

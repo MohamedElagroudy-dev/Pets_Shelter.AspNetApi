@@ -7,7 +7,7 @@ namespace Core.Entities.AdoptionApp
     {
         // Relations
         public int AnimalId { get; set; }
-        public Core.Entities.Animal.Animal Animal { get; set; } = null!;
+        public Core.Entities.Animal.AdoptionAnimal Animal { get; set; } = null!;
 
 
         public string ApplicantId { get; set; } = null!;

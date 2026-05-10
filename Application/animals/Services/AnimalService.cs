@@ -122,7 +122,7 @@ namespace Ecom.Application.Animals.Services
             _logger.LogInformation("Executing DeleteAsync for animal Id={Id}", id);
 
             var animal = await _unitOfWork.Animals.GetByidAsync(id, a => a.Photos, a => a.PetType);
-            if (animal == null) throw new NotFoundException(nameof(Animal), id.ToString());
+            if (animal == null) throw new NotFoundException(nameof(AdoptionAnimal), id.ToString());
 
             // Delete image files and photo records
             var photos = animal.Photos?.ToList() ?? new List<AnimalPhoto>();
@@ -152,7 +152,7 @@ namespace Ecom.Application.Animals.Services
             _logger.LogInformation("Executing GetAnimalAsync for animal Id={Id}", id);
 
             var animal = await _unitOfWork.Animals.GetByidAsync(id, a => a.Photos, a => a.PetType);
-            if (animal == null) throw new NotFoundException(nameof(Animal), id.ToString());
+            if (animal == null) throw new NotFoundException(nameof(AdoptionAnimal), id.ToString());
 
             return animal.ToDto();
         }

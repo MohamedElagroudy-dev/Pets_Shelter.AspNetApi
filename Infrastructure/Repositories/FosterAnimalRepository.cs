@@ -10,16 +10,16 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories
 {
-    public class AnimalRepository : GenericRepository<AdoptionAnimal>, IAnimalRepository
+    public class FosterAnimalRepository : GenericRepository<FosterAnimal>, IFosterAnimalRepository
     {
         private readonly ApplicationDbContext _context;
 
-        public AnimalRepository(ApplicationDbContext context) : base(context)
+        public FosterAnimalRepository(ApplicationDbContext context) : base(context)
         {
             _context = context;
         }
 
-        public async Task<(IEnumerable<AdoptionAnimal> Animals, int TotalCount)> GetAllAsync(
+        public async Task<(IEnumerable<FosterAnimal> Animals, int TotalCount)> GetAllAsync(
             int pageNumber,
             int pageSize,
             string? search,
@@ -29,7 +29,7 @@ namespace Infrastructure.Repositories
             double? ageToYears,
             AnimalSort? sort)
         {
-            var query = _context.Set<AdoptionAnimal>()
+            var query = _context.Set<FosterAnimal>()
                 .Include(a => a.Photos)
                 .Include(a => a.PetType)
                 .AsNoTracking();

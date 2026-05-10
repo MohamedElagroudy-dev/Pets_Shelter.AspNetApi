@@ -30,7 +30,7 @@ namespace Ecom.Application.AdoptionApplications.Services
 
         public async Task<int> CreateAsync(CreateAdoptionApplicationDto dto, string userId)
         {
-            var animal = await _unitOfWork.Repository<Animal>().GetAsync(dto.AnimalId);
+            var animal = await _unitOfWork.Repository<AdoptionAnimal>().GetAsync(dto.AnimalId);
             if (animal == null) throw new ArgumentException("Animal not found");
 
             var existing = await _unitOfWork.Repository<AdoptionApplication>()

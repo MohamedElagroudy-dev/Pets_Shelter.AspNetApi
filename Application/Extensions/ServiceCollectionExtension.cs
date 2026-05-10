@@ -11,6 +11,7 @@ using Core.Interfaces;
 using Ecom.Application.AdoptionApplications.Services;
 using Ecom.Application.Animals.Services;
 using Ecom.Application.Favorites.Services;
+using Ecom.Application.FosterAnimals.Services;
 using Ecom.Application.Products.Services;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -35,6 +36,7 @@ namespace Application.Extensions
             services.AddScoped<IAdminAppService, AdminAppService>();
             services.AddScoped<IAnimalService, AnimalService>();
             services.AddScoped<IAdoptionApplicationService, AdoptionApplicationService>();
+            services.AddScoped<IFosterAnimalService, FosterAnimalService>();
 
             services.AddHttpContextAccessor(); // needed for IHttpContextAccessor
             services.AddScoped<IUserContext, UserContext>();

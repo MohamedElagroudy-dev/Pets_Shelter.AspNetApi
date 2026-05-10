@@ -1,14 +1,14 @@
 using Core.Entities.Animal;
-using Ecom.Application.Animals.DTOs;
+using Ecom.Application.FosterAnimals.DTOs;
 using System.Linq;
 
-namespace Ecom.Application.Animals.Mappings
+namespace Ecom.Application.FosterAnimals.Mappings
 {
-    public static class AnimalMappingExtensions
+    public static class FosterAnimalMappingExtensions
     {
         private const string DefaultImagePath = "/Images/Defult/animal-default.jpg";
 
-        public static AnimalDTO ToDto(this AdoptionAnimal animal)
+        public static FosterAnimalDTO ToDto(this FosterAnimal animal)
         {
             var photos = animal.Photos?.Select(p => new PhotoDTO
             {
@@ -22,7 +22,7 @@ namespace Ecom.Application.Animals.Mappings
                 photos.Add(new PhotoDTO { ImageUrl = DefaultImagePath });
             }
 
-            return new AnimalDTO
+            return new FosterAnimalDTO
             {
                 Id = animal.Id,
                 Name = animal.Name,
@@ -31,20 +31,25 @@ namespace Ecom.Application.Animals.Mappings
                 Size = animal.Size.ToString(),
                 WeightKg = animal.WeightKg,
                 Gender = animal.Gender.ToString(),
-                IsAdopted = animal.IsAdopted,
                 PetTypeId = animal.PetTypeId,
                 PetTypeName = animal.PetType?.Name ?? string.Empty,
                 Photos = photos,
                 CreatedAt = animal.CreatedAt,
                 AnimalsFriendlyLevel = animal.Temperament?.AnimalsFriendlyLevel ?? 1,
                 ChildrenFriendlyLevel = animal.Temperament?.ChildrenFriendlyLevel ?? 1,
-                HouseTrainedLevel = animal.Temperament?.HouseTrainedLevel ?? 1
+                HouseTrainedLevel = animal.Temperament?.HouseTrainedLevel ?? 1,
+                FosterStartDate = animal.FosterStartDate,
+                FosterEndDate = animal.FosterEndDate,
+                FosterDurationDays = animal.FosterDurationDays,
+                FosterNotes = animal.FosterNotes,
+                Status = animal.Status.ToString(),
+                IsUrgent = animal.IsUrgent
             };
         }
 
-        public static AdoptionAnimal ToEntity(this AddAnimalDTO dto)
+        public static FosterAnimal ToEntity(this AddFosterAnimalDTO dto)
         {
-            return new AdoptionAnimal
+            return new FosterAnimal
             {
                 Name = dto.Name,
                 Description = dto.Description,
@@ -58,11 +63,16 @@ namespace Ecom.Application.Animals.Mappings
                     AnimalsFriendlyLevel = dto.AnimalsFriendlyLevel,
                     ChildrenFriendlyLevel = dto.ChildrenFriendlyLevel,
                     HouseTrainedLevel = dto.HouseTrainedLevel
-                }
+                },
+                FosterStartDate = dto.FosterStartDate,
+                FosterEndDate = dto.FosterEndDate,
+                FosterNotes = dto.FosterNotes,
+                Status = dto.Status,
+                IsUrgent = dto.IsUrgent
             };
         }
 
-        public static void UpdateEntity(this AdoptionAnimal animal, UpdateAnimalDTO dto)
+        public static void UpdateEntity(this FosterAnimal animal, UpdateFosterAnimalDTO dto)
         {
             animal.Name = dto.Name;
             animal.Description = dto.Description;
@@ -78,6 +88,12 @@ namespace Ecom.Application.Animals.Mappings
             animal.Temperament.AnimalsFriendlyLevel = dto.AnimalsFriendlyLevel;
             animal.Temperament.ChildrenFriendlyLevel = dto.ChildrenFriendlyLevel;
             animal.Temperament.HouseTrainedLevel = dto.HouseTrainedLevel;
+
+            animal.FosterStartDate = dto.FosterStartDate;
+            animal.FosterEndDate = dto.FosterEndDate;
+            animal.FosterNotes = dto.FosterNotes;
+            animal.Status = dto.Status;
+            animal.IsUrgent = dto.IsUrgent;
         }
     }
 }

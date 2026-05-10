@@ -41,6 +41,7 @@ namespace Infrastructure.Extensions
             services.AddScoped<IAdminService, AdminService>();
             services.AddScoped<ISubscriptionService, SubscriptionService>();
             services.AddScoped<IEmailService, EmailService>();
+            services.AddScoped<IFosterAnimalRepository, FosterAnimalRepository>();
 
             services.AddSingleton<IFileProvider>(
             new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot")));
