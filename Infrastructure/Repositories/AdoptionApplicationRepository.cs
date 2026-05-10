@@ -25,7 +25,9 @@ namespace Infrastructure.Repositories
             string? search,
             string? applicantId,
             ApplicationStatus? status,
-            AdoptionApplicationSort sort)
+            AdoptionApplicationSort sort,
+            ApplicationType? applicationType
+            )
         {
             var query = _context.Set<AdoptionApplication>()
                 .Include(a => a.Animal)
@@ -46,6 +48,9 @@ namespace Infrastructure.Repositories
 
             if (status.HasValue)
                 query = query.Where(a => a.Status == status.Value);
+
+            if (applicationType.HasValue)
+                query = query.Where(a => a.ApplicationType == applicationType.Value);
 
             var total = await query.CountAsync();
 

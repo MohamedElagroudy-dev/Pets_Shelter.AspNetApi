@@ -13,6 +13,7 @@ namespace Core.Interfaces
             string? search,
             string? applicantId,
             ApplicationStatus? status,
-            AdoptionApplicationSort sort);
+            AdoptionApplicationSort sort,
+            ApplicationType? applicationType);
     }
 }
