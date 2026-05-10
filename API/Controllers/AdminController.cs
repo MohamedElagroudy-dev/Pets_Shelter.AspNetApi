@@ -1,25 +1,18 @@
 ﻿using API.Helper;
 using Application.Admin.DTO;
 using Application.Admin.Services;
-using Application.AdoptionApplications.DTOs;
 using Application.Common;
 using Application.Common.Pagination;
 using Application.Orders.DTOs;
 using Application.Orders.Services;
 using Application.Payment.Services;
 using Core.Constants;
-using Core.Entities;
-using Core.Entities.OrderAggregate;
 using Core.Exceptions;
-using Core.Interfaces;
-using Core.Sharing.Pagination;
-using Ecom.Application.AdoptionApplications.DTOs;
-using Ecom.Application.AdoptionApplications.Services;
-using Ecom.Application.Products.DTOs;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Stripe;
+using Ecom.Application.AnimalApplications.DTOs;
+using Ecom.Application.AnimalApplications.Services;
+
 
 namespace API.Controllers
 {
@@ -31,9 +24,9 @@ namespace API.Controllers
         private readonly IOrderService _orderService;
         private readonly IPaymentAppService _paymentService;
         private readonly IAdminAppService _adminAppService;
-        private readonly IAdoptionApplicationService _Applicationservice;
+        private readonly IAnimalApplicationService _Applicationservice;
 
-        public AdminController(IOrderService orderService, IPaymentAppService paymentService, IAdminAppService adminAppService, IAdoptionApplicationService service)
+        public AdminController(IOrderService orderService, IPaymentAppService paymentService, IAdminAppService adminAppService, IAnimalApplicationService service)
         {
             _orderService = orderService;
             _paymentService = paymentService;
@@ -143,12 +136,27 @@ namespace API.Controllers
 
 
         [HttpGet("GetAllApplications")]
-        public async Task<IActionResult> GetAll([FromQuery] AdoptionApplicationParams @params)
+        public async Task<IActionResult> GetAll([FromQuery] AnimalApplicationParams @params)
         {
             try
             {
+                @params.ApplicationType = ApplicationType.Adoption;
                 var result = await _Applicationservice.GetAllAsync(@params);
-                return Ok(new ResponseAPI<AdoptionApplicationStatsResult>(200, "Applications fetched", result));
+                return Ok(new ResponseAPI<AnimalApplicationStatsResult>(200, "Applications fetched", result));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ResponseAPI<string>(500, ex.Message));
+            }
+        }
+        [HttpGet("GetAllFosterApplications")]
+        public async Task<IActionResult> GetAllFoster([FromQuery] AnimalApplicationParams @params)
+        {
+            try
+            {
+                @params.ApplicationType = ApplicationType.Foster;
+                var result = await _Applicationservice.GetAllAsync(@params);
+                return Ok(new ResponseAPI<AnimalApplicationStatsResult>(200, "Applications fetched", result));
             }
             catch (Exception ex)
             {
@@ -165,7 +173,7 @@ namespace API.Controllers
                 if (app == null)
                     return NotFound(new ResponseAPI<string>(404, $"Application with ID {id} not found"));
 
-                return Ok(new ResponseAPI<AdoptionApplicationDetailsDto>(200, data: app));
+                return Ok(new ResponseAPI<AnimalApplicationDetailsDto>(200, data: app));
             }
             catch (Exception ex)
             {
