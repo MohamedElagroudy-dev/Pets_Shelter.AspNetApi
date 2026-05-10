@@ -1,4 +1,5 @@
 ﻿using Core.Constants;
+using Core.Entities.Animal;
 
 
 namespace Core.Entities.AdoptionApp
@@ -7,11 +8,13 @@ namespace Core.Entities.AdoptionApp
     {
         // Relations
         public int AnimalId { get; set; }
-        public Core.Entities.Animal.AdoptionAnimal Animal { get; set; } = null!;
-
+        public BaseAnimal Animal { get; set; } = null!;
 
         public string ApplicantId { get; set; } = null!;
         public AppUser Applicant { get; set; } = null!;
+
+        // Application type 
+        public ApplicationType ApplicationType { get; set; } = ApplicationType.Adoption;
 
         // Owned sections
         public ApplicantInfo ApplicantInfo { get; set; } = new();
