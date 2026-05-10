@@ -1,6 +1,6 @@
 using API.Helper;
-using Ecom.Application.AdoptionApplications.DTOs;
-using Ecom.Application.AdoptionApplications.Services;
+using Ecom.Application.AnimalApplications.DTOs;
+using Ecom.Application.AnimalApplications.Services;
 using Application.Common;
 using Application.Common.Pagination;
 using Core.Constants;
@@ -16,9 +16,9 @@ namespace API.Controllers
     [Authorize]
     public class AdoptionApplicationsController : ControllerBase
     {
-        private readonly IAdoptionApplicationService _service;
+        private readonly IAnimalApplicationService _service;
 
-        public AdoptionApplicationsController(IAdoptionApplicationService service)
+        public AdoptionApplicationsController(IAnimalApplicationService service)
         {
             _service = service;
         }
@@ -32,7 +32,7 @@ namespace API.Controllers
 
         [HttpPost]
         [Authorize(Roles = UserRoles.Customer)]
-        public async Task<IActionResult> Create([FromBody] CreateAdoptionApplicationDto dto)
+        public async Task<IActionResult> Create([FromBody] CreateAnimalApplicationDto dto)
         {
             try
             {
@@ -40,7 +40,9 @@ namespace API.Controllers
                 if (string.IsNullOrEmpty(userId))
                     return Unauthorized(new ResponseAPI(401));
 
-                var id = await _service.CreateAsync(dto, userId);
+                dto.ApplicationType = ApplicationType.Adoption;
+
+                var id = await _service.CreateAdoptionAsync(dto, userId);
                 return Ok(new ResponseAPI<int>(200, "Application submitted", id));
             }
             catch (UnauthorizedAccessException)
@@ -58,13 +60,15 @@ namespace API.Controllers
         }
 
         [HttpGet("my")]
-        public async Task<IActionResult> GetMy([FromQuery] AdoptionApplicationParams @params)
+        public async Task<IActionResult> GetMy([FromQuery] AnimalApplicationParams @params)
         {
             try
             {
                 var userId = GetCurrentUserId();
-                var result = await _service.GetMyApplicationsAsync(userId, @params);
-                return Ok(new ResponseAPI<PagedResult<AdoptionApplicationDto>>(200, "Applications fetched", result));
+                var paramsWithType = @params ?? new AnimalApplicationParams();
+                paramsWithType.ApplicationType = ApplicationType.Adoption;
+                var result = await _service.GetMyApplicationsAsync(userId, paramsWithType);
+                return Ok(new ResponseAPI<PagedResult<AnimalApplicationDto>>(200, "Applications fetched", result));
             }
             catch (UnauthorizedAccessException)
             {
@@ -89,7 +93,7 @@ namespace API.Controllers
                 if (app == null)
                     return NotFound(new ResponseAPI<string>(404, $"Application with ID {id} not found"));
 
-                return Ok(new ResponseAPI<AdoptionApplicationDetailsDto>(200, $"Applications with id {id} fetched", app));
+                return Ok(new ResponseAPI<AnimalApplicationDetailsDto>(200, $"Applications with id {id} fetched", app));
             }
             catch (UnauthorizedAccessException)
             {
