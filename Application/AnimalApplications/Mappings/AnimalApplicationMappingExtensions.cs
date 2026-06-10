@@ -1,19 +1,19 @@
 using Core.Entities.AdoptionApp;
-using Ecom.Application.AdoptionApplications.DTOs;
 using System.Linq;
 using System;
 using Core.Constants;
 using Core.Entities;
+using Ecom.Application.AnimalApplications.DTOs;
 
-namespace Ecom.Application.AdoptionApplications.Mappings
+namespace Ecom.Application.AnimalApplications.Mappings
 {
 
-    public static class AdoptionApplicationMappingExtensions
+    public static class AnimalApplicationMappingExtensions
     {
         private const string DefaultImagePath = "/Images/Defult/DefultUserPic.jpeg";
-        public static AdoptionApplicationDto ToDto(this AdoptionApplication app)
+        public static AnimalApplicationDto ToDto(this AdoptionApplication app)
         {
-            return new AdoptionApplicationDto
+            return new AnimalApplicationDto
             {
                 Id = app.Id,
                 AnimalId = app.AnimalId,
@@ -30,9 +30,9 @@ namespace Ecom.Application.AdoptionApplications.Mappings
             };
         }
 
-        public static AdoptionApplicationDetailsDto ToDetailsDto(this AdoptionApplication app)
+        public static AnimalApplicationDetailsDto ToDetailsDto(this AdoptionApplication app)
         {
-            return new AdoptionApplicationDetailsDto
+            return new AnimalApplicationDetailsDto
             {
                 Id = app.Id,
                 Status = app.Status,
@@ -54,12 +54,13 @@ namespace Ecom.Application.AdoptionApplications.Mappings
             };
         }
 
-        public static AdoptionApplication ToEntity(this CreateAdoptionApplicationDto dto, AppUser user)
+        public static AdoptionApplication ToEntity(this CreateAnimalApplicationDto dto, AppUser user)
         {
             return new AdoptionApplication
             {
                 AnimalId = dto.AnimalId,
                 ApplicantId = user.Id,
+                ApplicationType = dto.ApplicationType, // ensure application type is preserved
                 ApplicantInfo = new ApplicantInfo
                 {
                     FirstName = dto.FirstName,

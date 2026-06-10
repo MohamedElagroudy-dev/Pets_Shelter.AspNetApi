@@ -1,9 +1,9 @@
 using Core.Constants;
 using System;
 
-namespace Ecom.Application.AdoptionApplications.DTOs
+namespace Ecom.Application.AnimalApplications.DTOs
 {
-    public class AdoptionApplicationDetailsDto
+    public class AnimalApplicationDetailsDto
     {
         public int Id { get; set; }
         public ApplicationStatus Status { get; set; }

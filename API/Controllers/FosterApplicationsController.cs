@@ -1,24 +1,23 @@
-using API.Helper;
-using Ecom.Application.AnimalApplications.DTOs;
-using Ecom.Application.AnimalApplications.Services;
+﻿using API.Helper;
 using Application.Common;
 using Application.Common.Pagination;
 using Core.Constants;
-using Core.Exceptions;
+using Ecom.Application.AnimalApplications.DTOs;
+using Ecom.Application.AnimalApplications.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
-//Todo: return the name of the user with dto
+
 namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class AdoptionApplicationsController : ControllerBase
+    public class FosterApplicationsController : ControllerBase
     {
         private readonly IAnimalApplicationService _service;
 
-        public AdoptionApplicationsController(IAnimalApplicationService service)
+        public FosterApplicationsController(IAnimalApplicationService service)
         {
             _service = service;
         }
@@ -40,9 +39,9 @@ namespace API.Controllers
                 if (string.IsNullOrEmpty(userId))
                     return Unauthorized(new ResponseAPI(401));
 
-                dto.ApplicationType = ApplicationType.Adoption;
+                dto.ApplicationType = ApplicationType.Foster;
 
-                var id = await _service.CreateAdoptionAsync(dto, userId);
+                var id = await _service.CreateFosterAsync(dto, userId);
                 return Ok(new ResponseAPI<int>(200, "Application submitted", id));
             }
             catch (UnauthorizedAccessException)
@@ -53,7 +52,7 @@ namespace API.Controllers
             {
                 return BadRequest(new ResponseAPI<string>(400, ex.Message));
             }
-            catch (Exception )
+            catch (Exception)
             {
                 throw;
             }
@@ -65,9 +64,11 @@ namespace API.Controllers
             try
             {
                 var userId = GetCurrentUserId();
-                var paramsWithType = @params ?? new AnimalApplicationParams();
-                paramsWithType.ApplicationType = ApplicationType.Adoption;
-                var result = await _service.GetMyApplicationsAsync(userId, paramsWithType);
+                if (string.IsNullOrEmpty(userId))
+                    return Unauthorized(new ResponseAPI(401));
+
+                @params.ApplicationType = ApplicationType.Foster;
+                var result = await _service.GetMyApplicationsAsync(userId, @params);
                 return Ok(new ResponseAPI<PagedResult<AnimalApplicationDto>>(200, "Applications fetched", result));
             }
             catch (UnauthorizedAccessException)
@@ -104,6 +105,5 @@ namespace API.Controllers
                 throw;
             }
         }
-
     }
 }
