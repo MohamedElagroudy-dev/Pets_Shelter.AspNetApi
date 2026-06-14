@@ -1,15 +1,20 @@
-﻿using Application.Account;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
+using Application.Account;
 using System.Collections.Concurrent;
 
-namespace API.SignalR
+namespace Application.SignalR
 {
-
     [Authorize]
-    public class NotificationHub(IUserContext _userContext) : Hub
+    public class NotificationHub : Hub
     {
         private static readonly ConcurrentDictionary<string, string> UserConnections = new();
+        private readonly IUserContext _userContext;
+
+        public NotificationHub(IUserContext userContext)
+        {
+            _userContext = userContext;
+        }
 
         public override Task OnConnectedAsync()
         {
