@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using Core.Entities.Chat;
 
 namespace Core.Entities
 {
@@ -20,5 +21,11 @@ namespace Core.Entities
         public List<RefreshToken>? RefreshTokens { get; set; }
 
         public string PictureUrl { get; set; } = string.Empty;
+
+        // Chat navigation properties
+        public ChatRoom? ChatRoom { get; set; }
+
+        // All messages this user ever sent (both roles)
+        public ICollection<Message> SentMessages { get; set; } = new List<Message>();
     }
 }

@@ -1,4 +1,4 @@
-﻿using API.SignalR;
+﻿using Application.SignalR;
 using Application.Payment.DTOs;
 using Application.Payment.Services;
 using Core.Constants;
