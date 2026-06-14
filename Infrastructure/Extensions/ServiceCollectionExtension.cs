@@ -13,6 +13,7 @@ using System.Text;
 using Infrastructure.Settings;
 using Infrastructure.Service;
 using Application.Subscriptions.Services;
+using Application.Chat.Interfaces;
 
 
 namespace Infrastructure.Extensions
@@ -42,6 +43,7 @@ namespace Infrastructure.Extensions
             services.AddScoped<ISubscriptionService, SubscriptionService>();
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IFosterAnimalRepository, FosterAnimalRepository>();
+            services.AddScoped<IChatService, ChatService>();
 
             services.AddSingleton<IFileProvider>(
             new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot")));
@@ -85,6 +87,25 @@ namespace Infrastructure.Extensions
                     ValidIssuer = configuration["JWT:Issuer"],
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)),
                     ClockSkew = TimeSpan.Zero
+                };
+
+                // ??  CRITICAL — SignalR passes the token as a query-string parameter
+                //     because WebSockets cannot send custom headers.
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = ctx =>
+                    {
+                        var accessToken = ctx.Request.Query["access_token"];
+                        var path = ctx.HttpContext.Request.Path;
+
+                        if (!string.IsNullOrEmpty(accessToken) &&
+                            path.StartsWithSegments("/hubs/chat"))
+                        {
+                            ctx.Token = accessToken;
+                        }
+
+                        return Task.CompletedTask;
+                    }
                 };
             });
         }
