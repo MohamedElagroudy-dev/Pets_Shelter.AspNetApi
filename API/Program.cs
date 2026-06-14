@@ -1,5 +1,5 @@
-
-using API.Middleware;
+﻿using API.Middleware;
+using Application.SignalR;
 using Application.Extensions;
 using Core.Entities;
 using Core.Extensions;
@@ -32,35 +32,45 @@ namespace API
             builder.Services.Addcore();
             builder.Services.AddApplication();
 
-            // Add CORS
+            // ── SignalR ───────────────────────────────────────────────────────────
+            builder.Services.AddSignalR();
+            //builder.Services.AddCors(options => 
+            //{ 
+            // options.AddPolicy("AllowReactApp", 
+            // policy => 
+            // { 
+            // policy.WithOrigins( 
+            // "http://localhost:3000", 
+            // "http://localhost:5173", 
+            // "http://localhost:5176", 
+            // "http://localhost:5177" 
+            // ) // .AllowAnyHeader() 
+            // .AllowAnyMethod(); 
+            // }); 
+            //});
+            // Add CORS (allow credentials for SignalR)
             //builder.Services.AddCors(options =>
             //{
-            //    options.AddPolicy("AllowReactApp",
+            //    options.AddPolicy("AllowAll",
             //        policy =>
             //        {
-            //            policy.WithOrigins(
-            //                    "http://localhost:3000",
-            //                    "http://localhost:5173",
-            //                    "http://localhost:5176",
-            //                    "http://localhost:5177"
-            //                )
+            //            policy
+            //                .AllowAnyOrigin()
             //                .AllowAnyHeader()
-            //                .AllowAnyMethod();
+            //                .AllowAnyMethod()
+            //                .AllowCredentials();  // required for SignalR clients that send cookies or auth headers via query string
             //        });
             //});
             builder.Services.AddCors(options =>
             {
-                options.AddPolicy("AllowAll",
-                    policy =>
-                    {
-                        policy
-                            .AllowAnyOrigin()
-                            .AllowAnyHeader()
-                            .AllowAnyMethod();
-                    });
+                options.AddPolicy("AllowAll", policy =>
+                {
+                    policy.SetIsOriginAllowed(_ => true)
+                          .AllowAnyHeader()
+                          .AllowAnyMethod()
+                          .AllowCredentials();
+                });
             });
-
-
 
             var app = builder.Build();
 
@@ -95,10 +105,15 @@ namespace API
             // Use CORS
             app.UseCors("AllowAll");
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
 
             app.MapControllers();
+
+            // Map the SignalR hubs
+            app.MapHub<ChatHub>("/hubs/chat");
+            app.MapHub<NotificationHub>("/hubs/notifications");
 
             app.Run();
         }
