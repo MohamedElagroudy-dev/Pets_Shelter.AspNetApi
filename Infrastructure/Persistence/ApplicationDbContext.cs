@@ -1,5 +1,6 @@
 ﻿using Core.Entities;
 using Core.Entities.Animal;
+using Core.Entities.Chat;
 using Core.Entities.OrderAggregate;
 using Core.Entities.Plans;
 using Core.Entities.Product;
@@ -31,11 +32,16 @@ namespace Infrastructure.Persistence
         public DbSet<PlanFeature> PlanFeatures { get; set; }
         public DbSet<SubscriptionPlan> SubscriptionPlans { get; set; }
 
+        public DbSet<ChatRoom> ChatRooms => Set<ChatRoom>();
+        public DbSet<Message> Messages => Set<Message>();
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(ProductConfiguration).Assembly);
+
+          
         }
     }
 }
