@@ -43,5 +43,28 @@ namespace Infrastructure.Service
                     .SendAsync("ReceiveApplicationNotification", message);
             }
         }
+
+        public async Task NotifyApplicationAcceptedAsync(AdoptionApplication application)
+        {
+            if (application?.Applicant?.Email == null)
+                return;
+
+            var connectionId = NotificationHub.GetConnectionIdByEmail(application.Applicant.Email);
+            if (connectionId != null)
+            {
+                var message = new
+                {
+                    applicationId = application.Id,
+                    status = "Accepted",
+                    animalName = application.Animal?.Name ?? "Unknown",
+                    adminNotes = application.AdminNotes ?? string.Empty,
+                    message = $"Your application for {application.Animal?.Name} has been accepted.",
+                    timestamp = DateTime.UtcNow
+                };
+
+                await _hubContext.Clients.Client(connectionId)
+                    .SendAsync("ReceiveApplicationNotification", message);
+            }
+        }
     }
 }
