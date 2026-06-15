@@ -17,5 +17,6 @@ namespace Core.Interfaces
             ApplicationType? applicationType);
 
         Task<AdoptionApplication?> RejectAsync(int id, string adminNotes);
+        Task<AdoptionApplication?> AcceptAsync(int id, string adminNotes);
     }
 }
