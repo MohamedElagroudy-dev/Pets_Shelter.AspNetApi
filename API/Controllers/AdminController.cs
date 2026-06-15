@@ -202,5 +202,26 @@ namespace API.Controllers
             }
         }
 
+        [HttpPost("applications/{id:int}/accept")]
+        public async Task<IActionResult> AcceptApplication(int id, [FromBody] AcceptApplicationDto request)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(request?.AdminNotes))
+                    return BadRequest(new ResponseAPI<string>(400, "Admin notes are required for acceptance"));
+
+                var app = await _Applicationservice.AcceptApplicationAsync(id, request);
+                return Ok(new ResponseAPI<AnimalApplicationDetailsDto>(200, "Application accepted successfully", app));
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new ResponseAPI<string>(404, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ResponseAPI<string>(500, $"Internal server error: {ex.Message}"));
+            }
+        }
+
     }
 }
