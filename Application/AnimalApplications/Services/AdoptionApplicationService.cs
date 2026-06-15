@@ -141,19 +141,11 @@ namespace Ecom.Application.AnimalApplications.Services
 
         public async Task<AnimalApplicationDetailsDto?> RejectApplicationAsync(int id, RejectApplicationDto dto)
         {
-            var app = await _unitOfWork.Repository<AdoptionApplication>()
-                .GetByAsync(a => a.Id == id, a => a.Animal, a => a.Animal.Photos, a => a.Applicant);
-            
+            // Delegate the DB update to the repository implementation
+            var app = await _unitOfWork.AdoptionApplications.RejectAsync(id, dto.AdminNotes);
+
             if (app == null)
                 throw new KeyNotFoundException($"Application with ID {id} not found");
-
-            // Update application status and admin notes
-            app.Status = ApplicationStatus.Rejected;
-            app.AdminNotes = dto.AdminNotes;
-            app.ReviewedAt = DateTime.UtcNow;
-
-            await _unitOfWork.Repository<AdoptionApplication>().UpdateAsync(id, app);
-            await _unitOfWork.CompleteAsync();
 
             // Send notification to the applicant
             await _notificationService.NotifyApplicationRejectedAsync(app);

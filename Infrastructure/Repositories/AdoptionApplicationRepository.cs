@@ -64,5 +64,26 @@ namespace Infrastructure.Repositories
             var items = await query.Skip(pageSize * (pageNumber - 1)).Take(pageSize).ToListAsync();
             return (items, total);
         }
+
+        public async Task<AdoptionApplication?> RejectAsync(int id, string adminNotes)
+        {
+            var app = await _context.Set<AdoptionApplication>()
+                .Include(a => a.Animal)
+                    .ThenInclude(an => an.Photos)
+                .Include(a => a.Applicant)
+                .FirstOrDefaultAsync(a => a.Id == id);
+
+            if (app == null)
+                return null;
+
+            app.Status = ApplicationStatus.Rejected;
+            app.AdminNotes = adminNotes;
+            app.ReviewedAt = DateTime.UtcNow;
+
+            _context.Update(app);
+            await _context.SaveChangesAsync();
+
+            return app;
+        }
     }
 }
