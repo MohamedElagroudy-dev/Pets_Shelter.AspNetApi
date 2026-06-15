@@ -44,6 +44,7 @@ namespace Infrastructure.Extensions
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IFosterAnimalRepository, FosterAnimalRepository>();
             services.AddScoped<IChatService, ChatService>();
+            services.AddScoped<INotificationService, NotificationService>();
 
             services.AddSingleton<IFileProvider>(
             new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot")));
@@ -99,7 +100,7 @@ namespace Infrastructure.Extensions
                         var path = ctx.HttpContext.Request.Path;
 
                         if (!string.IsNullOrEmpty(accessToken) &&
-                            path.StartsWithSegments("/hubs/chat"))
+                            (path.StartsWithSegments("/hubs/chat") || path.StartsWithSegments("/hubs/notifications")))
                         {
                             ctx.Token = accessToken;
                         }

@@ -1,4 +1,5 @@
 ﻿using Core.Entities.OrderAggregate;
+using Core.Entities.AdoptionApp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,5 +11,6 @@ namespace Core.Interfaces
     public interface INotificationService
     {
         Task NotifyOrderCompletedAsync(Order order);
+        Task NotifyApplicationRejectedAsync(AdoptionApplication application);
     }
 }
