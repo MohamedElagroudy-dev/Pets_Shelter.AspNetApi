@@ -181,5 +181,26 @@ namespace API.Controllers
             }
         }
 
+        [HttpPost("applications/{id:int}/reject")]
+        public async Task<IActionResult> RejectApplication(int id, [FromBody] RejectApplicationDto request)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(request?.AdminNotes))
+                    return BadRequest(new ResponseAPI<string>(400, "Admin notes are required for rejection"));
+
+                var app = await _Applicationservice.RejectApplicationAsync(id, request);
+                return Ok(new ResponseAPI<AnimalApplicationDetailsDto>(200, "Application rejected successfully", app));
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new ResponseAPI<string>(404, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ResponseAPI<string>(500, $"Internal server error: {ex.Message}"));
+            }
+        }
+
     }
 }
