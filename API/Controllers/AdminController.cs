@@ -33,7 +33,7 @@ namespace API.Controllers
             _adminAppService = adminAppService;
             _Applicationservice = service;
         }
-        [HttpGet]
+        [HttpGet("orders")]
         public async Task<IActionResult> GetAll([FromQuery] OrderParams orderParams)
         {
             try
@@ -46,7 +46,7 @@ namespace API.Controllers
                 return BadRequest(new ResponseAPI<string>(500, ex.Message));
             }
         }
-        [HttpGet("{id}")]
+        [HttpGet("orders/{id}")]
         public async Task<ActionResult<ResponseAPI<OrderDto>>> GetOrderById(int id)
         {
             try
