@@ -19,12 +19,18 @@ namespace Ecom.Application.AnimalApplications.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IUserContext _userContext;
         private readonly IAuthService _authService;
+        private readonly INotificationService _notificationService;
 
-        public AnimalApplicationService(IUnitOfWork unitOfWork, IUserContext userContext, IAuthService authService)
+        public AnimalApplicationService(
+            IUnitOfWork unitOfWork, 
+            IUserContext userContext, 
+            IAuthService authService,
+            INotificationService notificationService)
         {
             _unitOfWork = unitOfWork;
             _userContext = userContext;
             _authService = authService;
+            _notificationService = notificationService;
         }
 
         public async Task<int> CreateAdoptionAsync(CreateAnimalApplicationDto dto, string userId)
@@ -131,6 +137,28 @@ namespace Ecom.Application.AnimalApplications.Services
         {
             var app = await _unitOfWork.Repository<AdoptionApplication>().GetByAsync(a => a.Id == id, a => a.Animal, a => a.Animal.Photos);
             return app?.ToDetailsDto();
+        }
+
+        public async Task<AnimalApplicationDetailsDto?> RejectApplicationAsync(int id, RejectApplicationDto dto)
+        {
+            var app = await _unitOfWork.Repository<AdoptionApplication>()
+                .GetByAsync(a => a.Id == id, a => a.Animal, a => a.Animal.Photos, a => a.Applicant);
+            
+            if (app == null)
+                throw new KeyNotFoundException($"Application with ID {id} not found");
+
+            // Update application status and admin notes
+            app.Status = ApplicationStatus.Rejected;
+            app.AdminNotes = dto.AdminNotes;
+            app.ReviewedAt = DateTime.UtcNow;
+
+            await _unitOfWork.Repository<AdoptionApplication>().UpdateAsync(id, app);
+            await _unitOfWork.CompleteAsync();
+
+            // Send notification to the applicant
+            await _notificationService.NotifyApplicationRejectedAsync(app);
+
+            return app.ToDetailsDto();
         }
     }
 
