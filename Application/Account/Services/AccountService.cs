@@ -268,6 +268,28 @@ namespace Application.Account.Services
             return await _authService.SendEmailForForgetPassword(email);
         }
 
+        public async Task<string?> ChangePasswordAsync(ChangePasswordDto dto)
+        {
+            if (dto == null)
+                throw new ArgumentNullException(nameof(dto));
 
+            var currentUser = _userContext.GetCurrentUser();
+            if (currentUser == null)
+                throw new UnauthorizedAccessException("User not authenticated");
+
+            _logger.LogInformation("ChangePassword called for user: {Email}", currentUser.Email);
+
+            // Validate that new password and confirm password match
+            if (dto.NewPassword != dto.ConfirmPassword)
+                return "New password and confirm password do not match";
+
+            // Validate that new password is different from old password
+            if (dto.OldPassword == dto.NewPassword)
+                return "New password must be different from old password";
+
+            var result = await _authService.ChangePasswordAsync(currentUser.Email!, dto.OldPassword, dto.NewPassword);
+            
+            return result; // null = success, string = error message
+        }
     }
 }

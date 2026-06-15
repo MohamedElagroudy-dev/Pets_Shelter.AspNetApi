@@ -28,5 +28,6 @@ namespace Application.Account.Services
         Task<string?> ResetPassword(RestPasswordModel restPassword);
         Task<bool> ActiveAccount(ActiveAccountModel accountModel);
         Task<bool> SendEmailForForgetPassword(string email);
+        Task<string?> ChangePasswordAsync(ChangePasswordDto dto);
     }
 }

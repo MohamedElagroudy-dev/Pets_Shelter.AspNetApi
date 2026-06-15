@@ -281,6 +281,35 @@ namespace API.Controllers
                 return StatusCode(500, new { message = ex.Message });
             }
         }
+        [HttpPost("forget-password")]
+        [Authorize]
+        public async Task<IActionResult> ForgetPassword([FromBody] ChangePasswordDto dto)
+        {
+            if (dto == null)
+                return BadRequest(new { message = "Request body is required" });
+
+            try
+            {
+                var result = await _accountAppService.ChangePasswordAsync(dto);
+                
+                if (result == null)
+                    return Ok(new { message = "Password has been changed successfully" });
+
+                return BadRequest(new { message = result });
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new { message = ex.Message });
+            }
+            catch (ArgumentNullException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
+        }
 
         [HttpPost("activate")]
         public async Task<IActionResult> Activate([FromBody] ActiveAccountModel model)

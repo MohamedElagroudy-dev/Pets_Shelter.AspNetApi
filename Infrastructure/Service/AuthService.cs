@@ -484,5 +484,26 @@ namespace Infrastructure.Service
             return true;
 
         }
+
+        public async Task<string?> ChangePasswordAsync(string userEmail, string oldPassword, string newPassword)
+        {
+            var user = await _userManager.FindByEmailAsync(userEmail);
+            if (user == null)
+                return "User not found";
+
+            // Verify old password is correct
+            var passwordCorrect = await _userManager.CheckPasswordAsync(user, oldPassword);
+            if (!passwordCorrect)
+                return "Old password is incorrect";
+
+            // Change password
+            var result = await _userManager.ChangePasswordAsync(user, oldPassword, newPassword);
+            
+            if (result.Succeeded)
+                return null; // null indicates success
+
+            var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+            return errors;
+        }
     }
 }

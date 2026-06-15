@@ -25,5 +25,6 @@ namespace Core.Interfaces
         Task<string> ResetPassword(RestPasswordModel restPassword);
         Task<bool> ActiveAccount(ActiveAccountModel accountModel);
         Task<bool> SendEmailForForgetPassword(string email);
+        Task<string?> ChangePasswordAsync(string userEmail, string oldPassword, string newPassword);
     }
 }
