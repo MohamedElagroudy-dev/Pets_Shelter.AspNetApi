@@ -152,6 +152,20 @@ namespace Ecom.Application.AnimalApplications.Services
 
             return app.ToDetailsDto();
         }
+
+        public async Task<AnimalApplicationDetailsDto?> AcceptApplicationAsync(int id, AcceptApplicationDto dto)
+        {
+            // Delegate DB update to repository which will also update animal data
+            var app = await _unitOfWork.AdoptionApplications.AcceptAsync(id, dto.AdminNotes);
+
+            if (app == null)
+                throw new KeyNotFoundException($"Application with ID {id} not found");
+
+            // Send notification
+            await _notificationService.NotifyApplicationAcceptedAsync(app);
+
+            return app.ToDetailsDto();
+        }
     }
 
    
