@@ -50,7 +50,13 @@ namespace Ecom.Application.AnimalApplications.Mappings
                 AnimalId = app.AnimalId,
                 AnimalName = app.Animal?.Name ?? string.Empty,
                 AnimalDescription = app.Animal?.Description ?? string.Empty,
-                AnimalPictureUrl = app.Animal?.Photos?.FirstOrDefault()?.ImageUrl ?? string.Empty
+                AnimalPictureUrl = app.Animal?.Photos?.FirstOrDefault()?.ImageUrl ?? string.Empty,
+
+                // Include owned sections so consumer receives full application info
+                HouseholdInfo = app.HouseholdInfo ?? new HouseholdInfo(),
+                PetCareInfo = app.PetCareInfo ?? new PetCareInfo(),
+                Preferences = app.Preferences ?? new AdoptionPreferences(),
+                Agreement = app.Agreement ?? new AgreementInfo()
             };
         }
 

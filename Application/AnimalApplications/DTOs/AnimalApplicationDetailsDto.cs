@@ -1,4 +1,5 @@
 using Core.Constants;
+using Core.Entities.AdoptionApp;
 using System;
 
 namespace Ecom.Application.AnimalApplications.DTOs
@@ -28,5 +29,11 @@ namespace Ecom.Application.AnimalApplications.DTOs
         public string AnimalName { get; set; } = string.Empty;
         public string AnimalDescription { get; set; } = string.Empty;
         public string AnimalPictureUrl { get; set; } = string.Empty;
+
+        // Application Details
+        public HouseholdInfo HouseholdInfo { get; set; } = new();
+        public PetCareInfo PetCareInfo { get; set; } = new();
+        public AdoptionPreferences Preferences { get; set; } = new();
+        public AgreementInfo Agreement { get; set; } = new();
     }
 }
