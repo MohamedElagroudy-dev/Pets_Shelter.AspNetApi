@@ -22,6 +22,7 @@ namespace Infrastructure.Repositories
         public IFosterAnimalRepository FosterAnimals { get; }
         public IAdoptionApplicationRepository AdoptionApplications { get; }
         public IEmailService EmailService { get; }
+
         public UnitOfWork(ApplicationDbContext context,
                           IProductRepository productRepository,
                           IGenericRepository<Rating> RatingRepo,
