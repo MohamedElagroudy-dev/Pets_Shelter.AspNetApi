@@ -18,10 +18,15 @@ namespace E_commerce.Extensions
                 var config = ConfigurationOptions.Parse(connString);
                 config.AbortOnConnectFail = false;
 
+                var redisPassword = builder.Configuration["ConnectionStrings:RedisPassword"];
+                var redisEndpoint = builder.Configuration["ConnectionStrings:RedisEndpoint"];
+                if (redisEndpoint is null) // just for null warning
+                    redisEndpoint = "";
+
                 // Important for Upstash (TLS/SSL required)
                 config.Ssl = true;
-                config.Password = "gQAAAAAAAXymAAIncDFkMDFjODRhZmU1N2M0MWY0OTU5YWFlZTg2NzRkNTM0NnAxOTc0NDY";
-                config.EndPoints.Add("becoming-duck-97446.upstash.io:6379");
+                config.Password = redisPassword;
+                config.EndPoints.Add(redisEndpoint);
 
                 return ConnectionMultiplexer.Connect(config);
             });
