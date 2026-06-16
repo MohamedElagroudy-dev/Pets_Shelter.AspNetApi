@@ -1,6 +1,7 @@
 using Application.Common.Pagination;
 using Core.Constants;
 using Core.Entities.AdoptionApp;
+using Core.Entities.Animal;
 using Core.Interfaces;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -63,6 +64,70 @@ namespace Infrastructure.Repositories
 
             var items = await query.Skip(pageSize * (pageNumber - 1)).Take(pageSize).ToListAsync();
             return (items, total);
+        }
+
+        public async Task<AdoptionApplication?> RejectAsync(int id, string adminNotes)
+        {
+            var app = await _context.Set<AdoptionApplication>()
+                .Include(a => a.Animal)
+                    .ThenInclude(an => an.Photos)
+                .Include(a => a.Applicant)
+                .FirstOrDefaultAsync(a => a.Id == id);
+
+            if (app == null)
+                return null;
+
+            app.Status = ApplicationStatus.Rejected;
+            app.AdminNotes = adminNotes;
+            app.ReviewedAt = DateTime.UtcNow;
+
+            _context.Update(app);
+            await _context.SaveChangesAsync();
+
+            return app;
+        }
+
+        public async Task<AdoptionApplication?> AcceptAsync(int id, string adminNotes)
+        {
+            var app = await _context.Set<AdoptionApplication>()
+                .Include(a => a.Animal)
+                    .ThenInclude(an => an.Photos)
+                .Include(a => a.Applicant)
+                .FirstOrDefaultAsync(a => a.Id == id);
+
+            if (app == null)
+                return null;
+
+            app.Status = ApplicationStatus.Approved;
+            app.AdminNotes = adminNotes;
+            app.ReviewedAt = DateTime.UtcNow;
+
+            // Update animal depending on application type
+            if (app.ApplicationType == ApplicationType.Adoption)
+            {
+                // If animal is AdoptionAnimal, set adopter
+                var adoptionAnimal = app.Animal as AdoptionAnimal;
+                if (adoptionAnimal != null)
+                {
+                    adoptionAnimal.AdopterId = app.ApplicantId;
+                }
+            }
+            else if (app.ApplicationType == ApplicationType.Foster)
+            {
+                var fosterAnimal = app.Animal as FosterAnimal;
+                if (fosterAnimal != null)
+                {
+                    fosterAnimal.FostererId = app.ApplicantId;
+                    fosterAnimal.Status = FosterStatus.InFoster;
+                    fosterAnimal.FosterStartDate = DateTime.UtcNow;
+                }
+            }
+
+            _context.Update(app);
+            _context.Update(app.Animal);
+            await _context.SaveChangesAsync();
+
+            return app;
         }
     }
 }

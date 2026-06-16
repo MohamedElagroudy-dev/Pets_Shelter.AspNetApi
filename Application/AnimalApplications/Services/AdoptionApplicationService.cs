@@ -19,12 +19,18 @@ namespace Ecom.Application.AnimalApplications.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IUserContext _userContext;
         private readonly IAuthService _authService;
+        private readonly INotificationService _notificationService;
 
-        public AnimalApplicationService(IUnitOfWork unitOfWork, IUserContext userContext, IAuthService authService)
+        public AnimalApplicationService(
+            IUnitOfWork unitOfWork, 
+            IUserContext userContext, 
+            IAuthService authService,
+            INotificationService notificationService)
         {
             _unitOfWork = unitOfWork;
             _userContext = userContext;
             _authService = authService;
+            _notificationService = notificationService;
         }
 
         public async Task<int> CreateAdoptionAsync(CreateAnimalApplicationDto dto, string userId)
@@ -131,6 +137,34 @@ namespace Ecom.Application.AnimalApplications.Services
         {
             var app = await _unitOfWork.Repository<AdoptionApplication>().GetByAsync(a => a.Id == id, a => a.Animal, a => a.Animal.Photos);
             return app?.ToDetailsDto();
+        }
+
+        public async Task<AnimalApplicationDetailsDto?> RejectApplicationAsync(int id, RejectApplicationDto dto)
+        {
+            // Delegate the DB update to the repository implementation
+            var app = await _unitOfWork.AdoptionApplications.RejectAsync(id, dto.AdminNotes);
+
+            if (app == null)
+                throw new KeyNotFoundException($"Application with ID {id} not found");
+
+            // Send notification to the applicant
+            await _notificationService.NotifyApplicationRejectedAsync(app);
+
+            return app.ToDetailsDto();
+        }
+
+        public async Task<AnimalApplicationDetailsDto?> AcceptApplicationAsync(int id, AcceptApplicationDto dto)
+        {
+            // Delegate DB update to repository which will also update animal data
+            var app = await _unitOfWork.AdoptionApplications.AcceptAsync(id, dto.AdminNotes);
+
+            if (app == null)
+                throw new KeyNotFoundException($"Application with ID {id} not found");
+
+            // Send notification
+            await _notificationService.NotifyApplicationAcceptedAsync(app);
+
+            return app.ToDetailsDto();
         }
     }
 

@@ -15,5 +15,7 @@ namespace Ecom.Application.AnimalApplications.Services
         // Admin
         Task<AnimalApplicationStatsResult> GetAllAsync(AnimalApplicationParams @params);
         Task<AnimalApplicationDetailsDto?> GetByIdAsync(int id);
+        Task<AnimalApplicationDetailsDto?> RejectApplicationAsync(int id, RejectApplicationDto dto);
+        Task<AnimalApplicationDetailsDto?> AcceptApplicationAsync(int id, AcceptApplicationDto dto);
     }
 }
