@@ -1,15 +1,19 @@
+using Application.Account;
+using Application.Common;
 using Application.Common.Pagination;
+using Core.Constants;
+using Core.Entities;
 using Core.Entities.Animal;
 using Core.Interfaces;
 using Ecom.Application.FosterAnimals.DTOs;
 using Ecom.Application.FosterAnimals.Mappings;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
-using Application.Common;
-using System.Linq;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using System;
-using Core.Constants;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace Ecom.Application.FosterAnimals.Services
 {
@@ -18,18 +22,44 @@ namespace Ecom.Application.FosterAnimals.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IImageManagementService _imageService;
         private readonly ILogger<FosterAnimalService> _logger;
+        private readonly IUserContext _userContext;
+        private readonly UserManager<AppUser> _userManager;
 
-        public FosterAnimalService(IUnitOfWork unitOfWork, IImageManagementService imageService, ILogger<FosterAnimalService> logger)
+        public FosterAnimalService(IUnitOfWork unitOfWork,
+            IImageManagementService imageService,
+            ILogger<FosterAnimalService> logger,
+            IUserContext userContext,
+            UserManager<AppUser> userManager)
         {
             _unitOfWork = unitOfWork;
             _imageService = imageService;
             _logger = logger;
+            _userContext = userContext;
+            _userManager = userManager;
         }
 
         public async Task<PagedResult<FosterAnimalDTO>> GetAllAsync(AnimalParams animalParams)
         {
-            _logger.LogInformation("Executing GetAllAsync for FosterAnimal with page {PageNumber}, size {PageSize}", animalParams.PageNumber, animalParams.PageSize);
+            _logger.LogInformation("Executing GetAllAsync for FosterAnimal with page {PageNumber}, size {PageSize}",
+                animalParams.PageNumber, animalParams.PageSize);
 
+            Expression<Func<FosterAnimal, bool>>? predicate = null;
+            var currentUser = _userContext.GetCurrentUser();
+
+            if (currentUser == null)
+            {
+                // Anonymous
+                predicate = a => a.FostererId == null;
+            }
+            else
+            {
+                // Find user by ID from the JWT, not by ClaimsPrincipal
+                var user = await _userManager.FindByIdAsync(currentUser.Id);
+                if (user != null && await _userManager.IsInRoleAsync(user, "Customer"))
+                {
+                    predicate = a => a.FostererId == null;
+                }
+            }
             var result = await _unitOfWork.FosterAnimals.GetAllAsync(
                 animalParams.PageNumber,
                 animalParams.PageSize,
@@ -38,7 +68,8 @@ namespace Ecom.Application.FosterAnimals.Services
                 animalParams.Gender,
                 animalParams.AgeFromYears,
                 animalParams.AgeToYears,
-                animalParams.Sort
+                animalParams.Sort,
+                predicate
             );
 
             var animals = result.Animals;

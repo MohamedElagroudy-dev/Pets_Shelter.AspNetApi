@@ -2,6 +2,7 @@ using API.Helper;
 using Application.Common;
 using Application.Common.Pagination;
 using Core.Constants;
+using Core.Entities.Animal;
 using Core.Exceptions;
 using Ecom.Application.Animals.DTOs;
 using Ecom.Application.Animals.Services;

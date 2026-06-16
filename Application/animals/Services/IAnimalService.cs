@@ -1,6 +1,8 @@
 using Application.Common.Pagination;
 using Application.Common;
 using Ecom.Application.Animals.DTOs;
+using System.Linq.Expressions;
+using Core.Entities.Animal;
 
 namespace Ecom.Application.Animals.Services
 {
