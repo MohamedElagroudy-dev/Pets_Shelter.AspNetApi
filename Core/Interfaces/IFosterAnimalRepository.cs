@@ -1,7 +1,6 @@
 using Core.Entities.Animal;
 using Core.Constants;
 using System.Collections.Generic;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace Core.Interfaces
@@ -16,7 +15,6 @@ namespace Core.Interfaces
             Gender? gender,
             double? ageFromYears,
             double? ageToYears,
-            AnimalSort? sort,
-            Expression<Func<FosterAnimal, bool>>? predicate = null);
+            AnimalSort? sort);
     }
 }

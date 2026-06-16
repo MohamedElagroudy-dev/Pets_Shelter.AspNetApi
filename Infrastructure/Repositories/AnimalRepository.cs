@@ -6,7 +6,6 @@ using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories
@@ -28,17 +27,12 @@ namespace Infrastructure.Repositories
             Gender? gender,
             double? ageFromYears,
             double? ageToYears,
-            AnimalSort? sort,
-            Expression<Func<AdoptionAnimal, bool>>? predicate = null)
+            AnimalSort? sort)
         {
             var query = _context.Set<AdoptionAnimal>()
                 .Include(a => a.Photos)
                 .Include(a => a.PetType)
                 .AsNoTracking();
-
-            // Apply custom predicate if provided
-            if (predicate != null)
-                query = query.Where(predicate);
 
             if (!string.IsNullOrWhiteSpace(search))
             {

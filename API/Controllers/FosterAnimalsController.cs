@@ -1,6 +1,5 @@
 using Application.Common.Pagination;
 using Core.Constants;
-using Core.Entities.Animal;
 using Ecom.Application.FosterAnimals.DTOs;
 using Ecom.Application.FosterAnimals.Services;
 using Microsoft.AspNetCore.Authorization;

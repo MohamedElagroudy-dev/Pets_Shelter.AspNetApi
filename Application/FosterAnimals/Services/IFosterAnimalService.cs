@@ -2,8 +2,6 @@ using Ecom.Application.FosterAnimals.DTOs;
 using Application.Common.Pagination;
 using System.Threading.Tasks;
 using Application.Common;
-using System.Linq.Expressions;
-using Core.Entities.Animal;
 
 namespace Ecom.Application.FosterAnimals.Services
 {
