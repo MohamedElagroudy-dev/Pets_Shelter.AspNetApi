@@ -185,5 +185,40 @@ namespace Ecom.Application.Animals.Services
 
             return animal.ToDto();
         }
+
+        public async Task<PagedResult<AnimalDTO>> GetAllMyAsync(AnimalParams animalParams)
+        {
+            _logger.LogInformation("Executing GetAllAsync with page {PageNumber}, size {PageSize}",
+                animalParams.PageNumber, animalParams.PageSize);
+
+            Expression<Func<AdoptionAnimal, bool>>? predicate = null;
+            var currentUser = _userContext.GetCurrentUser();
+
+            if (currentUser == null)
+            {
+                throw new UnauthorizedAccessException("User must be authenticated to view their animals.");
+            }
+            else
+            {
+                
+                predicate = a => a.AdopterId == currentUser.Id;
+                
+            }
+
+            var result = await _unitOfWork.Animals.GetAllAsync(
+                animalParams.PageNumber,
+                animalParams.PageSize,
+                animalParams.Search,
+                animalParams.PetTypeId,
+                animalParams.Gender,
+                animalParams.AgeFromYears,
+                animalParams.AgeToYears,
+                animalParams.Sort,
+                predicate
+            );
+
+            var dto = result.Animals.Select(a => a.ToDto()).ToList();
+            return new PagedResult<AnimalDTO>(dto, result.TotalCount, animalParams.PageSize, animalParams.PageNumber);
+        }
     }
 }

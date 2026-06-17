@@ -13,5 +13,6 @@ namespace Ecom.Application.Animals.Services
         Task<bool> UpdateAsync(UpdateAnimalDTO dto);
         Task<AnimalDTO?> DeleteAsync(int id);
         Task<AnimalDTO?> GetAnimalAsync(int id);
+        Task<PagedResult<AnimalDTO>> GetAllMyAsync(AnimalParams animalParams);
     }
 }
