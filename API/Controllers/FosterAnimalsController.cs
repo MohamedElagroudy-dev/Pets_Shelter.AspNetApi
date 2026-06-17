@@ -25,6 +25,12 @@ namespace API.Controllers
             var animals = await _fosterAnimalService.GetAllAsync(animalParams);
             return Ok(animals);
         }
+        [HttpGet("my")]
+        public async Task<IActionResult> GetAllMy([FromQuery] AnimalParams animalParams)
+        {
+            var animals = await _fosterAnimalService.GetAllMyAsync(animalParams);
+            return Ok(animals);
+        }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)

@@ -35,6 +35,19 @@ namespace API.Controllers
                 return BadRequest(new ResponseAPI<string>(500, ex.Message));
             }
         }
+        [HttpGet("my")]
+        public async Task<IActionResult> GetMyAll([FromQuery] AnimalParams animalParams)
+        {
+            try
+            {
+                var animals = await _animalService.GetAllMyAsync(animalParams);
+                return Ok(new ResponseAPI<PagedResult<AnimalDTO>>(200, "Animals fetched successfully", animals));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ResponseAPI<string>(500, ex.Message));
+            }
+        }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)

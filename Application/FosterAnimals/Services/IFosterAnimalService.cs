@@ -1,9 +1,10 @@
-using Ecom.Application.FosterAnimals.DTOs;
-using Application.Common.Pagination;
-using System.Threading.Tasks;
 using Application.Common;
-using System.Linq.Expressions;
+using Application.Common.Pagination;
+using Core.Constants;
 using Core.Entities.Animal;
+using Ecom.Application.FosterAnimals.DTOs;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace Ecom.Application.FosterAnimals.Services
 {
@@ -14,5 +15,8 @@ namespace Ecom.Application.FosterAnimals.Services
         Task<bool> UpdateAsync(UpdateFosterAnimalDTO dto);
         Task<FosterAnimalDTO?> DeleteAsync(int id);
         Task<FosterAnimalDTO?> GetFosterAnimalAsync(int id);
+        Task<PagedResult<FosterAnimalDTO>> GetAllMyAsync(AnimalParams animalParams);
+        Task<PagedResult<FosterAnimalDTO>> GetAllFosteredAsync(AnimalParams animalParams);
+        Task<PagedResult<FosterAnimalDTO>> GetAllFosterEndedAsync(AnimalParams animalParams, FosterStatus? status);
     }
 }

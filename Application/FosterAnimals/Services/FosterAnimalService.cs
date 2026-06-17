@@ -185,5 +185,99 @@ namespace Ecom.Application.FosterAnimals.Services
             UpdateFosterStatusIfExpired(animal);
             return animal.ToDto();
         }
+
+        public async Task<PagedResult<FosterAnimalDTO>> GetAllMyAsync(AnimalParams animalParams)
+        {
+            _logger.LogInformation("Executing GetAllAsync for FosterAnimal with page {PageNumber}, size {PageSize}",
+                animalParams.PageNumber, animalParams.PageSize);
+
+            Expression<Func<FosterAnimal, bool>>? predicate = null;
+            var currentUser = _userContext.GetCurrentUser();
+
+            if (currentUser == null)
+            {
+                throw new UnauthorizedAccessException("User must be authenticated to view their foster animals.");
+            }
+            else
+            {              
+                predicate = a => a.FostererId == currentUser.Id;
+            }
+            var result = await _unitOfWork.FosterAnimals.GetAllAsync(
+                animalParams.PageNumber,
+                animalParams.PageSize,
+                animalParams.Search,
+                animalParams.PetTypeId,
+                animalParams.Gender,
+                animalParams.AgeFromYears,
+                animalParams.AgeToYears,
+                animalParams.Sort,
+                predicate
+            );
+
+            var animals = result.Animals;
+            var totalCount = result.TotalCount;
+
+            var dto = animals.Select(a => a.ToDto()).ToList();
+
+            return new PagedResult<FosterAnimalDTO>(dto, totalCount, animalParams.PageSize, animalParams.PageNumber);
+        }
+
+        //Admin method to get all fostered animals, regardless of the user
+        public async Task<PagedResult<FosterAnimalDTO>> GetAllFosteredAsync(AnimalParams animalParams)
+        {
+            _logger.LogInformation("Executing GetAllFosteredAsync with page {PageNumber}, size {PageSize}",
+                animalParams.PageNumber, animalParams.PageSize);
+
+            Expression<Func<FosterAnimal, bool>> predicate = a => a.FostererId != null;
+
+            var result = await _unitOfWork.FosterAnimals.GetAllAsync(
+                animalParams.PageNumber,
+                animalParams.PageSize,
+                animalParams.Search,
+                animalParams.PetTypeId,
+                animalParams.Gender,
+                animalParams.AgeFromYears,
+                animalParams.AgeToYears,
+                animalParams.Sort,
+                predicate
+            );
+
+            var dto = result.Animals.Select(a => a.ToDto()).ToList();
+            return new PagedResult<FosterAnimalDTO>(dto, result.TotalCount, animalParams.PageSize, animalParams.PageNumber);
+        }
+
+        // Admin: get all foster animals where the foster end date is in the past
+        public async Task<PagedResult<FosterAnimalDTO>> GetAllFosterEndedAsync(AnimalParams animalParams, FosterStatus? status)
+        {
+            _logger.LogInformation("Executing GetAllFosterEndedAsync with page {PageNumber}, size {PageSize}",
+                animalParams.PageNumber, animalParams.PageSize);
+
+            // predicate for animals that have an end date and that end date is before now
+            Expression<Func<FosterAnimal, bool>> predicate =
+            a => a.FosterEndDate.HasValue
+              && a.FosterEndDate.Value < DateTime.UtcNow
+              && (!status.HasValue || a.Status == status.Value);
+
+            var result = await _unitOfWork.FosterAnimals.GetAllAsync(
+                animalParams.PageNumber,
+                animalParams.PageSize,
+                animalParams.Search,
+                animalParams.PetTypeId,
+                animalParams.Gender,
+                animalParams.AgeFromYears,
+                animalParams.AgeToYears,
+                animalParams.Sort,
+                predicate
+            );
+
+            // Optionally update status for returned animals (mark expired)
+            foreach (var animal in result.Animals)
+            {
+                UpdateFosterStatusIfExpired(animal);
+            }
+
+            var dto = result.Animals.Select(a => a.ToDto()).ToList();
+            return new PagedResult<FosterAnimalDTO>(dto, result.TotalCount, animalParams.PageSize, animalParams.PageNumber);
+        }
     }
 }

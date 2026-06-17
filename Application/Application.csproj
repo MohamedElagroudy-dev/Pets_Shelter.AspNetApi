@@ -33,4 +33,9 @@
     </Reference>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Admin\DTOs\" />
+    <Folder Include="Common\Extensions\" />
+  </ItemGroup>
+
 </Project>
