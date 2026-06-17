@@ -185,5 +185,41 @@ namespace Ecom.Application.FosterAnimals.Services
             UpdateFosterStatusIfExpired(animal);
             return animal.ToDto();
         }
+
+        public async Task<PagedResult<FosterAnimalDTO>> GetAllMyAsync(AnimalParams animalParams)
+        {
+            _logger.LogInformation("Executing GetAllAsync for FosterAnimal with page {PageNumber}, size {PageSize}",
+                animalParams.PageNumber, animalParams.PageSize);
+
+            Expression<Func<FosterAnimal, bool>>? predicate = null;
+            var currentUser = _userContext.GetCurrentUser();
+
+            if (currentUser == null)
+            {
+                throw new UnauthorizedAccessException("User must be authenticated to view their foster animals.");
+            }
+            else
+            {              
+                predicate = a => a.FostererId == currentUser.Id;
+            }
+            var result = await _unitOfWork.FosterAnimals.GetAllAsync(
+                animalParams.PageNumber,
+                animalParams.PageSize,
+                animalParams.Search,
+                animalParams.PetTypeId,
+                animalParams.Gender,
+                animalParams.AgeFromYears,
+                animalParams.AgeToYears,
+                animalParams.Sort,
+                predicate
+            );
+
+            var animals = result.Animals;
+            var totalCount = result.TotalCount;
+
+            var dto = animals.Select(a => a.ToDto()).ToList();
+
+            return new PagedResult<FosterAnimalDTO>(dto, totalCount, animalParams.PageSize, animalParams.PageNumber);
+        }
     }
 }

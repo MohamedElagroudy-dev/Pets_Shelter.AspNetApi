@@ -14,5 +14,6 @@ namespace Ecom.Application.FosterAnimals.Services
         Task<bool> UpdateAsync(UpdateFosterAnimalDTO dto);
         Task<FosterAnimalDTO?> DeleteAsync(int id);
         Task<FosterAnimalDTO?> GetFosterAnimalAsync(int id);
+        Task<PagedResult<FosterAnimalDTO>> GetAllMyAsync(AnimalParams animalParams);
     }
 }
