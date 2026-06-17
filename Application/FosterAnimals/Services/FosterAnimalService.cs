@@ -245,5 +245,36 @@ namespace Ecom.Application.FosterAnimals.Services
             var dto = result.Animals.Select(a => a.ToDto()).ToList();
             return new PagedResult<FosterAnimalDTO>(dto, result.TotalCount, animalParams.PageSize, animalParams.PageNumber);
         }
+
+        // Admin: get all foster animals where the foster end date is in the past
+        public async Task<PagedResult<FosterAnimalDTO>> GetAllFosterEndedAsync(AnimalParams animalParams)
+        {
+            _logger.LogInformation("Executing GetAllFosterEndedAsync with page {PageNumber}, size {PageSize}",
+                animalParams.PageNumber, animalParams.PageSize);
+
+            // predicate for animals that have an end date and that end date is before now
+            Expression<Func<FosterAnimal, bool>> predicate = a => a.FosterEndDate.HasValue && a.FosterEndDate.Value < DateTime.UtcNow;
+
+            var result = await _unitOfWork.FosterAnimals.GetAllAsync(
+                animalParams.PageNumber,
+                animalParams.PageSize,
+                animalParams.Search,
+                animalParams.PetTypeId,
+                animalParams.Gender,
+                animalParams.AgeFromYears,
+                animalParams.AgeToYears,
+                animalParams.Sort,
+                predicate
+            );
+
+            // Optionally update status for returned animals (mark expired)
+            foreach (var animal in result.Animals)
+            {
+                UpdateFosterStatusIfExpired(animal);
+            }
+
+            var dto = result.Animals.Select(a => a.ToDto()).ToList();
+            return new PagedResult<FosterAnimalDTO>(dto, result.TotalCount, animalParams.PageSize, animalParams.PageNumber);
+        }
     }
 }

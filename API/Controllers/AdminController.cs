@@ -217,6 +217,20 @@ namespace API.Controllers
             }
         }
 
+        [HttpGet("fostered/ended")]
+        public async Task<IActionResult> GetAllFosterEnded([FromQuery] Application.Common.Pagination.AnimalParams @params)
+        {
+            try
+            {
+                var result = await _fosterAnimalService.GetAllFosterEndedAsync(@params);
+                return Ok(new ResponseAPI<PagedResult<FosterAnimalDTO>>(200, "Foster records with ended date fetched", result));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ResponseAPI<string>(500, ex.Message));
+            }
+        }
+
         [HttpPost("applications/{id:int}/reject")]
         public async Task<IActionResult> RejectApplication(int id, [FromBody] RejectApplicationDto request)
         {
