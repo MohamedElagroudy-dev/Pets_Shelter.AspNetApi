@@ -247,13 +247,16 @@ namespace Ecom.Application.FosterAnimals.Services
         }
 
         // Admin: get all foster animals where the foster end date is in the past
-        public async Task<PagedResult<FosterAnimalDTO>> GetAllFosterEndedAsync(AnimalParams animalParams)
+        public async Task<PagedResult<FosterAnimalDTO>> GetAllFosterEndedAsync(AnimalParams animalParams, FosterStatus? status)
         {
             _logger.LogInformation("Executing GetAllFosterEndedAsync with page {PageNumber}, size {PageSize}",
                 animalParams.PageNumber, animalParams.PageSize);
 
             // predicate for animals that have an end date and that end date is before now
-            Expression<Func<FosterAnimal, bool>> predicate = a => a.FosterEndDate.HasValue && a.FosterEndDate.Value < DateTime.UtcNow;
+            Expression<Func<FosterAnimal, bool>> predicate =
+            a => a.FosterEndDate.HasValue
+              && a.FosterEndDate.Value < DateTime.UtcNow
+              && (!status.HasValue || a.Status == status.Value);
 
             var result = await _unitOfWork.FosterAnimals.GetAllAsync(
                 animalParams.PageNumber,
