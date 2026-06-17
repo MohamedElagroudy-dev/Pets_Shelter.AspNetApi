@@ -218,11 +218,11 @@ namespace API.Controllers
         }
 
         [HttpGet("fostered/ended")]
-        public async Task<IActionResult> GetAllFosterEnded([FromQuery] Application.Common.Pagination.AnimalParams @params)
+        public async Task<IActionResult> GetAllFosterEnded([FromQuery] Application.Common.Pagination.AnimalParams @params, [FromQuery] FosterStatus? status)
         {
             try
             {
-                var result = await _fosterAnimalService.GetAllFosterEndedAsync(@params);
+                var result = await _fosterAnimalService.GetAllFosterEndedAsync(@params,status);
                 return Ok(new ResponseAPI<PagedResult<FosterAnimalDTO>>(200, "Foster records with ended date fetched", result));
             }
             catch (Exception ex)
