@@ -220,5 +220,29 @@ namespace Ecom.Application.Animals.Services
             var dto = result.Animals.Select(a => a.ToDto()).ToList();
             return new PagedResult<AnimalDTO>(dto, result.TotalCount, animalParams.PageSize, animalParams.PageNumber);
         }
+
+        // admin function to get all adopted animals
+        public async Task<PagedResult<AnimalDTO>> GetAllAdoptedAsync(AnimalParams animalParams)
+        {
+            _logger.LogInformation("Executing GetAllAdoptedAsync with page {PageNumber}, size {PageSize}",
+                animalParams.PageNumber, animalParams.PageSize);
+
+            Expression<Func<AdoptionAnimal, bool>> predicate = a => a.AdopterId != null;
+
+            var result = await _unitOfWork.Animals.GetAllAsync(
+                animalParams.PageNumber,
+                animalParams.PageSize,
+                animalParams.Search,
+                animalParams.PetTypeId,
+                animalParams.Gender,
+                animalParams.AgeFromYears,
+                animalParams.AgeToYears,
+                animalParams.Sort,
+                predicate
+            );
+
+            var dto = result.Animals.Select(a => a.ToDto()).ToList();
+            return new PagedResult<AnimalDTO>(dto, result.TotalCount, animalParams.PageSize, animalParams.PageNumber);
+        }
     }
 }

@@ -1,4 +1,4 @@
-﻿using API.Helper;
+using API.Helper;
 using Application.Admin.DTO;
 using Application.Admin.Services;
 using Application.Common;
@@ -12,6 +12,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Ecom.Application.AnimalApplications.DTOs;
 using Ecom.Application.AnimalApplications.Services;
+using Ecom.Application.Animals.Services;
+using Ecom.Application.Animals.DTOs;
+using Ecom.Application.FosterAnimals.Services;
+using Ecom.Application.FosterAnimals.DTOs;
 
 
 namespace API.Controllers
@@ -25,13 +29,17 @@ namespace API.Controllers
         private readonly IPaymentAppService _paymentService;
         private readonly IAdminAppService _adminAppService;
         private readonly IAnimalApplicationService _Applicationservice;
+        private readonly IAnimalService _animalService;
+        private readonly IFosterAnimalService _fosterAnimalService;
 
-        public AdminController(IOrderService orderService, IPaymentAppService paymentService, IAdminAppService adminAppService, IAnimalApplicationService service)
+        public AdminController(IOrderService orderService, IPaymentAppService paymentService, IAdminAppService adminAppService, IAnimalApplicationService service, IAnimalService animalService, IFosterAnimalService fosterAnimalService)
         {
             _orderService = orderService;
             _paymentService = paymentService;
             _adminAppService = adminAppService;
             _Applicationservice = service;
+            _animalService = animalService;
+            _fosterAnimalService = fosterAnimalService;
         }
         [HttpGet("orders")]
         public async Task<IActionResult> GetAll([FromQuery] OrderParams orderParams)
@@ -178,6 +186,34 @@ namespace API.Controllers
             catch (Exception ex)
             {
                 return BadRequest(new ResponseAPI<string>(500, ex.Message));
+            }
+        }
+
+        [HttpGet("adopted/animals")]
+        public async Task<IActionResult> GetAllAdopted([FromQuery] Application.Common.Pagination.AnimalParams @params)
+        {
+            try
+            {
+                var result = await _animalService.GetAllAdoptedAsync(@params);
+                return Ok(new ResponseAPI<PagedResult<AnimalDTO>>(200, "Adopted animals fetched", result));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ResponseAPI<string>(500, ex.Message));
+            }
+        }
+
+        [HttpGet("fostered/animals")]
+        public async Task<IActionResult> GetAllFostered([FromQuery] Application.Common.Pagination.AnimalParams @params)
+        {
+            try
+            {
+                var result = await _fosterAnimalService.GetAllFosteredAsync(@params);
+                return Ok(new ResponseAPI<PagedResult<FosterAnimalDTO>>(200, "Fostered animals fetched", result));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ResponseAPI<string>(500, ex.Message));
             }
         }
 

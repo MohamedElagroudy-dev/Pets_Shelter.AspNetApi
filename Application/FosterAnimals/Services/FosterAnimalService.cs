@@ -221,5 +221,29 @@ namespace Ecom.Application.FosterAnimals.Services
 
             return new PagedResult<FosterAnimalDTO>(dto, totalCount, animalParams.PageSize, animalParams.PageNumber);
         }
+
+        //Admin method to get all fostered animals, regardless of the user
+        public async Task<PagedResult<FosterAnimalDTO>> GetAllFosteredAsync(AnimalParams animalParams)
+        {
+            _logger.LogInformation("Executing GetAllFosteredAsync with page {PageNumber}, size {PageSize}",
+                animalParams.PageNumber, animalParams.PageSize);
+
+            Expression<Func<FosterAnimal, bool>> predicate = a => a.FostererId != null;
+
+            var result = await _unitOfWork.FosterAnimals.GetAllAsync(
+                animalParams.PageNumber,
+                animalParams.PageSize,
+                animalParams.Search,
+                animalParams.PetTypeId,
+                animalParams.Gender,
+                animalParams.AgeFromYears,
+                animalParams.AgeToYears,
+                animalParams.Sort,
+                predicate
+            );
+
+            var dto = result.Animals.Select(a => a.ToDto()).ToList();
+            return new PagedResult<FosterAnimalDTO>(dto, result.TotalCount, animalParams.PageSize, animalParams.PageNumber);
+        }
     }
 }
