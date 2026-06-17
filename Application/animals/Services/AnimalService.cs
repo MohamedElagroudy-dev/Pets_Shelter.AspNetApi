@@ -183,13 +183,6 @@ namespace Ecom.Application.Animals.Services
             var animal = await _unitOfWork.Animals.GetByidAsync(id, a => a.Photos, a => a.PetType);
             if (animal == null) throw new NotFoundException(nameof(AdoptionAnimal), id.ToString());
 
-            var currentUser = _userContext.GetCurrentUser();
-            // hide adopted animals from anonymous users and regular customers
-            if ((currentUser == null || currentUser.IsInRole(UserRoles.Customer)) && animal.AdopterId != null)
-            {
-                throw new NotFoundException(nameof(AdoptionAnimal), id.ToString());
-            }
-
             return animal.ToDto();
         }
     }

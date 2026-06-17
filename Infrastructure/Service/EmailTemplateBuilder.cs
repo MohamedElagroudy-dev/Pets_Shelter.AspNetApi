@@ -89,7 +89,7 @@ namespace Infrastructure.Service
                 This link is valid for a limited time.
             </p>
             <a class='button'
-               href='http://localhost:4200/Account/{component}?email={email}&code={encodedToken}'>
+               href='https://petopia.0xcode7.xyz/{component}?email={email}&code={encodedToken}'>
                 {message}
             </a>
         </div>

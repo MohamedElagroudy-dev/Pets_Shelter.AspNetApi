@@ -479,7 +479,7 @@ namespace Infrastructure.Service
                 return false;
             }
             var token = await _userManager.GeneratePasswordResetTokenAsync(findUser);
-            await SendEmail(findUser.Email, token, "Reset-Password", "Reset Password", "click on button to Reset your password");
+            await SendEmail(findUser.Email, token, "ResetPassword", "Reset Password", "click on button to Reset your password");
 
             return true;
 
