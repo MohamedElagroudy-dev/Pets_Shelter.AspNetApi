@@ -95,5 +95,26 @@ namespace Ecom.Application.FosterAnimals.Mappings
             animal.Status = dto.Status;
             animal.IsUrgent = dto.IsUrgent;
         }
+        public static FosterAnimalWithUserDTO ToWithUserDto(this FosterAnimal animal)
+        {
+            var animalDto = animal.ToDto();
+
+            FosterAnimalWithUserDTO.UserSummary? userDto = null;
+            if (animal.Fosterer != null)
+            {
+                userDto = new FosterAnimalWithUserDTO.UserSummary
+                {
+                    Id = animal.Fosterer.Id,
+                    UserName = animal.Fosterer.UserName ?? string.Empty,
+                    Email = animal.Fosterer.Email ?? string.Empty,
+                    FirstName = animal.Fosterer.FirstName ?? string.Empty,
+                    LastName = animal.Fosterer.LastName ?? string.Empty,
+                    PictureUrl = animal.Fosterer.PictureUrl ?? string.Empty,
+                    PhoneNumber = animal.Fosterer.PhoneNumber ?? string.Empty
+                };
+            }
+
+            return new FosterAnimalWithUserDTO { Animal = animalDto, User = userDto };
+        }
     }
 }

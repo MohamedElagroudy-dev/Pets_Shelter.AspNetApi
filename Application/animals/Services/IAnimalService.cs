@@ -15,5 +15,6 @@ namespace Ecom.Application.Animals.Services
         Task<AnimalDTO?> GetAnimalAsync(int id);
         Task<PagedResult<AnimalDTO>> GetAllMyAsync(AnimalParams animalParams);
         Task<PagedResult<AnimalDTO>> GetAllAdoptedAsync(AnimalParams animalParams);
+        Task<AnimalWithUserDTO?> GetAdoptedAnimalWithUserAsync(int id);
     }
 }

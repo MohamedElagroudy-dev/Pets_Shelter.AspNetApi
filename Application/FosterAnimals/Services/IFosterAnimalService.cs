@@ -18,5 +18,6 @@ namespace Ecom.Application.FosterAnimals.Services
         Task<PagedResult<FosterAnimalDTO>> GetAllMyAsync(AnimalParams animalParams);
         Task<PagedResult<FosterAnimalDTO>> GetAllFosteredAsync(AnimalParams animalParams);
         Task<PagedResult<FosterAnimalDTO>> GetAllFosterEndedAsync(AnimalParams animalParams, FosterStatus? status);
+        Task<FosterAnimalWithUserDTO?> GetFosteredAnimalWithUserAsync(int id);
     }
 }

@@ -5,6 +5,7 @@ using Core.Constants;
 using Core.Entities;
 using Core.Entities.Animal;
 using Core.Interfaces;
+using Application.Admin.DTO;
 using Ecom.Application.FosterAnimals.DTOs;
 using Ecom.Application.FosterAnimals.Mappings;
 using Microsoft.AspNetCore.Identity;
@@ -180,10 +181,18 @@ namespace Ecom.Application.FosterAnimals.Services
         public async Task<FosterAnimalDTO?> GetFosterAnimalAsync(int id)
         {
             _logger.LogInformation("Executing GetFosterAnimalAsync for foster animal Id={Id}", id);
-            var animal = await _unitOfWork.FosterAnimals.GetByidAsync(id, a => a.Photos, a => a.PetType);
+            var animal = await _unitOfWork.FosterAnimals.GetByidAsync(id, a => a.Photos, a => a.PetType, a => a.Fosterer);
             if (animal == null) return null;
             UpdateFosterStatusIfExpired(animal);
             return animal.ToDto();
+        }
+
+        public async Task<FosterAnimalWithUserDTO?> GetFosteredAnimalWithUserAsync(int id)
+        {
+            var animal = await _unitOfWork.FosterAnimals.GetByidAsync(id, a => a.Photos, a => a.PetType, a => a.Fosterer);
+            if (animal == null) return null;
+
+            return animal.ToWithUserDto();
         }
 
         public async Task<PagedResult<FosterAnimalDTO>> GetAllMyAsync(AnimalParams animalParams)

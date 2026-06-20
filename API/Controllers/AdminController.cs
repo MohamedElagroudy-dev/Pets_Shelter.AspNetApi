@@ -231,6 +231,40 @@ namespace API.Controllers
             }
         }
 
+        [HttpGet("adopted/animals/{id:int}")]
+        public async Task<IActionResult> GetAdoptedAnimalDetails(int id)
+        {
+            try
+            {
+                var result = await _animalService.GetAdoptedAnimalWithUserAsync(id);
+                if (result == null)
+                    return NotFound(new ResponseAPI<string>(404, $"Adopted animal with ID {id} not found"));
+
+                return Ok(new ResponseAPI<AnimalWithUserDTO>(200, "Adopted animal details fetched", result));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ResponseAPI<string>(500, ex.Message));
+            }
+        }
+
+        [HttpGet("fostered/animals/{id:int}")]
+        public async Task<IActionResult> GetFosteredAnimalDetails(int id)
+        {
+            try
+            {
+                var result = await _fosterAnimalService.GetFosteredAnimalWithUserAsync(id);
+                if (result == null)
+                    return NotFound(new ResponseAPI<string>(404, $"Fostered animal with ID {id} not found"));
+
+                return Ok(new ResponseAPI<FosterAnimalWithUserDTO>(200, "Fostered animal details fetched", result));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ResponseAPI<string>(500, ex.Message));
+            }
+        }
+
         [HttpPost("applications/{id:int}/reject")]
         public async Task<IActionResult> RejectApplication(int id, [FromBody] RejectApplicationDto request)
         {
@@ -272,6 +306,8 @@ namespace API.Controllers
                 return StatusCode(500, new ResponseAPI<string>(500, $"Internal server error: {ex.Message}"));
             }
         }
+
+        
 
     }
 }

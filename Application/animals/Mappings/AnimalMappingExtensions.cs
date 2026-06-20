@@ -1,6 +1,7 @@
 using Core.Entities.Animal;
 using Ecom.Application.Animals.DTOs;
 using System.Linq;
+using Application.Admin.DTO;
 
 namespace Ecom.Application.Animals.Mappings
 {
@@ -40,6 +41,28 @@ namespace Ecom.Application.Animals.Mappings
                 ChildrenFriendlyLevel = animal.Temperament?.ChildrenFriendlyLevel ?? 1,
                 HouseTrainedLevel = animal.Temperament?.HouseTrainedLevel ?? 1
             };
+        }
+
+        public static AnimalWithUserDTO ToWithUserDto(this AdoptionAnimal animal)
+        {
+            var animalDto = animal.ToDto();
+
+            AnimalWithUserDTO.UserSummary? userDto = null;
+            if (animal.Adopter != null)
+            {
+                userDto = new AnimalWithUserDTO.UserSummary
+                {
+                    Id = animal.Adopter.Id,
+                    UserName = animal.Adopter.UserName ?? string.Empty,
+                    Email = animal.Adopter.Email ?? string.Empty,
+                    FirstName = animal.Adopter?.FirstName,
+                    LastName = animal.Adopter?.LastName,
+                    PictureUrl = animal.Adopter?.PictureUrl ?? string.Empty,
+                    PhoneNumber = animal.Adopter?.PhoneNumber?? string.Empty
+                };
+            }
+
+            return new AnimalWithUserDTO { Animal = animalDto, User = userDto };
         }
 
         public static AdoptionAnimal ToEntity(this AddAnimalDTO dto)

@@ -1,4 +1,5 @@
 using Application.Account; // for IUserContext
+using Application.Admin.DTO;
 using Application.Common;
 using Application.Common.Pagination;
 using Core.Constants;
@@ -180,10 +181,19 @@ namespace Ecom.Application.Animals.Services
         {
             _logger.LogInformation("Executing GetAnimalAsync for animal Id={Id}", id);
 
-            var animal = await _unitOfWork.Animals.GetByidAsync(id, a => a.Photos, a => a.PetType);
+            var animal = await _unitOfWork.Animals.GetByidAsync(id, a => a.Photos, a => a.PetType, a => a.Adopter);
             if (animal == null) throw new NotFoundException(nameof(AdoptionAnimal), id.ToString());
 
             return animal.ToDto();
+        }
+
+        public async Task<AnimalWithUserDTO?> GetAdoptedAnimalWithUserAsync(int id)
+        {
+            var animal = await _unitOfWork.Animals.GetByidAsync(id, a => a.Photos, a => a.PetType, a => a.Adopter);
+            if (animal == null) return null;
+
+            // Use mapping extension to build combined DTO (includes AnimalDTO + UserDto)
+            return animal.ToWithUserDto();
         }
 
         public async Task<PagedResult<AnimalDTO>> GetAllMyAsync(AnimalParams animalParams)
