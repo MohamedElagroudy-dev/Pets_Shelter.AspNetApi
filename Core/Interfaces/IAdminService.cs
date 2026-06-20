@@ -14,5 +14,6 @@ namespace Core.Interfaces
             string? role);
 
         Task<string?> GetUserPrimaryRoleAsync(string userId);
+        Task<AppUser?> GetUserByIdAsync(string userId); // Get user by id
     }
 }

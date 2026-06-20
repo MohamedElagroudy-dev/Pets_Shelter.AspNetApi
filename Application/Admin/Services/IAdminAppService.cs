@@ -14,5 +14,6 @@ namespace Application.Admin.Services
     {
         Task<IEnumerable<string>> GetAvailableRolesAsync();
         Task<PagedResult<UserDto>> GetAllUsersAsync(UserParams paginationParams);
+        Task<UserDetailsDto?> GetUserDetailsAsync(string userId);
     }
 }

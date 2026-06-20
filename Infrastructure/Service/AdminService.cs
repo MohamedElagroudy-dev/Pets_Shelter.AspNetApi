@@ -90,5 +90,10 @@ namespace Infrastructure.Service
             var roles = await _userManager.GetRolesAsync(user);
             return roles.FirstOrDefault();
         }
+
+        public async Task<AppUser?> GetUserByIdAsync(string userId)
+        {
+            return await _userManager.FindByIdAsync(userId);
+        }
     }
 }

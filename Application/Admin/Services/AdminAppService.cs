@@ -11,6 +11,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Ecom.Application.Animals.Mappings;
+using Ecom.Application.FosterAnimals.Mappings;
 
 namespace Application.Admin.Services
 {
@@ -70,6 +72,34 @@ namespace Application.Admin.Services
             }
 
             return new PagedResult<UserDto>(users, count, paginationParams.PageSize, paginationParams.PageNumber);
+        }
+
+        public async Task<UserDetailsDto?> GetUserDetailsAsync(string userId)
+        {
+            if (string.IsNullOrEmpty(userId)) return null;
+
+            // Fetch user via admin service
+            var user = await _unitOfWork.AdminService.GetUserByIdAsync(userId);
+            if (user == null) return null;
+
+            var userDto = user.ToDto();
+
+            // Fetch adopted animals where AdopterId == userId
+            var (adoptedAnimals, adoptedCount) = await _unitOfWork.Animals.GetAllAsync(1, int.MaxValue, null, null, null, null, null, null, a => a.AdopterId == userId);
+            var adoptedDtos = adoptedAnimals.Select(a => a.ToDto()).ToList();
+
+            // Fetch foster animals where FostererId == userId
+            var (fosteredAnimals, fosteredCount) = await _unitOfWork.FosterAnimals.GetAllAsync(1, int.MaxValue, null, null, null, null, null, null, a => a.FostererId == userId);
+            var fosteredDtos = fosteredAnimals.Select(a => a.ToDto()).ToList();
+
+            var result = new UserDetailsDto
+            {
+                User = userDto,
+                AdoptedAnimals = adoptedDtos,
+                FosteredAnimals = fosteredDtos
+            };
+
+            return result;
         }
     }
 }

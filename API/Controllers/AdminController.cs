@@ -307,7 +307,20 @@ namespace API.Controllers
             }
         }
 
-        
+        [HttpGet("users/{id}")]
+        public async Task<IActionResult> GetUserDetails(string id)
+        {
+            try
+            {
+                var details = await _adminAppService.GetUserDetailsAsync(id);
+                if (details == null) return NotFound(new ResponseAPI<string>(404, $"User with ID {id} not found"));
+                return Ok(new ResponseAPI<UserDetailsDto>(200, "User details fetched", details));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ResponseAPI<string>(500, ex.Message));
+            }
+        }
 
     }
 }
