@@ -32,6 +32,7 @@ namespace Infrastructure.Repositories
                 .Include(a => a.Photos)
                 .Include(a => a.PetType)
                 .Include(a => a.Donations)
+                    .ThenInclude(d => d.Donor)
                 .AsNoTracking();
 
             // Apply custom predicate if provided
@@ -81,6 +82,17 @@ namespace Infrastructure.Repositories
                 .ToListAsync();
 
             return (animals, totalCount);
+        }
+        public async Task<DonationAnimal?> GetDetailsByIdAsync(int id)
+        {
+            return await _context.Set<DonationAnimal>()
+                .Include(a => a.Photos)
+                .Include(a => a.PetType)
+                .Include(a => a.Temperament)
+                .Include(a => a.Donations)
+                    .ThenInclude(d => d.Donor)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(a => a.Id == id);
         }
     }
 }

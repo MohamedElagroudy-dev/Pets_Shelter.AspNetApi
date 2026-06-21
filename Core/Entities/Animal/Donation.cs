@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Core.Constants;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -16,8 +17,17 @@ namespace Core.Entities.Animal
         public string DonorId { get; set; } = null!;
         public virtual AppUser Donor { get; set; } = null!;
 
+        public bool IsAnonymous { get; set; } = false;
+
+        public string? DonorName { get; set; }   
+        public string? DonorProfilePicture { get; set; } 
+
         public decimal Amount { get; set; }
-        public string? Message { get; set; }          // "Hope Finn finds a loving home soon!"
+        public string? Message { get; set; }          
         public DateTime DonatedAt { get; set; } = DateTime.UtcNow;
+
+        public DonationPaymentStatus PaymentStatus { get; set; } = DonationPaymentStatus.Pending;
+        public string? StripePaymentIntentId { get; set; }  
+        public DateTime? PaidAt { get; set; }
     }
 }

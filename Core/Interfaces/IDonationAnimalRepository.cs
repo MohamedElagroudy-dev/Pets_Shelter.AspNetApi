@@ -22,5 +22,6 @@ namespace Core.Interfaces
             DonationStatus? status,
             AnimalSort? sort,
             Expression<Func<DonationAnimal, bool>>? predicate = null);
+        Task<DonationAnimal?> GetDetailsByIdAsync(int id);
     }
 }
