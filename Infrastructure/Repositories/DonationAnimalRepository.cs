@@ -1,0 +1,86 @@
+﻿using Core.Constants;
+using Core.Entities.Animal;
+using Core.Interfaces;
+using Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
+
+namespace Infrastructure.Repositories
+{
+    public class DonationAnimalRepository : GenericRepository<DonationAnimal>, IDonationAnimalRepository
+    {
+        private readonly ApplicationDbContext _context;
+
+        public DonationAnimalRepository(ApplicationDbContext context) : base(context)
+        {
+            _context = context;
+        }
+
+        public async Task<(IEnumerable<DonationAnimal> Animals, int TotalCount)> GetAllAsync(
+            int pageNumber,
+            int pageSize,
+            string? search,
+            int? petTypeId,
+            Gender? gender,
+            double? ageFromYears,
+            double? ageToYears,
+            DonationStatus? status,
+            AnimalSort? sort,
+            Expression<Func<DonationAnimal, bool>>? predicate = null)
+        {
+            var query = _context.Set<DonationAnimal>()
+                .Include(a => a.Photos)
+                .Include(a => a.PetType)
+                .Include(a => a.Donations)
+                .AsNoTracking();
+
+            // Apply custom predicate if provided
+            if (predicate != null)
+                query = query.Where(predicate);
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                var searchWords = search.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                query = query.Where(a => searchWords.All(word =>
+                    a.Name.ToLower().Contains(word.ToLower()) ||
+                    a.Description.ToLower().Contains(word.ToLower())
+                ));
+            }
+
+            if (petTypeId.HasValue)
+                query = query.Where(a => a.PetTypeId == petTypeId.Value);
+
+            if (gender.HasValue)
+                query = query.Where(a => a.Gender == gender.Value);
+
+            if (ageFromYears.HasValue)
+                query = query.Where(a => a.AgeYears >= ageFromYears.Value);
+
+            if (ageToYears.HasValue)
+                query = query.Where(a => a.AgeYears <= ageToYears.Value);
+
+            if (status.HasValue)
+                query = query.Where(a => a.DonationStatus == status.Value);
+
+            var totalCount = await query.CountAsync();
+
+            query = sort switch
+            {
+                AnimalSort.NameAsc => query.OrderBy(a => a.Name),
+                AnimalSort.NameDesc => query.OrderByDescending(a => a.Name),
+                AnimalSort.AgeAsc => query.OrderBy(a => a.AgeYears),
+                AnimalSort.AgeDesc => query.OrderByDescending(a => a.AgeYears),
+                AnimalSort.CreatedAtAsc => query.OrderBy(a => a.CreatedAt),
+                AnimalSort.CreatedAtDesc => query.OrderByDescending(a => a.CreatedAt),
+                _ => query.OrderByDescending(a => a.Id)
+            };
+
+            var animals = await query
+                .Skip(pageSize * (pageNumber - 1))
+                .Take(pageSize)
+                .ToListAsync();
+
+            return (animals, totalCount);
+        }
+    }
+}

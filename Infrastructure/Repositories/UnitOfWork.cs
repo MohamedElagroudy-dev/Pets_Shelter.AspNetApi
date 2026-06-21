@@ -23,6 +23,8 @@ namespace Infrastructure.Repositories
         public IAdoptionApplicationRepository AdoptionApplications { get; }
         public IEmailService EmailService { get; }
 
+        public IDonationAnimalRepository DonationAnimals { get; }
+
         public UnitOfWork(ApplicationDbContext context,
                           IProductRepository productRepository,
                           IGenericRepository<Rating> RatingRepo,
@@ -33,7 +35,8 @@ namespace Infrastructure.Repositories
                           IFosterAnimalRepository fosterAnimalRepository,
                           IAdoptionApplicationRepository adoptionApplicationRepository,
                           IAdminService adminService,
-                          IEmailService emailService
+                          IEmailService emailService,
+                           IDonationAnimalRepository donationAnimalRepository
                           )
         {
             _context = context;
@@ -47,6 +50,7 @@ namespace Infrastructure.Repositories
             FosterAnimals = fosterAnimalRepository;
             AdoptionApplications = adoptionApplicationRepository;
             EmailService = emailService;
+            DonationAnimals = donationAnimalRepository;
         }
         public IGenericRepository<TEntity> Repository<TEntity>() where TEntity : BaseEntity
         {
