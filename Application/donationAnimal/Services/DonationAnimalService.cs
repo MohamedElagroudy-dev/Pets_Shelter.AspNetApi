@@ -145,7 +145,7 @@ namespace Application.donationAnimal.Services
         {
             _logger.LogInformation("Executing GetAnimalAsync (Donation) for Id={Id}", id);
 
-            var animal = await _unitOfWork.DonationAnimals.GetByidAsync(id, a => a.Photos, a => a.PetType, a => a.Donations);
+            var animal = await _unitOfWork.DonationAnimals.GetDetailsByIdAsync(id);
             if (animal == null) throw new NotFoundException(nameof(DonationAnimal), id.ToString());
 
             return animal.ToDto();

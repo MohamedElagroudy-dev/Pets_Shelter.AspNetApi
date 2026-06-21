@@ -1,6 +1,8 @@
 ﻿using Application.donationAnimal.DTOs;
 using Core.Constants;
 using Core.Entities.Animal;
+using Stripe.Terminal;
+using System.Reflection.Metadata;
 
 
 namespace Application.donationAnimal.Mappings
@@ -8,6 +10,7 @@ namespace Application.donationAnimal.Mappings
     public static class DonationAnimalMappingExtensions
     {
         private const string DefaultImagePath = "/Images/Defult/animal-default.jpg";
+        private const string DefaultUserPicturePath = "/Images/Defult/DefultUserPic.jpeg";
 
         public static DonationAnimalDTO ToDto(this DonationAnimal animal)
         {
@@ -23,14 +26,23 @@ namespace Application.donationAnimal.Mappings
                 photos.Add(new PhotoDTO { ImageUrl = DefaultImagePath });
             }
 
-            var donations = animal.Donations?.Select(d => new DonationDTO
+            var donations = animal.Donations?.Select( d => new DonationDTO
             {
                 Id = d.Id,
                 DonationAnimalId = d.DonationAnimalId,
-                DonorId = d.DonorId,
                 Amount = d.Amount,
                 Message = d.Message,
-                DonatedAt = d.DonatedAt
+                DonatedAt = d.DonatedAt,
+                DonorName = d.IsAnonymous
+                    ? "Anonymous"
+                    : d.Donor == null
+                        ? "Anonymous"
+                        : !string.IsNullOrWhiteSpace(d.DonorName)
+                            ? d.DonorName
+                            : $"{d.Donor.FirstName} {d.Donor.LastName}".Trim(),
+                DonorPictureUrl = d.IsAnonymous
+                    ? DefaultUserPicturePath
+                    : d.Donor?.PictureUrl ?? DefaultUserPicturePath
             }).ToList() ?? new List<DonationDTO>();
 
             return new DonationAnimalDTO

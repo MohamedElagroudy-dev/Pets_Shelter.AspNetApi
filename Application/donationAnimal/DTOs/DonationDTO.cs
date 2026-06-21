@@ -7,6 +7,8 @@ namespace Application.donationAnimal.DTOs
         public int Id { get; set; }
         public int DonationAnimalId { get; set; }
         public string DonorId { get; set; } = string.Empty;
+        public string DonorName { get; set; } = string.Empty;
+        public string DonorPictureUrl { get; set; } = string.Empty;
         public decimal Amount { get; set; }
         public string? Message { get; set; }
         public DateTime DonatedAt { get; set; }
