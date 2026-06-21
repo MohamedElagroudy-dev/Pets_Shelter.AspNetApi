@@ -41,7 +41,8 @@ namespace Infrastructure.Config
             // Discriminator for TPH
             builder.HasDiscriminator<string>("AnimalRole")
                 .HasValue<AdoptionAnimal>("Adoption")
-                .HasValue<FosterAnimal>("Foster");
+                .HasValue<FosterAnimal>("Foster")
+                .HasValue<DonationAnimal>("Donation");
 
             // Shared relationships
             builder.HasOne(a => a.PetType)
