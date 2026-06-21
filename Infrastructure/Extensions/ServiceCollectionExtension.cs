@@ -34,7 +34,6 @@ namespace Infrastructure.Extensions
             services.AddScoped<IAdoptionApplicationRepository, AdoptionApplicationRepository>();
             services.AddSingleton<ICartService, CartService>();
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-            //services.AddScoped<IPaymentService, PaymentService>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IPaymentService, PaymentService>();
@@ -45,6 +44,7 @@ namespace Infrastructure.Extensions
             services.AddScoped<IFosterAnimalRepository, FosterAnimalRepository>();
             services.AddScoped<IChatService, ChatService>();
             services.AddScoped<INotificationService, NotificationService>();
+            services.AddScoped<IDonationAnimalRepository, DonationAnimalRepository>();
 
             services.AddSingleton<IFileProvider>(
             new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot")));
