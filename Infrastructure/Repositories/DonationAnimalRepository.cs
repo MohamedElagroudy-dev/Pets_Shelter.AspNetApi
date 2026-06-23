@@ -31,8 +31,6 @@ namespace Infrastructure.Repositories
             var query = _context.Set<DonationAnimal>()
                 .Include(a => a.Photos)
                 .Include(a => a.PetType)
-                .Include(a => a.Donations)
-                    .ThenInclude(d => d.Donor)
                 .AsNoTracking();
 
             // Apply custom predicate if provided
