@@ -3,6 +3,7 @@ using Application.Account.Services;
 using Application.Admin.Services;
 using Application.Cart.Services;
 using Application.Categories.Services;
+using Application.donationAnimal.Services;
 using Application.Orders.Services;
 using Application.Payment.Services;
 using Application.PetTypes.Services;
@@ -37,6 +38,7 @@ namespace Application.Extensions
             services.AddScoped<IAnimalService, AnimalService>();
             services.AddScoped<IAnimalApplicationService, AnimalApplicationService>();
             services.AddScoped<IFosterAnimalService, FosterAnimalService>();
+            services.AddScoped<IDonationAnimalService, DonationAnimalService>();
 
             services.AddHttpContextAccessor(); // needed for IHttpContextAccessor
             services.AddScoped<IUserContext, UserContext>();

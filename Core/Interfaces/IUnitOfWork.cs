@@ -22,6 +22,7 @@ namespace Core.Interfaces
         IFosterAnimalRepository FosterAnimals { get; } // FosterAnimals repository
         IEmailService EmailService { get; }
         IAdoptionApplicationRepository AdoptionApplications { get; }
+        IDonationAnimalRepository DonationAnimals { get; }
         IGenericRepository<TEntity> Repository<TEntity>() where TEntity : BaseEntity;
         Task<int> CompleteAsync();
 
