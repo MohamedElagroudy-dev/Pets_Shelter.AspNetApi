@@ -27,7 +27,8 @@ namespace Core.Entities.Animal
         public DateTime DonatedAt { get; set; } = DateTime.UtcNow;
 
         public DonationPaymentStatus PaymentStatus { get; set; } = DonationPaymentStatus.Pending;
-        public string? StripePaymentIntentId { get; set; }  
+        public string? StripePaymentIntentId { get; set; }
+        public string? StripeSessionId { get; set; }
         public DateTime? PaidAt { get; set; }
     }
 }

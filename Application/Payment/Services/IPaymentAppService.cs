@@ -15,8 +15,7 @@ namespace Application.Payment.Services
         Task<ShoppingCart?> CreateOrUpdatePaymentIntent(string cartId);
         Task<OrderDto> RefundOrderAsync(int orderId);
         Task<IReadOnlyList<DeliveryMethodDTO>> GetDeliveryMethodsAsync();
-        Task<string> CreateDonationCheckoutSession(decimal amount);
-
+        Task<string> CreateDonationCheckoutSession(int donationId, decimal amount);
 
     }
 }

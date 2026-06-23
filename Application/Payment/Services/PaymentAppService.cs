@@ -119,9 +119,9 @@ namespace Application.Payment.Services
 
 
 
-        public async Task<string> CreateDonationCheckoutSession(decimal amount)
+        public async Task<string> CreateDonationCheckoutSession(int donationId, decimal amount)
         {
-            return await _paymentGateway.CreateCheckoutSessionAsync(amount);
+            return await _paymentGateway.CreateDonationCheckoutSessionAsync(donationId,amount);
         }
 
 

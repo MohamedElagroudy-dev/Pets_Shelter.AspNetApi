@@ -52,15 +52,24 @@ namespace Infrastructure.Service
             var result = await refundService.CreateAsync(refundOptions);
             return result.Status;
         }
-        public async Task<string> CreateCheckoutSessionAsync(decimal amount)
+        public async Task<string>CreateDonationCheckoutSessionAsync(int donationId,decimal amount)
         {
             var options = new SessionCreateOptions
             {
                     Mode = "payment",
 
-                    SuccessUrl = "https://google.com",
+                    SuccessUrl =
+                        "https://petopia.0xcode7.xyz/",
 
-                    CancelUrl = "https://google.com",
+                    CancelUrl =
+                        "https://petopia.0xcode7.xyz/",
+
+                    Metadata = new Dictionary<string, string>
+                    {
+                        { "Type", "Donation" },
+
+                        { "DonationId", donationId.ToString() }
+                    },
 
                     LineItems =
                     [
@@ -68,26 +77,30 @@ namespace Infrastructure.Service
                         {
                             Quantity = 1,
 
-                            PriceData = new SessionLineItemPriceDataOptions
-                            {
-                                Currency = "egp",
-
-                                UnitAmount = (long)(amount * 100),
-
-                                ProductData = new SessionLineItemPriceDataProductDataOptions
+                            PriceData =
+                                new SessionLineItemPriceDataOptions
                                 {
-                                    Name = "Donation Test"
+                                    Currency = "egp",
+
+                                    UnitAmount =
+                                        (long)(amount * 100),
+
+                                    ProductData =
+                                        new SessionLineItemPriceDataProductDataOptions
+                                        {
+                                            Name = $"Donation #{donationId}"
+                                        }
                                 }
-                            }
                         }
                     ]
             };
 
             var service = new SessionService();
 
-            var session = await service.CreateAsync(options);
+            var session =
+                await service.CreateAsync(options);
 
-            return session.Url;
+            return session.Url!;
         }
     }
 }
