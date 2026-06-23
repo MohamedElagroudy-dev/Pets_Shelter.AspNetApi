@@ -2,6 +2,7 @@
 using Application.Payment.DTOs;
 using Application.Payment.Services;
 using Application.SignalR;
+using Application.UserDonations.Services;
 using Core.Constants;
 using Core.Entities;
 using Core.Interfaces;
@@ -23,18 +24,21 @@ namespace API.Controllers
         private readonly string _whSecret;
         private readonly IHubContext<NotificationHub> _hubContext;
         private readonly IOrderService _orderService;
+        private readonly IDonationService _donationService;
 
         public PaymentsController(IPaymentAppService paymentService,
             IUnitOfWork unit,
             IConfiguration config,
             IHubContext<NotificationHub> hubContext,
-            IOrderService orderService)
+            IOrderService orderService,
+            IDonationService donationService)
         {
             _paymentService = paymentService;
             _unit = unit;
             _whSecret = config["StripeSettings:WhSecret"]!;
             _hubContext = hubContext;
             _orderService = orderService;
+            _donationService = donationService;
         }
 
       
@@ -66,22 +70,38 @@ namespace API.Controllers
             {
                 var stripeEvent = ConstructStripeEvent(json);
 
-                if (stripeEvent.Data.Object is not PaymentIntent intent)
+                if (stripeEvent.Type == "payment_intent.succeeded")
                 {
-                    return BadRequest("Invalid event data.");
-                }
+                    var intent = stripeEvent.Data.Object as PaymentIntent;
 
-                await _orderService.HandlePaymentIntentSucceeded(intent);
+                    if (intent != null)
+                    {
+                        await _orderService.HandlePaymentIntentSucceeded(intent);
+                    }
+                }
+                else if (stripeEvent.Type == "checkout.session.completed")
+                {
+                    var session = stripeEvent.Data.Object as Stripe.Checkout.Session;
+
+                    if (session != null)
+                    {
+                        await _donationService.HandleDonationCompleted(session);
+                    }
+                }
 
                 return Ok();
             }
-            catch (StripeException )
+            catch (StripeException)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Webhook error");
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError,
+                    "Webhook error");
             }
-            catch (Exception )
+            catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "An unexpected error occurred");
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError,
+                    ex.Message);
             }
         }
 
@@ -98,18 +118,18 @@ namespace API.Controllers
         }
 
 
-        [HttpPost("checkout-session")]
-        public async Task<IActionResult> CreateCheckoutSession(
-            CreateSessionDto dto)
-        {
-            var url = await _paymentService
-                .CreateDonationCheckoutSession(dto.Amount);
+        //[HttpPost("checkout-session")]
+        //public async Task<IActionResult> CreateCheckoutSession(
+        //    CreateSessionDto dto)
+        //{
+        //    var url = await _paymentService
+        //        .CreateDonationCheckoutSession(dto);
 
-            return Ok(new
-            {
-                CheckoutUrl = url
-            });
-        }
+        //    return Ok(new
+        //    {
+        //        CheckoutUrl = url
+        //    });
+        //}
 
     }
 
