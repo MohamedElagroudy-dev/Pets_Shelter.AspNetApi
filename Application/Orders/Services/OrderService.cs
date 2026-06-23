@@ -189,7 +189,7 @@ namespace Application.Orders.Services
             return order.ToDto();
         }
 
-        private async Task HandlePaymentIntentSucceeded(PaymentIntent intent)
+        public async Task HandlePaymentIntentSucceeded(PaymentIntent intent)
         {
             // Handle both successful and failed payment intent statuses
             var order = await _unitOfWork.Orders.GetByAsync(x => x.PaymentIntentId == intent.Id, x => x.OrderItems, p => p.DeliveryMethod);
@@ -266,5 +266,6 @@ namespace Application.Orders.Services
             }
         }
 
+       
     }
 }
