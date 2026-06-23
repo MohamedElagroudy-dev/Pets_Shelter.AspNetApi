@@ -3,6 +3,7 @@ using Application.Common;
 using Application.Common.Pagination;
 using Application.Orders.DTOs;
 using Application.Orders.Mappings;
+using Application.SignalR;
 using Core.Constants;
 using Core.Entities;
 using Core.Entities.OrderAggregate;
@@ -10,7 +11,9 @@ using Core.Exceptions;
 using Core.Interfaces;
 using Ecom.Application.Products.DTOs;
 using Ecom.Core.Entities.Product;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
+using Stripe;
 
 
 namespace Application.Orders.Services
@@ -20,15 +23,19 @@ namespace Application.Orders.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IUserContext _userContext;
         private readonly ILogger<OrderService> _logger;
+        private readonly IHubContext<NotificationHub> _hubContext;
+
 
         public OrderService(
             IUnitOfWork unitOfWork,
             IUserContext userContext,
-            ILogger<OrderService> logger)
+            ILogger<OrderService> logger,
+            IHubContext<NotificationHub> hubContext)
         {
             _unitOfWork = unitOfWork;
             _userContext = userContext;
             _logger = logger;
+            _hubContext = hubContext;
         }
         public async Task<PagedResult<OrderDto>> GetAllAsync(OrderParams orderParams)
         {
@@ -180,6 +187,83 @@ namespace Application.Orders.Services
             await _unitOfWork.CompleteAsync();
 
             return order.ToDto();
+        }
+
+        private async Task HandlePaymentIntentSucceeded(PaymentIntent intent)
+        {
+            // Handle both successful and failed payment intent statuses
+            var order = await _unitOfWork.Orders.GetByAsync(x => x.PaymentIntentId == intent.Id, x => x.OrderItems, p => p.DeliveryMethod);
+
+            if (order == null)
+            {
+                // Order not found - nothing to do
+                return;
+            }
+
+            if (intent.Status == "succeeded")
+            {
+                if ((long)order.GetTotal() * 100 != intent.Amount)
+                {
+                    order.Status = OrderStatus.PaymentReceived;
+                }
+                else
+                {
+                    order.Status = OrderStatus.PaymentReceived;
+                }
+
+                await _unitOfWork.CompleteAsync();
+
+                var connectionId = NotificationHub.GetConnectionIdByEmail(order.BuyerEmail);
+
+                if (!string.IsNullOrEmpty(connectionId))
+                {
+                    var payload = new
+                    {
+                        orderId = order.Id,
+                        status = order.Status.ToString(),
+                        total = order.GetTotal(),
+                        subtotal = order.Subtotal,
+                        deliveryPrice = order.DeliveryMethod?.Price ?? 0,
+                        itemsCount = order.OrderItems?.Sum(i => i.Quantity) ?? 0,
+                        deliveryMethod = order.DeliveryMethod?.ShortName ?? string.Empty,
+                        deliveryTime = order.DeliveryMethod?.DeliveryTime ?? string.Empty,
+                        message = order.Status == OrderStatus.PaymentReceived
+                            ? "✓ Payment received — your order is confirmed!"
+                            : "⚠ Payment amount mismatch — please contact support.",
+                        timestamp = DateTime.UtcNow
+                    };
+
+                    await _hubContext.Clients.Client(connectionId).SendAsync("OrderStatusChanged", payload);
+                }
+            }
+            else
+            {
+                // Treat other statuses as payment failure
+                order.Status = OrderStatus.PaymentFailed;
+                await _unitOfWork.CompleteAsync();
+
+                var connectionId = NotificationHub.GetConnectionIdByEmail(order.BuyerEmail);
+
+                if (!string.IsNullOrEmpty(connectionId))
+                {
+                    var payload = new
+                    {
+                        orderId = order.Id,
+                        status = order.Status.ToString(),
+                        total = order.GetTotal(),
+                        subtotal = order.Subtotal,
+                        deliveryPrice = order.DeliveryMethod?.Price ?? 0,
+                        itemsCount = order.OrderItems?.Sum(i => i.Quantity) ?? 0,
+                        deliveryMethod = order.DeliveryMethod?.ShortName ?? string.Empty,
+                        deliveryTime = order.DeliveryMethod?.DeliveryTime ?? string.Empty,
+                        message = "✖ Payment failed — please retry checkout or contact support.",
+                        timestamp = DateTime.UtcNow,
+                        error = intent.LastPaymentError?.Message ?? string.Empty
+                    };
+
+                    await _hubContext.Clients.Client(connectionId).SendAsync("OrderStatusChanged", payload);
+                }
+            }
         }
 
     }

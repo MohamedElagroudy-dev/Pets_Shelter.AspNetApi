@@ -1,6 +1,7 @@
 ﻿using Application.Common;
 using Application.Common.Pagination;
 using Application.Orders.DTOs;
+using Stripe;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -14,5 +15,6 @@ namespace Application.Orders.Services
         Task<OrderDto> GetUserOrderByIdAsync(int orderId);
         Task<OrderDto> GetOrderByIdAsync(int orderId);
         Task<OrderDto> UpdateOrderStatusAsync(int orderId, string newStatus);
+        Task HandlePaymentIntentSucceeded(PaymentIntent intent);
     }
 }
