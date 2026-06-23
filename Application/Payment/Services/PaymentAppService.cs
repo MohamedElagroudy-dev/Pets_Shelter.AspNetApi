@@ -117,7 +117,14 @@ namespace Application.Payment.Services
         }
 
 
-        
+
+
+        public async Task<string> CreateDonationCheckoutSession(decimal amount)
+        {
+            return await _paymentGateway.CreateCheckoutSessionAsync(amount);
+        }
+
+
     }
 }
 

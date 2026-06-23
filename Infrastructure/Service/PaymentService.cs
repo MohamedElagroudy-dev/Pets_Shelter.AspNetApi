@@ -3,6 +3,7 @@ using Core.Entities.Cart;
 using Core.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Stripe;
+using Stripe.Checkout;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -50,6 +51,43 @@ namespace Infrastructure.Service
             var refundOptions = new RefundCreateOptions { PaymentIntent = paymentIntentId };
             var result = await refundService.CreateAsync(refundOptions);
             return result.Status;
+        }
+        public async Task<string> CreateCheckoutSessionAsync(decimal amount)
+        {
+            var options = new SessionCreateOptions
+            {
+                    Mode = "payment",
+
+                    SuccessUrl = "https://google.com",
+
+                    CancelUrl = "https://google.com",
+
+                    LineItems =
+                    [
+                        new SessionLineItemOptions
+                        {
+                            Quantity = 1,
+
+                            PriceData = new SessionLineItemPriceDataOptions
+                            {
+                                Currency = "egp",
+
+                                UnitAmount = (long)(amount * 100),
+
+                                ProductData = new SessionLineItemPriceDataProductDataOptions
+                                {
+                                    Name = "Donation Test"
+                                }
+                            }
+                        }
+                    ]
+            };
+
+            var service = new SessionService();
+
+            var session = await service.CreateAsync(options);
+
+            return session.Url;
         }
     }
 }
