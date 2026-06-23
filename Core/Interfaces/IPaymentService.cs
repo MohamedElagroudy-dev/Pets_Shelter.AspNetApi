@@ -11,6 +11,8 @@ namespace Core.Interfaces
     {
         Task<(string paymentIntentId, string clientSecret)> CreateOrUpdatePaymentIntent(string? existingIntentId, long total);
         Task<string> RefundPayment(string paymentIntentId);
-        Task<string> CreateCheckoutSessionAsync(decimal amount);
+        Task<string> CreateDonationCheckoutSessionAsync(
+    int donationId,
+    decimal amount);
     }
 }
