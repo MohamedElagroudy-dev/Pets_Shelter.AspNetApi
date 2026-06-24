@@ -4,6 +4,7 @@ using Application.UserDonations.DTOs;
 using Application.UserDonations.Mappings;
 using Core.Constants;
 using Core.Entities.Animal;
+using Core.Exceptions;
 using Core.Interfaces;
 using Microsoft.Extensions.Logging;
 using Stripe.Checkout;
@@ -35,6 +36,20 @@ namespace Application.UserDonations.Services
         }
         public async Task<string> CreateDonationPaymentAsync(CreateDonationPaymentDto dto)
         {
+            if (dto.Amount < 50)
+                throw new InvalidOperationException("Minimum donation amount is 50 EGP.");
+
+            var animal = await _unitOfWork.DonationAnimals
+                .GetAsync(dto.DonationAnimalId);
+
+            if (animal == null)
+                throw new NotFoundException(nameof(DonationAnimal),
+                    dto.DonationAnimalId.ToString());
+
+            if (animal.DonationStatus == DonationStatus.Funded)
+                throw new InvalidOperationException(
+                    "This donation campaign has already been funded.");
+
             var currentUser = _userContext.GetCurrentUser();
 
             if (currentUser == null)
@@ -92,6 +107,13 @@ namespace Application.UserDonations.Services
             if (animal != null)
             {
                 animal.CollectedAmount += donation.Amount;
+
+                if (animal.CollectedAmount >= animal.GoalAmount)
+                {
+                    animal.CollectedAmount = animal.GoalAmount;
+
+                    animal.DonationStatus = DonationStatus.Funded;
+                }
             }
 
             await _unitOfWork.CompleteAsync();

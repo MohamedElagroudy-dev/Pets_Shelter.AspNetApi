@@ -87,7 +87,9 @@ namespace Infrastructure.Repositories
                 .Include(a => a.Photos)
                 .Include(a => a.PetType)
                 .Include(a => a.Temperament)
-                .Include(a => a.Donations)
+                .Include(a => a.Donations
+                    .Where(d => d.PaymentStatus == DonationPaymentStatus.Succeeded)
+                    .OrderByDescending(d => d.DonatedAt))
                     .ThenInclude(d => d.Donor)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(a => a.Id == id);
