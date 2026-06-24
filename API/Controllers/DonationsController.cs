@@ -25,7 +25,7 @@ namespace API.Controllers
                     await _donationService
                         .CreateDonationPaymentAsync(dto);
 
-                return Ok(new ResponseAPI<string>(200, url));
+                return Ok(new ResponseAPI<string>(200, "Donation created successfully. Wait for the payment to be processed.", url));
             }
             catch (Exception ex)
             {
