@@ -1,4 +1,5 @@
-﻿using Application.UserDonations.DTOs;
+﻿using API.Helper;
+using Application.UserDonations.DTOs;
 using Application.UserDonations.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -18,14 +19,18 @@ namespace API.Controllers
         [HttpPost("donation")]
         public async Task<IActionResult> CreateDonationPayment(CreateDonationPaymentDto dto)
         {
-            var url =
-                await _donationService
-                    .CreateDonationPaymentAsync(dto);
-
-            return Ok(new
+            try
             {
-                CheckoutUrl = url
-            });
+                var url =
+                    await _donationService
+                        .CreateDonationPaymentAsync(dto);
+
+                return Ok(new ResponseAPI<string>(200, url));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ResponseAPI<string>(500, ex.Message));
+            }
         }
     }
 }
