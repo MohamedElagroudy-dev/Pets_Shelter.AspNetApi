@@ -1,6 +1,7 @@
 ﻿using Application.Account;
 using Application.UserDonations.DTOs;
 using Core.Constants;
+using Core.Entities;
 using Core.Entities.Animal;
 using System;
 using System.Collections.Generic;
@@ -27,7 +28,7 @@ namespace Application.UserDonations.Mappings
         //        Status = donation.Status
         //    };
         //}
-        public static Donation ToEntity(this CreateDonationPaymentDto dto, CurrentUser currentUser)
+        public static Donation ToEntity(this CreateDonationPaymentDto dto, AppUser currentUser)
         {
             var donation = new Donation
             {
@@ -44,6 +45,9 @@ namespace Application.UserDonations.Mappings
                 DonorName = dto.IsAnonymous
                     ? null
                     : $"{currentUser.FirstName} {currentUser.LastName}",
+                DonorProfilePicture = dto.IsAnonymous
+                    ? null
+                    : currentUser.PictureUrl,
 
                 PaymentStatus = DonationPaymentStatus.Pending,
 

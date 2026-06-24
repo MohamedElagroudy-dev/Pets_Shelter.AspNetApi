@@ -16,7 +16,7 @@ namespace Core.Entities.OrderAggregate
         public PaymentSummary PaymentSummary { get; set; } = null!;
         public List<OrderItem> OrderItems { get; set; } = [];
         public decimal Subtotal { get; set; }
-        public OrderStatus Status { get; set; } = OrderStatus.Pending;
+        public OrderStatus Status { get; set; } = OrderStatus.PaymentReceived;
         public required string PaymentIntentId { get; set; }
 
         public decimal GetTotal()

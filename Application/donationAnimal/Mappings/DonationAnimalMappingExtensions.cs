@@ -42,7 +42,7 @@ namespace Application.donationAnimal.Mappings
                             : $"{d.Donor.FirstName} {d.Donor.LastName}".Trim(),
                 DonorPictureUrl = d.IsAnonymous
                     ? DefaultUserPicturePath
-                    : d.Donor?.PictureUrl ?? DefaultUserPicturePath
+                    : d.DonorProfilePicture ?? DefaultUserPicturePath
             }).ToList() ?? new List<DonationDTO>();
 
             return new DonationAnimalDTO

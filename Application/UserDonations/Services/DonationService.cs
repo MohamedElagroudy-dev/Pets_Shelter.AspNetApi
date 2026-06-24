@@ -39,8 +39,9 @@ namespace Application.UserDonations.Services
 
             if (currentUser == null)
                 throw new UnauthorizedAccessException();
+            var user = await _unitOfWork.AdminService.GetUserByIdAsync(currentUser.Id);
 
-            var donation = dto.ToEntity(currentUser);
+            var donation = dto.ToEntity(user);
 
             await _unitOfWork.Repository<Donation>()
                 .AddAsync(donation);
