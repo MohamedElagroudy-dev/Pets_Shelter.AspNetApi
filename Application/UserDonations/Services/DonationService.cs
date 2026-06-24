@@ -22,17 +22,20 @@ namespace Application.UserDonations.Services
         private readonly ILogger<DonationService> _logger;
         private readonly IUserContext _userContext;
         private readonly IPaymentService _paymentService;
+        private readonly IAuthService _authService;
 
         public DonationService(
             IUnitOfWork unitOfWork,
             IUserContext userContext,
             ILogger<DonationService> logger,
-            IPaymentService paymentService)
+            IPaymentService paymentService,
+            IAuthService authService)
         {
             _unitOfWork = unitOfWork;
             _userContext = userContext;
             _logger = logger;
             _paymentService = paymentService;
+            _authService = authService;
         }
         public async Task<string> CreateDonationPaymentAsync(CreateDonationPaymentDto dto)
         {
@@ -56,7 +59,9 @@ namespace Application.UserDonations.Services
                 throw new UnauthorizedAccessException();
             var user = await _unitOfWork.AdminService.GetUserByIdAsync(currentUser.Id);
 
-            var donation = dto.ToEntity(user);
+            var (User, roles) = await _authService.GetUserByEmailWithAddress(currentUser.Email!);
+
+            var donation = dto.ToEntity(User);
 
             await _unitOfWork.Repository<Donation>()
                 .AddAsync(donation);
