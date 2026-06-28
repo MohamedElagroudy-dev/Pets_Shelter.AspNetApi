@@ -73,7 +73,7 @@ namespace Application.Orders.Services
                 var product = await _unitOfWork.Products.GetByidAsync(item.ProductId, p => p.Photos)
                               ?? throw new ArgumentException($"Product {item.ProductId} not found");
 
-                var pictureUrl = product.Photos?.FirstOrDefault()?.ImageName ?? "default.jpg";
+                var pictureUrl = product.Photos?.FirstOrDefault()?.ImageName ?? "/Images/Defult/42463.jpg";
 
                 items.Add(new OrderItem
                 {
