@@ -24,7 +24,7 @@ namespace Infrastructure.Config
             builder.HasOne<BaseAnimal>(a => a.Animal)
                    .WithMany()
                    .HasForeignKey(a => a.AnimalId)
-                   .OnDelete(DeleteBehavior.Restrict);
+                   .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasOne(a => a.Applicant)
                    .WithMany()
