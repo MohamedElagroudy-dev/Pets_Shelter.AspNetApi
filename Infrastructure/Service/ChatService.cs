@@ -126,7 +126,7 @@ namespace Infrastructure.Service
             // Sender must be either the room's customer OR an admin.
             var roles = await _userManager.GetRolesAsync(sender);
             bool isAdmin = roles.Contains("Admin");
-            bool isCustomer = room.CustomerId == cmd.SenderId;
+            bool isCustomer = room.CustomerId == sender.Id;
 
             if (!isAdmin && !isCustomer)
                 throw new UnauthorizedAccessException(
@@ -135,7 +135,7 @@ namespace Infrastructure.Service
             var message = new Message
             {
                 ChatRoomId = cmd.ChatRoomId,
-                SenderId = cmd.SenderId,
+                SenderId = sender.Id,
                 Sender = sender,
                 Content = cmd.Content,
                 SentAt = DateTime.UtcNow
