@@ -118,6 +118,8 @@ namespace Infrastructure.Service
                 ?? throw new KeyNotFoundException($"ChatRoom {cmd.ChatRoomId} not found.");
 
             var sender = await _userManager.FindByIdAsync(cmd.SenderId)
+                ?? await _userManager.FindByNameAsync(cmd.SenderId)
+                ?? await _userManager.FindByEmailAsync(cmd.SenderId)
                 ?? throw new KeyNotFoundException($"Sender {cmd.SenderId} not found.");
 
             // ── authorization guard ──────────────────────────────────────────────
