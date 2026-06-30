@@ -22,6 +22,8 @@ namespace Application.SignalR
 
             if (isAdmin)
             {
+                await Groups.AddToGroupAsync(Context.ConnectionId, "all-admins");   
+
                 var rooms = await _chat.GetAllRoomsAsync();
                 foreach (var room in rooms)
                     await Groups.AddToGroupAsync(Context.ConnectionId, RoomGroup(room.Id));
@@ -79,6 +81,11 @@ namespace Application.SignalR
             var cmd = new Application.Chat.DTOs.SendMessageCommand(resolvedRoomId, userId, content);
             var message = await _chat.SaveMessageAsync(cmd);
 
+            if (!isAdmin)
+            {
+                await Clients.Group("all-admins").SendAsync("JoinRoomSilently", resolvedRoomId);
+            }
+
             await Clients
                 .Group(RoomGroup(resolvedRoomId))
                 .SendAsync("ReceiveMessage", message);
@@ -86,7 +93,10 @@ namespace Application.SignalR
             if (isAdmin)
                 await Groups.AddToGroupAsync(Context.ConnectionId, RoomGroup(resolvedRoomId));
         }
-
+        public Task JoinRoom(int roomId)
+        {
+            return Groups.AddToGroupAsync(Context.ConnectionId, RoomGroup(roomId));
+        }
         private string GetUserId() =>
             Context.UserIdentifier
             ?? throw new HubException("Unauthenticated connection.");
