@@ -59,10 +59,10 @@ namespace Infrastructure.Service
                     Mode = "payment",
 
                     SuccessUrl =
-                        "https://petopia.0xcode7.xyz/",
+                        "https://petopia.0xcode7.xyz/sponsor",
 
                     CancelUrl =
-                        "https://petopia.0xcode7.xyz/",
+                        "https://petopia.0xcode7.xyz/sponsor",
 
                     Metadata = new Dictionary<string, string>
                     {
