@@ -22,7 +22,7 @@ namespace Infrastructure.Seeders
                 };
 
 
-                await userManager.CreateAsync(user, "Password@123");
+                await userManager.CreateAsync(user, "Password");
                 await userManager.AddToRoleAsync(user, "Admin");
             }
 

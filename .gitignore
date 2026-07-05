@@ -373,3 +373,5 @@ secrets.json
 wwwroot/Images/
 API/wwwroot/Images/
 
+*.md
+/BACKEND_NOTIFICATION_EXAMPLES.cs
