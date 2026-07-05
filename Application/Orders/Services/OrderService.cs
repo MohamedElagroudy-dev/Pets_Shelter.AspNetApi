@@ -3,7 +3,6 @@ using Application.Common;
 using Application.Common.Pagination;
 using Application.Orders.DTOs;
 using Application.Orders.Mappings;
-using Application.SignalR;
 using Core.Constants;
 using Core.Entities;
 using Core.Entities.OrderAggregate;
@@ -11,7 +10,6 @@ using Core.Exceptions;
 using Core.Interfaces;
 using Ecom.Application.Products.DTOs;
 using Ecom.Core.Entities.Product;
-using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 using Stripe;
 
@@ -23,19 +21,19 @@ namespace Application.Orders.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IUserContext _userContext;
         private readonly ILogger<OrderService> _logger;
-        private readonly IHubContext<NotificationHub> _hubContext;
+        private readonly INotificationService _notificationService;
 
 
         public OrderService(
             IUnitOfWork unitOfWork,
             IUserContext userContext,
             ILogger<OrderService> logger,
-            IHubContext<NotificationHub> hubContext)
+            INotificationService notificationService)
         {
             _unitOfWork = unitOfWork;
             _userContext = userContext;
             _logger = logger;
-            _hubContext = hubContext;
+            _notificationService = notificationService;
         }
         public async Task<PagedResult<OrderDto>> GetAllAsync(OrderParams orderParams)
         {
@@ -213,28 +211,7 @@ namespace Application.Orders.Services
 
                 await _unitOfWork.CompleteAsync();
 
-                var connectionId = NotificationHub.GetConnectionIdByEmail(order.BuyerEmail);
-
-                if (!string.IsNullOrEmpty(connectionId))
-                {
-                    var payload = new
-                    {
-                        orderId = order.Id,
-                        status = order.Status.ToString(),
-                        total = order.GetTotal(),
-                        subtotal = order.Subtotal,
-                        deliveryPrice = order.DeliveryMethod?.Price ?? 0,
-                        itemsCount = order.OrderItems?.Sum(i => i.Quantity) ?? 0,
-                        deliveryMethod = order.DeliveryMethod?.ShortName ?? string.Empty,
-                        deliveryTime = order.DeliveryMethod?.DeliveryTime ?? string.Empty,
-                        message = order.Status == OrderStatus.PaymentReceived
-                            ? "✓ Payment received — your order is confirmed!"
-                            : "⚠ Payment amount mismatch — please contact support.",
-                        timestamp = DateTime.UtcNow
-                    };
-
-                    await _hubContext.Clients.Client(connectionId).SendAsync("OrderStatusChanged", payload);
-                }
+                await _notificationService.NotifyOrderCompletedAsync(order);
             }
             else
             {
@@ -242,27 +219,8 @@ namespace Application.Orders.Services
                 order.Status = OrderStatus.PaymentFailed;
                 await _unitOfWork.CompleteAsync();
 
-                var connectionId = NotificationHub.GetConnectionIdByEmail(order.BuyerEmail);
-
-                if (!string.IsNullOrEmpty(connectionId))
-                {
-                    var payload = new
-                    {
-                        orderId = order.Id,
-                        status = order.Status.ToString(),
-                        total = order.GetTotal(),
-                        subtotal = order.Subtotal,
-                        deliveryPrice = order.DeliveryMethod?.Price ?? 0,
-                        itemsCount = order.OrderItems?.Sum(i => i.Quantity) ?? 0,
-                        deliveryMethod = order.DeliveryMethod?.ShortName ?? string.Empty,
-                        deliveryTime = order.DeliveryMethod?.DeliveryTime ?? string.Empty,
-                        message = "✖ Payment failed — please retry checkout or contact support.",
-                        timestamp = DateTime.UtcNow,
-                        error = intent.LastPaymentError?.Message ?? string.Empty
-                    };
-
-                    await _hubContext.Clients.Client(connectionId).SendAsync("OrderStatusChanged", payload);
-                }
+                var errorMessage = intent.LastPaymentError?.Message ?? string.Empty;
+                await _notificationService.NotifyOrderFailedAsync(order, errorMessage);
             }
         }
 

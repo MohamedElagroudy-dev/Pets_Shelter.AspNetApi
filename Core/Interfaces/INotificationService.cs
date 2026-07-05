@@ -11,6 +11,7 @@ namespace Core.Interfaces
     public interface INotificationService
     {
         Task NotifyOrderCompletedAsync(Order order);
+        Task NotifyOrderFailedAsync(Order order, string errorMessage);
         Task NotifyApplicationRejectedAsync(AdoptionApplication application);
         Task NotifyApplicationAcceptedAsync(AdoptionApplication application);
     }
