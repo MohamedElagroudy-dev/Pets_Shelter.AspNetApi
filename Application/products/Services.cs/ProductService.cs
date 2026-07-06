@@ -54,7 +54,7 @@ namespace Ecom.Application.Products.Services
 
             if (dto.Photos != null)
             {
-                var imagePaths = await _imageService.AddImageAsync(dto.Photos, dto.Name);
+                var imagePaths = await _imageService.AddImageAsync(dto.Photos, product.Id.ToString());
                 var photos = imagePaths.Select(path => new Photo
                 {
                     ImageName = path,
