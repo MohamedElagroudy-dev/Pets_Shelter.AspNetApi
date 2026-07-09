@@ -34,6 +34,7 @@ namespace Infrastructure.Persistence
 
         public DbSet<ChatRoom> ChatRooms => Set<ChatRoom>();
         public DbSet<Message> Messages => Set<Message>();
+        public DbSet<UserNotification> UserNotifications => Set<UserNotification>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
