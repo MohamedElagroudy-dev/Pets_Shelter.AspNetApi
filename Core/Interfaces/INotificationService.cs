@@ -14,5 +14,6 @@ namespace Core.Interfaces
         Task NotifyOrderFailedAsync(Order order, string errorMessage);
         Task NotifyApplicationRejectedAsync(AdoptionApplication application);
         Task NotifyApplicationAcceptedAsync(AdoptionApplication application);
+        Task DeliverPendingNotificationsAsync(string userId);
     }
 }

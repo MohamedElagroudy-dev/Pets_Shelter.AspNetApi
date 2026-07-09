@@ -1,50 +1,53 @@
+// Application/SignalR/NotificationHub.cs
+using System.Collections.Concurrent;
+using Core.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
-using Application.Account;
-using System.Collections.Concurrent;
 
 namespace Application.SignalR
 {
     [Authorize]
     public class NotificationHub : Hub
     {
-        private static readonly ConcurrentDictionary<string, string> UserConnections = new();
-        private readonly IUserContext _userContext;
+        private readonly INotificationService _notificationService;
 
-        public NotificationHub(IUserContext userContext)
+        // ConnectionId keyed by UserId (not email — more reliable)
+        private static readonly ConcurrentDictionary<string, string> _connections = new();
+
+        public NotificationHub(INotificationService notificationService)
         {
-            _userContext = userContext;
+            _notificationService = notificationService;
         }
 
-        public override Task OnConnectedAsync()
+        public override async Task OnConnectedAsync()
         {
-            var user = _userContext.GetCurrentUser();
-            if (user == null)
-                throw new Exception();
+            var userId = Context.UserIdentifier
+                ?? throw new HubException("Unauthenticated");
 
-            if (!string.IsNullOrEmpty(user.Email))
-                UserConnections[user.Email] = Context.ConnectionId;
+            _connections[userId] = Context.ConnectionId;
 
-            return base.OnConnectedAsync();
+            // Deliver everything the user missed while offline
+            await _notificationService.DeliverPendingNotificationsAsync(userId);
+
+            await base.OnConnectedAsync();
         }
 
         public override Task OnDisconnectedAsync(Exception? exception)
         {
-            var user = _userContext.GetCurrentUser();
-            if (user == null)
-                throw new Exception();
-
-            if (!string.IsNullOrEmpty(user.Email))
-                UserConnections.TryRemove(user.Email, out _);
+            var userId = Context.UserIdentifier;
+            if (userId != null)
+                _connections.TryRemove(userId, out _);
 
             return base.OnDisconnectedAsync(exception);
         }
 
-        public static string? GetConnectionIdByEmail(string email)
-        {
-            UserConnections.TryGetValue(email, out var connectionId);
+        // Called by NotificationService — looks up by UserId now
+        public static string? GetConnectionIdByUserId(string userId)
+            => _connections.TryGetValue(userId, out var id) ? id : null;
 
-            return connectionId;
-        }
+        // Keep backward-compatible email lookup if other code still uses it
+        // (you can remove this once you update all callers to use UserId)
+        [Obsolete("Use GetConnectionIdByUserId instead")]
+        public static string? GetConnectionIdByEmail(string email) => null;
     }
 }
