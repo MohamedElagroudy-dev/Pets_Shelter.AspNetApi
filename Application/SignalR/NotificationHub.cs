@@ -1,4 +1,3 @@
-// Application/SignalR/NotificationHub.cs
 using System.Collections.Concurrent;
 using Core.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -11,7 +10,6 @@ namespace Application.SignalR
     {
         private readonly INotificationService _notificationService;
 
-        // ConnectionId keyed by UserId (not email — more reliable)
         private static readonly ConcurrentDictionary<string, string> _connections = new();
 
         public NotificationHub(INotificationService notificationService)
@@ -19,14 +17,16 @@ namespace Application.SignalR
             _notificationService = notificationService;
         }
 
+        // Pull the real Id straight from the "uid" claim
+        private string? UserId => Context.User?.FindFirst("uid")?.Value;
+
         public override async Task OnConnectedAsync()
         {
-            var userId = Context.UserIdentifier
-                ?? throw new HubException("Unauthenticated");
+            var userId = UserId
+                ?? throw new HubException("User Id not found in token");
 
             _connections[userId] = Context.ConnectionId;
 
-            // Deliver everything the user missed while offline
             await _notificationService.DeliverPendingNotificationsAsync(userId);
 
             await base.OnConnectedAsync();
@@ -34,20 +34,14 @@ namespace Application.SignalR
 
         public override Task OnDisconnectedAsync(Exception? exception)
         {
-            var userId = Context.UserIdentifier;
+            var userId = UserId;
             if (userId != null)
                 _connections.TryRemove(userId, out _);
 
             return base.OnDisconnectedAsync(exception);
         }
 
-        // Called by NotificationService — looks up by UserId now
         public static string? GetConnectionIdByUserId(string userId)
             => _connections.TryGetValue(userId, out var id) ? id : null;
-
-        // Keep backward-compatible email lookup if other code still uses it
-        // (you can remove this once you update all callers to use UserId)
-        [Obsolete("Use GetConnectionIdByUserId instead")]
-        public static string? GetConnectionIdByEmail(string email) => null;
     }
 }
