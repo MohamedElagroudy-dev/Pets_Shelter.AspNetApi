@@ -105,12 +105,7 @@ namespace Application.Orders.Services
             await _unitOfWork.Orders.AddAsync(order);
             await _unitOfWork.CompleteAsync();
 
-            _logger.LogInformation("Order saved. Id = {Id}", order.Id);
-
-            _logger.LogInformation("DeliveryMethod null? {IsNull}", order.DeliveryMethod == null);
-            _logger.LogInformation("OrderItems null? {IsNull}", order.OrderItems == null);
-            _logger.LogInformation("ShippingAddress null? {IsNull}", order.ShippingAddress == null);
-            _logger.LogInformation("PaymentSummary null? {IsNull}", order.PaymentSummary == null);
+            await _notificationService.NotifyOrderCompletedAsync(order);
 
             var orderdto = order.ToDto();
 
