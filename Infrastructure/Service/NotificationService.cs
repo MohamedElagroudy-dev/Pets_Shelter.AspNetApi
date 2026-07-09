@@ -1,5 +1,4 @@
-﻿// Infrastructure/Service/NotificationService.cs
-using System.Text.Json;
+﻿using System.Text.Json;
 using Core.Entities;
 using Core.Entities.OrderAggregate;
 using Core.Entities.AdoptionApp;
@@ -11,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Application.SignalR;
 using Application.SignalR.DTOs;
 using Infrastructure.Persistence;
+using Microsoft.Extensions.Logging;
 
 namespace Infrastructure.Service
 {
@@ -19,22 +19,32 @@ namespace Infrastructure.Service
         private readonly IHubContext<NotificationHub> _hubContext;
         private readonly ApplicationDbContext _db;
         private readonly UserManager<AppUser> _userManager;
+        private readonly ILogger<NotificationService> _logger;
 
         public NotificationService(
             IHubContext<NotificationHub> hubContext,
             ApplicationDbContext db,
-            UserManager<AppUser> userManager)
+            UserManager<AppUser> userManager,
+            ILogger<NotificationService> logger)
         {
             _hubContext = hubContext;
             _db = db;
             _userManager = userManager;
+            _logger = logger;
         }
 
         // ── Public notification methods ──────────────────────────────────────
 
         public async Task NotifyOrderCompletedAsync(Order order)
         {
-            if (order?.BuyerEmail == null) return;
+            if (order?.BuyerEmail == null)
+            {
+                _logger.LogWarning("NotifyOrderCompletedAsync called with null order or BuyerEmail");
+                return;
+            }
+
+            _logger.LogInformation("Notifying order completion for order {OrderId} with buyer email {BuyerEmail}",
+                order.Id, order.BuyerEmail);
 
             var data = new OrderNotificationData
             {
@@ -62,7 +72,14 @@ namespace Infrastructure.Service
 
         public async Task NotifyOrderFailedAsync(Order order, string errorMessage)
         {
-            if (order?.BuyerEmail == null) return;
+            if (order?.BuyerEmail == null)
+            {
+                _logger.LogWarning("NotifyOrderFailedAsync called with null order or BuyerEmail");
+                return;
+            }
+
+            _logger.LogWarning("Notifying order failure for order {OrderId} with buyer email {BuyerEmail}. Error: {ErrorMessage}",
+                order.Id, order.BuyerEmail, errorMessage);
 
             var data = new OrderNotificationData
             {
@@ -91,7 +108,14 @@ namespace Infrastructure.Service
 
         public async Task NotifyApplicationAcceptedAsync(AdoptionApplication application)
         {
-            if (application?.Applicant?.Email == null) return;
+            if (application?.Applicant?.Email == null)
+            {
+                _logger.LogWarning("NotifyApplicationAcceptedAsync called with null application or Applicant.Email");
+                return;
+            }
+
+            _logger.LogInformation("Notifying application acceptance for application {ApplicationId} for animal {AnimalName} to user {Email}",
+                application.Id, application.Animal?.Name ?? "Unknown", application.Applicant.Email);
 
             var data = new ApplicationNotificationData
             {
@@ -116,7 +140,14 @@ namespace Infrastructure.Service
 
         public async Task NotifyApplicationRejectedAsync(AdoptionApplication application)
         {
-            if (application?.Applicant?.Email == null) return;
+            if (application?.Applicant?.Email == null)
+            {
+                _logger.LogWarning("NotifyApplicationRejectedAsync called with null application or Applicant.Email");
+                return;
+            }
+
+            _logger.LogInformation("Notifying application rejection for application {ApplicationId} for animal {AnimalName} to user {Email}",
+                application.Id, application.Animal?.Name ?? "Unknown", application.Applicant.Email);
 
             var data = new ApplicationNotificationData
             {
@@ -143,16 +174,29 @@ namespace Infrastructure.Service
 
         public async Task DeliverPendingNotificationsAsync(string userId)
         {
+            _logger.LogInformation("Delivering pending notifications for user {UserId}", userId);
+
             var pending = await _db.UserNotifications
                 .Where(n => n.UserId == userId && !n.IsDelivered)
                 .OrderBy(n => n.CreatedAt)
                 .ToListAsync();
 
-            if (!pending.Any()) return;
+            if (!pending.Any())
+            {
+                _logger.LogDebug("No pending notifications found for user {UserId}", userId);
+                return;
+            }
+
+            _logger.LogInformation("Found {Count} pending notifications for user {UserId}", pending.Count, userId);
 
             var connectionId = NotificationHub.GetConnectionIdByUserId(userId);
-            if (string.IsNullOrEmpty(connectionId)) return;
+            if (string.IsNullOrEmpty(connectionId))
+            {
+                _logger.LogWarning("User {UserId} is not connected, cannot deliver pending notifications", userId);
+                return;
+            }
 
+            int deliveredCount = 0;
             foreach (var notification in pending)
             {
                 var dto = ToDto(notification);
@@ -160,9 +204,12 @@ namespace Infrastructure.Service
                     .SendAsync("Notification", dto);
 
                 notification.IsDelivered = true;
+                deliveredCount++;
+                _logger.LogDebug("Delivered notification {NotificationId} to user {UserId}", notification.Id, userId);
             }
 
             await _db.SaveChangesAsync();
+            _logger.LogInformation("Successfully delivered {Count} pending notifications to user {UserId}", deliveredCount, userId);
         }
 
         // ── Private helpers ─────────────────────────────────────────────────
@@ -176,9 +223,17 @@ namespace Infrastructure.Service
             NotificationDto dto,
             object dataObject)
         {
+            _logger.LogInformation("Saving notification for user {Email} with type {NotificationType}", email, dto.Type);
+
             // 1. Resolve the real UserId from email
             var user = await _userManager.FindByEmailAsync(email);
-            if (user == null) return;
+            if (user == null)
+            {
+                _logger.LogWarning("User with email {Email} not found. Notification not saved.", email);
+                return;
+            }
+
+            _logger.LogDebug("Resolved user {UserId} from email {Email}", user.Id, email);
 
             // 2. Persist to DB (IsDelivered = false by default)
             var entity = new UserNotification
@@ -198,11 +253,14 @@ namespace Infrastructure.Service
 
             _db.UserNotifications.Add(entity);
             await _db.SaveChangesAsync();
+            _logger.LogInformation("Notification entity created with ID {NotificationId} for user {UserId}", entity.Id, user.Id);
 
             // 3. Push via SignalR if user is currently online
             var connectionId = NotificationHub.GetConnectionIdByUserId(user.Id);
             if (!string.IsNullOrEmpty(connectionId))
             {
+                _logger.LogDebug("User {UserId} is online, pushing notification via SignalR", user.Id);
+
                 // give the entity its real Id for the DTO
                 dto.Id = entity.Id.ToString();
 
@@ -212,6 +270,14 @@ namespace Infrastructure.Service
                 // 4. Mark delivered since push succeeded
                 entity.IsDelivered = true;
                 await _db.SaveChangesAsync();
+
+                _logger.LogInformation("Notification {NotificationId} pushed to user {UserId} and marked as delivered",
+                    entity.Id, user.Id);
+            }
+            else
+            {
+                _logger.LogDebug("User {UserId} is offline. Notification {NotificationId} saved for later delivery",
+                    user.Id, entity.Id);
             }
             // if offline: entity stays IsDelivered=false
             // DeliverPendingNotificationsAsync will handle it on next connect
